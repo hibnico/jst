@@ -1,0 +1,27 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: org.hibnet.jst.tests
+Bundle-Vendor: Eclipse Modeling Project
+Bundle-Version: 1.0.0.qualifier
+Bundle-SymbolicName: org.hibnet.jst.tests; singleton:=true
+Bundle-ActivationPolicy: lazy
+Require-Bundle: org.hibnet.jst,
+ org.hibnet.jst.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.xtext.junit4,
+ org.eclipse.ui.workbench;resolution:=optional,
+ org.eclipse.xtend.lib,
+ com.google.guava,
+ org.eclipse.xtext.xbase.lib,
+ org.eclipse.xtext.xbase.junit,
+ org.eclipse.jdt.core
+Import-Package: org.apache.log4j,
+ org.junit;version="4.5.0",
+ org.junit.runner;version="4.5.0",
+ org.junit.runner.manipulation;version="4.5.0",
+ org.junit.runner.notification;version="4.5.0",
+ org.junit.runners;version="4.5.0",
+ org.junit.runners.model;version="4.5.0",
+ org.hamcrest.core
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Export-Package: org.hibnet.jst
