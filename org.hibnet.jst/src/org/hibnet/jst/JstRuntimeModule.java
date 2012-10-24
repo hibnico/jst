@@ -8,11 +8,14 @@
 package org.hibnet.jst;
 
 import org.eclipse.xtext.conversion.IValueConverterService;
+import org.eclipse.xtext.parser.antlr.LexerProvider;
 import org.eclipse.xtext.service.SingletonBinding;
 import org.eclipse.xtext.xbase.compiler.XbaseCompiler;
 import org.eclipse.xtext.xbase.typing.ITypeProvider;
 import org.hibnet.jst.jvmmodel.JstCompiler;
 import org.hibnet.jst.jvmmodel.JstTypeProvider;
+import org.hibnet.jst.parser.antlr.internal.InternalJstLexer;
+import org.hibnet.jst.parser.antlr.internal.JstLexer;
 import org.hibnet.jst.validation.JstValidator;
 
 /**
@@ -38,6 +41,17 @@ public class JstRuntimeModule extends AbstractJstRuntimeModule {
 	
 	public Class<? extends XbaseCompiler> bindXbaseCompiler() {
 		return JstCompiler.class;
+	}
+
+	@Override
+	public Class<? extends org.eclipse.xtext.parser.antlr.Lexer> bindLexer() {
+		return JstLexer.class;
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public com.google.inject.Provider<InternalJstLexer> provideInternalJstLexer() {
+		return (LexerProvider) org.eclipse.xtext.parser.antlr.LexerProvider.create(JstLexer.class);
 	}
 
 }

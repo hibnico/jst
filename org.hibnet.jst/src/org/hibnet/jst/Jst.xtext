@@ -9,51 +9,122 @@ grammar org.hibnet.jst.Jst with org.eclipse.xtext.xbase.annotations.XbaseWithAnn
 
 generate jst "http://www.hibnet.org/jst/Jst"
 import 'http://www.eclipse.org/xtext/xbase/Xbase' as xbase
+import "http://www.eclipse.org/emf/2002/Ecore" as ecore
 
 JstFile:
-	'<!--''«' 
-		('package' package=QualifiedName)? 
-		imports+=Import* 
-		params+=Parameter* 
-		body=RichString;
+		(DIRECTIVE_PACKAGE package=QualifiedName)?
+		imports+=Import*
+		functions+=Function*
+;
 
 Import:
-	'import' importedNamespace=QualifiedName;
+	DIRECTIVE_IMPORT importedNamespace=QualifiedName
+;
+
+Function:
+    DIRECTIVE_FUNCTION name=ID BRACE_OPEN params=Parameters? BRACE_CLOSE
+    body=RichString
+    DIRECTIVE_END
+;
+
+Parameters:
+    params+=Parameter (COMMA params+=Parameter)*
+;
 
 Parameter:
-	annotations+=XAnnotation* 
-	'param' type=JvmTypeReference? name=ID ('=' defaultexp=XExpression)?;
+	type=JvmTypeReference name=ID
+;
 
 RichString returns xbase::XBlockExpression:
-	{RichString}  
-	expressions+=RichStringLiteral 
-	(expressions+=RichStringPart expressions+=RichStringLiteral)*;
-
-RichStringLiteral returns xbase::XStringLiteral:
-	{RichStringLiteral} value=TEXT;
+	{RichString}
+	expressions+=RichStringPart*
+;
 
 RichStringPart returns xbase::XExpression:
-	XExpressionInsideBlock |
-	RichStringForLoop |
-	RichStringIf;
+      RichStringLiteral
+	| RichStringScript
+    | RichStringInlineExpr
+	| RichStringForLoop
+	| RichStringIf
+;
+
+RichStringLiteral returns xbase::XStringLiteral:
+    {RichStringLiteral} value=TEXT
+;
+
+RichStringScript returns xbase::XBlockExpression:
+    {XBlockExpression}
+    DIRECTIVE BRACE_OPEN block=XBlockExpression BRACE_CLOSE
+;
 
 RichStringForLoop returns xbase::XForLoopExpression:
 	{RichStringForLoop}
-	"FOR" declaredParam=JvmFormalParameter ':' forExpression=XExpression
+	DIRECTIVE_FOR BRACE_OPEN declaredParam=JvmFormalParameter COLON forExpression=XExpression BRACE_CLOSE
 		eachExpression=RichString
-	"ENDFOR";
+	DIRECTIVE_END
+;
 
 RichStringIf returns xbase::XIfExpression:
 	{RichStringIf}
-	"IF" if=XExpression
+	DIRECTIVE_IF BRACE_OPEN if=XExpression BRACE_CLOSE
 		then=RichString
-	(else=RichStringElseIf | "ELSE" else=RichString)?
-	"ENDIF";
-	
+	(else=RichStringElseIf | DIRECTIVE_ELSE else=RichString)?
+    DIRECTIVE_END
+;
+
 RichStringElseIf returns xbase::XIfExpression:
 	{RichStringIf}
-	"ELSEIF"if=XExpression
+	DIRECTIVE_ELSEIF BRACE_OPEN if=XExpression BRACE_CLOSE
 		then=RichString
-	(else=RichStringElseIf | "ELSE" else=RichString)?;
+	(else=RichStringElseIf | DIRECTIVE_ELSE else=RichString)?
+;
 
-terminal TEXT : '»' (!'«')* (EOF|'«');
+RichStringInlineExpr returns xbase::XExpression:
+    {RichStringInlineExpr}
+    elvis=(DIRECTIVE_ECHO | DIRECTIVE_ECHO_ELVIS) BRACE_OPEN expr=XExpression BRACE_CLOSE
+;
+
+terminal ML_COMMENT:
+    DIRECTIVE_ML_COMMENT_START -> DIRECTIVE_ML_COMMENT_END
+;
+
+terminal SL_COMMENT:
+    DIRECTIVE_SL_COMMENT !('\n'|'\r')* ('\r'? '\n')?
+;
+
+terminal INT returns ecore::EInt:
+    '0'..'9' ('0'..'9'|'_')*; 
+
+terminal DECIMAL:
+    INT 
+    (('e'|'E') ('+'|'-')? INT)? 
+    (('b'|'B')('i'|'I'|'d'|'D') | ('l'|'L'|'d'|'D'|'f'|'F'))?;
+
+terminal WS: (' '|'\t'|'\r'|'\n')+;
+
+terminal BRACE_OPEN: '(';
+terminal BRACE_CLOSE: ')';
+terminal COMMA: ',';
+terminal COLON: ':';
+
+terminal DIRECTIVE_PACKAGE: '#package';
+terminal DIRECTIVE_IMPORT: '#import';
+terminal DIRECTIVE_FUNCTION: '#function';
+terminal DIRECTIVE_IF: '#if';
+terminal DIRECTIVE_ELSE: '#else';
+terminal DIRECTIVE_ELSEIF: '#elseif';
+terminal DIRECTIVE_END: '#end';
+terminal DIRECTIVE_FOR: '#for';
+terminal DIRECTIVE_SL_COMMENT: '#--';
+terminal DIRECTIVE_ML_COMMENT_START: '#-';
+terminal DIRECTIVE_ML_COMMENT_END: '-#';
+terminal DIRECTIVE: '#';
+terminal DIRECTIVE_ECHO: '$';
+terminal DIRECTIVE_ECHO_ELVIS: '$!';
+
+terminal TEXT:
+// we fake the generated parser so it never match it and we can handle it ourself
+    '\uAAAA'
+// actual expected form:
+//    ( (!('#'|'$')) | '##' | '$$')*
+;

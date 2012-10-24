@@ -27,37 +27,41 @@ class IntegrationTest {
 	
 	@Test def void testParseAndCompile_01() {
 		'''
-			<!--<< >>-->
+			#function main()
 			Hello World
-		'''.repl.compile [
-			val result = compiledClass.newInstance.invoke('generate', null)
+			#end
+		'''.compile [
+			val result = compiledClass.newInstance.invoke('main', null)
 			assertEquals('Hello World',result)
 		]
 	}
 	
 	@Test def void testParseAndCompile_02() {
 		'''
-			<!--<<
-				param name = 'Foo'
-				param nullString
-				param list = newArrayList('one', 'two', 'three', 'four')
-			>>-->
-			<html><<nullString>>
-			  <title><<name>></title>
-			  <<FOR element : list>>
-			    <<IF element == 'one'>>
-			      <h1><<element>></h1>
-			    <<ELSEIF element == 'two'>>
-			      <h2><<element>></h2>
-			    <<ELSE>>
-			      <p><<element>></p>
-			    <<ENDIF>>
-			  <<ENDFOR>>
+			#function main()
+			 #( String nullString = null;
+			    String name = "Foo";
+			    List<String> list = Arrays.asList("one", "two", "three", "four"); )
+			<html>
+			  <i>$(nullString)</i>
+			  <b>$!(nullString)</b>
+			  <title>$(name)</title>
+			  #for(String element : list)
+			    #if(element.equals("one"))
+			      <h1>$(element)</h1>
+			    #elseif(element.equals("two"))
+			      <h2>$(element)</h2>
+			    #else
+			      <p>$(element)</p>
+			    #end
+			  #end
 			</html>
-		'''.repl.compile [
-			val result = compiledClass.newInstance.invoke('generate', null)
+		'''.compile [
+			val result = compiledClass.newInstance.invoke('main', null)
 			assertEquals('''
 				<html>
+				  <i>null</i>
+				  <b></b>
 				  <title>Foo</title>
 				      <h1>one</h1>
 				      <h2>two</h2>
@@ -67,7 +71,4 @@ class IntegrationTest {
 		]
 	}
 	
-	def repl(CharSequence s) {
-		s.toString.replace('<<','«').replace('>>','»')
-	}
 }
