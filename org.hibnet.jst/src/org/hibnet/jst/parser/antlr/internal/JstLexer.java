@@ -48,6 +48,9 @@ public class JstLexer extends InternalJstLexer {
 				}
 			}
 			switch (state.type) {
+				case RULE_DIRECTIVE_ELSE:
+					rawText = true;
+					break;
 				case RULE_DIRECTIVE_FUNCTION:
 				case RULE_DIRECTIVE_FOR:
 				case RULE_DIRECTIVE_IF:
