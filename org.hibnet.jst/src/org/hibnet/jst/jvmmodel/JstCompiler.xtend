@@ -12,6 +12,7 @@ import org.eclipse.xtext.xbase.compiler.XbaseCompiler
 import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable
 import org.hibnet.jst.jst.RichString
 import org.hibnet.jst.jst.RichStringForLoop
+import org.hibnet.jst.jst.RichStringInlineExpr
 
 class JstCompiler extends XbaseCompiler {
 	
@@ -43,6 +44,20 @@ class JstCompiler extends XbaseCompiler {
 					append(');')
 				decreaseIndentation.newLine.append("}")
 			}
+
+            RichStringInlineExpr : {
+                expr.expr.internalToJavaStatement(it, true)
+                newLine
+                append('out.print(')
+                if (expr.elvis) {
+                    append('org.eclipse.xtext.xbase.lib.ObjectExtensions.operator_elvis(')
+                    expr.expr.internalToJavaExpression(it)
+                    append(', "")')
+                } else {
+                    expr.expr.internalToJavaExpression(it)
+                }
+                append(');')
+            }
 
 			default :
 				super.doInternalToJavaStatement(expr, it, isReferenced)

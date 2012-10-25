@@ -44,7 +44,7 @@ class IntegrationTest {
 		''' #function main()
 			 #( var nullString = null
 			    var name = "Foo"
-			    var list = Arrays::asList("one", "two", "three", "four") )
+			    var list = newArrayList("one", "two", "three", "four") )
 			<html>
 			  <i>$(nullString)</i>
 			  <b>$!(nullString)</b>
