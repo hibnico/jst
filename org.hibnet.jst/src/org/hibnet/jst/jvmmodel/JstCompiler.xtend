@@ -18,40 +18,32 @@ class JstCompiler extends XbaseCompiler {
 	override protected doInternalToJavaStatement(XExpression expr, ITreeAppendable it, boolean isReferenced) {
 		switch expr {
 			RichString : {
-				val name = declareVariable(expr, '_appendable')
-				newLine
-				append('''
-					StringBuilder «name» = new StringBuilder();
-				''')
 				for (nestedExpression : expr.expressions) {
 					nestedExpression.internalToJavaStatement(it, true)
 					newLine
-					append('''«name».append(org.eclipse.xtext.xbase.lib.ObjectExtensions.operator_elvis(''')
+					append('out.print(')
 					nestedExpression.internalToJavaExpression(it)
-					append(',""));')
+					append(');')
 				}
 			}
 			
 			RichStringForLoop : {
 				expr.forExpression.internalToJavaStatement(it, true)
+                newLine
 				val paramType = typeProvider.getTypeForIdentifiable(expr.declaredParam)
-				val name = declareVariable(expr, '_forLoopResult')
-				newLine
-				append('''
-					StringBuilder «name» = new StringBuilder();
-					for (final ''')
+				append('''for (final ''')
 				serialize(paramType, expr, it);
 				append(''' «declareVariable(expr.declaredParam, makeJavaIdentifier(expr.declaredParam.name))» : ''')
 				internalToJavaExpression(expr.forExpression, it)
 				append(") {").increaseIndentation
 					expr.eachExpression.internalToJavaStatement(it, true)
 					newLine
-					append('''«name».append(''')
+					append('out.print(')
 					expr.eachExpression.internalToJavaExpression(it)
 					append(');')
 				decreaseIndentation.newLine.append("}")
 			}
-			
+
 			default :
 				super.doInternalToJavaStatement(expr, it, isReferenced)
 		}

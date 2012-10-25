@@ -17,6 +17,8 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 import static org.junit.Assert.*
+import java.io.PrintStream
+import java.io.ByteArrayOutputStream
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(JstInjectorProvider))
@@ -31,17 +33,18 @@ class IntegrationTest {
 			Hello World
 			#end
 		'''.compile [
-			val result = compiledClass.newInstance.invoke('main', null)
-			assertEquals('Hello World',result)
+            val out = new ByteArrayOutputStream();
+		    val p = new PrintStream(out)
+			compiledClass.newInstance.invoke('main', p)
+			assertEquals('Hello World', new String(out.toByteArray))
 		]
 	}
 	
 	@Test def void testParseAndCompile_02() {
-		'''
-			#function main()
-			 #( String nullString = null;
-			    String name = "Foo";
-			    List<String> list = Arrays.asList("one", "two", "three", "four"); )
+		''' #function main()
+			 #( var nullString = null
+			    var name = "Foo"
+			    var list = Arrays::asList("one", "two", "three", "four") )
 			<html>
 			  <i>$(nullString)</i>
 			  <b>$!(nullString)</b>
@@ -56,8 +59,11 @@ class IntegrationTest {
 			    #end
 			  #end
 			</html>
+			#end
 		'''.compile [
-			val result = compiledClass.newInstance.invoke('main', null)
+            val out = new ByteArrayOutputStream();
+            val p = new PrintStream(out)
+			compiledClass.newInstance.invoke('main', p)
 			assertEquals('''
 				<html>
 				  <i>null</i>
@@ -67,7 +73,7 @@ class IntegrationTest {
 				      <h2>two</h2>
 				      <p>three</p>
 				      <p>four</p>
-				</html>'''.toString,result.toString)
+				</html>'''.toString, new String(out.toByteArray))
 		]
 	}
 	

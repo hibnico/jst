@@ -8,12 +8,11 @@
 package org.hibnet.jst.jvmmodel
 
 import com.google.inject.Inject
+import java.io.PrintStream
 import org.eclipse.xtext.xbase.jvmmodel.AbstractModelInferrer
 import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
 import org.hibnet.jst.jst.JstFile
-import org.eclipse.emf.ecore.xml.type.AnyType
-import java.io.PrintStream
 
 /**
  * <p>Infers a JVM model from the source model.</p> 
@@ -34,7 +33,7 @@ class JstJvmModelInferrer extends AbstractModelInferrer {
 
    		acceptor.accept(javaClass).initializeLater [
             for (function : element.functions) {
-                element.toMethod(function.name, element.newTypeRef(typeof(AnyType))) [
+                members += element.toMethod(function.name, element.newTypeRef(typeof(Object))) [
                     parameters += element.toParameter(
                         "out",
                         element.newTypeRef(typeof(PrintStream))

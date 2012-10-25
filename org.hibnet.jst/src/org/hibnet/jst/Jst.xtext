@@ -52,9 +52,9 @@ RichStringLiteral returns xbase::XStringLiteral:
     {RichStringLiteral} value=TEXT
 ;
 
-RichStringScript returns xbase::XBlockExpression:
+RichStringScript returns xbase::XExpression:
     {XBlockExpression}
-    DIRECTIVE BRACE_OPEN block=XBlockExpression BRACE_CLOSE
+    DIRECTIVE BRACE_OPEN (expressions+=XExpressionInsideBlock ';'?)* BRACE_CLOSE
 ;
 
 RichStringForLoop returns xbase::XForLoopExpression:
