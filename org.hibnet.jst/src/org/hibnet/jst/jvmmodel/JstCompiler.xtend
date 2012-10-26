@@ -87,6 +87,7 @@ class JstCompiler extends XbaseCompiler {
             RichStringIf : false
             RichStringForLoop : false
             RichStringScript : false
+            RichStringInlineExpr : false
             default: true
 	    }
 	}
