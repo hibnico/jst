@@ -14,7 +14,6 @@ import org.hibnet.jst.jst.RichString
 import org.hibnet.jst.jst.RichStringIf
 import org.hibnet.jst.jst.RichStringForLoop
 import org.hibnet.jst.jst.RichStringInlineExpr
-import org.hibnet.jst.jst.RichStringScript
 
 class JstCompiler extends XbaseCompiler {
 	
@@ -87,7 +86,6 @@ class JstCompiler extends XbaseCompiler {
             RichString : false
             RichStringIf : false
             RichStringForLoop : false
-            RichStringScript : false
             RichStringInlineExpr : false
             default: true
 	    }

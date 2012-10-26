@@ -38,7 +38,7 @@ Parameter:
 RichString returns xbase::XBlockExpression:
 	{RichString}
 	(  expressions+=RichStringPart
-	   | DIRECTIVE BRACE_OPEN (expressions+=RichStringScript ';'?)* BRACE_CLOSE
+	   | DIRECTIVE BRACE_OPEN (expressions+=XExpressionInsideBlock ';'?)* BRACE_CLOSE
 	)*
 ;
 
@@ -47,11 +47,6 @@ RichStringPart returns xbase::XExpression:
     | RichStringInlineExpr
 	| RichStringForLoop
 	| RichStringIf
-;
-
-RichStringScript returns xbase::XExpression:
-    {RichStringScript}
-    expr=XExpressionInsideBlock
 ;
 
 RichStringLiteral returns xbase::XStringLiteral:
