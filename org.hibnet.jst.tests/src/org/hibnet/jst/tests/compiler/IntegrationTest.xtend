@@ -27,54 +27,182 @@ class IntegrationTest {
 	@Inject extension CompilationTestHelper
 	@Inject extension ReflectExtensions
 	
-	@Test def void testParseAndCompile_01() {
+	@Test def void testParseAndCompile_Simple() {
 		'''
-			#function main()
+			#function render()
 			Hello World
 			#end
 		'''.compile [
             val out = new ByteArrayOutputStream();
 		    val p = new PrintStream(out)
-			compiledClass.newInstance.invoke('main', p)
+			compiledClass.newInstance.invoke('render', p)
 			assertEquals('Hello World', new String(out.toByteArray))
 		]
 	}
 	
-	@Test def void testParseAndCompile_02() {
-		''' #function main()
-			 #( var nullString = null
-			    var name = "Foo"
-			    var list = newArrayList("one", "two", "three", "four") )
-			<html>
-			  <i>$(nullString)</i>
-			  <b>$!(nullString)</b>
-			  <title>$(name)</title>
-			  #for(String element : list)
-			    #if(element.equals("one"))
-			      <h1>$(element)</h1>
-			    #elseif(element.equals("two"))
-			      <h2>$(element)</h2>
-			    #else
-			      <p>$(element)</p>
-			    #end
-			  #end
-			</html>
-			#end
-		'''.compile [
+    @Test def void testParseAndCompile_If() {
+        ''' #function render()
+            #if(true)
+              <h1>Hello</h1>
+            #end
+            #end
+        '''.compile [
             val out = new ByteArrayOutputStream();
             val p = new PrintStream(out)
-			compiledClass.newInstance.invoke('main', p)
-			assertEquals('''
-				<html>
-				  <i>null</i>
-				  <b></b>
-				  <title>Foo</title>
-				      <h1>one</h1>
-				      <h2>two</h2>
-				      <p>three</p>
-				      <p>four</p>
-				</html>'''.toString, new String(out.toByteArray))
-		]
-	}
-	
+            compiledClass.newInstance.invoke('render', p)
+            assertEquals('''
+                 <h1>Hello</h1>
+                 '''.toString, new String(out.toByteArray))
+        ]
+    }
+    
+    @Test def void testParseAndCompile_IfElse() {
+        ''' #function render()
+                #if(true)
+                    <p>ok</p>
+                #else
+                    <p>nok</p>
+                #end
+            #end
+        '''.compile [
+            val out = new ByteArrayOutputStream();
+            val p = new PrintStream(out)
+            compiledClass.newInstance.invoke('render', p)
+            assertEquals('''
+                <p>ok</p>
+                '''.toString, new String(out.toByteArray))
+        ]
+    }
+    
+    @Test def void testParseAndCompile_IfElseIf() {
+        ''' #function render()
+                #if(false)
+                  <h1>nok</h1>
+                #elseif(true)
+                  <h2>ok</h2>
+                #else
+                  <p>nok</p>
+                #end
+            #end
+        '''.compile [
+            val out = new ByteArrayOutputStream();
+            val p = new PrintStream(out)
+            compiledClass.newInstance.invoke('render', p)
+            assertEquals('''
+                <h2>ok</h2>
+                '''.toString, new String(out.toByteArray))
+        ]
+    }
+    
+    @Test def void testParseAndCompile_Inline() {
+        ''' #function render()
+              <i>$("Hello")</i>
+            #end
+        '''.compile [
+            val out = new ByteArrayOutputStream();
+            val p = new PrintStream(out)
+            compiledClass.newInstance.invoke('render', p)
+            assertEquals('''
+                <i>Hello</i>
+                '''.toString, new String(out.toByteArray))
+        ]
+    }
+
+    @Test def void testParseAndCompile_Script() {
+        ''' #function render()
+              #( var name = "Foo")
+              <title>$(name)</title>
+            #end
+        '''.compile [
+            val out = new ByteArrayOutputStream();
+            val p = new PrintStream(out)
+            compiledClass.newInstance.invoke('render', p)
+            assertEquals('''
+                <title>Foo</title>
+                '''.toString, new String(out.toByteArray))
+        ]
+    }
+
+    @Test def void testParseAndCompile_InlineElvis() {
+        ''' #function render()
+              #( var name = "Foo")
+              #( var name2 = null)
+              <h1>$(name)</h1>
+              <h2>$!(name)</h2>
+              <h3>$(name2)</h3>
+              <h4>$!(name2)</h4>
+            #end
+        '''.compile [
+            val out = new ByteArrayOutputStream();
+            val p = new PrintStream(out)
+            compiledClass.newInstance.invoke('render', p)
+            assertEquals('''
+              <h1>Foo</h1>
+              <h2>Foo</h2>
+              <h3>null</h3>
+              <h4></h4>
+                '''.toString, new String(out.toByteArray))
+        ]
+    }
+
+    @Test def void testParseAndCompile_For() {
+        ''' #function render()
+             #( var list = newArrayList("one", "two", "three", "four") )
+            <html>
+              #for(String element : list)
+                <p>$(element)</p>
+              #end
+            </html>
+            #end
+        '''.compile [
+            val out = new ByteArrayOutputStream();
+            val p = new PrintStream(out)
+            compiledClass.newInstance.invoke('render', p)
+            assertEquals('''
+                <html>
+                      <p>one</p>
+                      <p>two</p>
+                      <p>three</p>
+                      <p>four</p>
+                </html>'''.toString, new String(out.toByteArray))
+        ]
+    }
+ 
+    @Test def void testParseAndCompile_Complex() {
+        ''' #function render()
+             #( var nullString = null
+                var name = "Foo"
+                var list = newArrayList("one", "two", "three", "four") )
+            <html>
+              <i>$(nullString)</i>
+              <b>$!(nullString)</b>
+              <title>$(name)</title>
+              #for(String element : list)
+                #if(element.equals("one"))
+                  <h1>$(element)</h1>
+                #elseif(element.equals("two"))
+                  <h2>$(element)</h2>
+                #else
+                  <p>$(element)</p>
+                #end
+              #end
+            </html>
+            #end
+        '''.compile [
+            val out = new ByteArrayOutputStream();
+            val p = new PrintStream(out)
+            compiledClass.newInstance.invoke('render', p)
+            assertEquals('''
+                <html>
+                  <i>null</i>
+                  <b></b>
+                  <title>Foo</title>
+                      <h1>one</h1>
+                      <h2>two</h2>
+                      <p>three</p>
+                      <p>four</p>
+                </html>'''.toString, new String(out.toByteArray))
+        ]
+    }
+    
 }
