@@ -50,9 +50,7 @@ class IntegrationTest {
             val out = new ByteArrayOutputStream();
             val p = new PrintStream(out)
             compiledClass.newInstance.invoke('render', p)
-            assertEquals('''
-                 <h1>Hello</h1>
-                 '''.toString, new String(out.toByteArray))
+            assertEquals('<h1>Hello</h1>', new String(out.toByteArray).trim)
         ]
     }
     
@@ -68,9 +66,7 @@ class IntegrationTest {
             val out = new ByteArrayOutputStream();
             val p = new PrintStream(out)
             compiledClass.newInstance.invoke('render', p)
-            assertEquals('''
-                <p>ok</p>
-                '''.toString, new String(out.toByteArray))
+            assertEquals('<p>ok</p>', new String(out.toByteArray).trim)
         ]
     }
     
@@ -88,9 +84,7 @@ class IntegrationTest {
             val out = new ByteArrayOutputStream();
             val p = new PrintStream(out)
             compiledClass.newInstance.invoke('render', p)
-            assertEquals('''
-                <h2>ok</h2>
-                '''.toString, new String(out.toByteArray))
+            assertEquals('<h2>ok</h2>', new String(out.toByteArray).trim)
         ]
     }
     
@@ -102,9 +96,7 @@ class IntegrationTest {
             val out = new ByteArrayOutputStream();
             val p = new PrintStream(out)
             compiledClass.newInstance.invoke('render', p)
-            assertEquals('''
-                <i>Hello</i>
-                '''.toString, new String(out.toByteArray))
+            assertEquals('<i>Hello</i>', new String(out.toByteArray).trim)
         ]
     }
 
@@ -117,9 +109,7 @@ class IntegrationTest {
             val out = new ByteArrayOutputStream();
             val p = new PrintStream(out)
             compiledClass.newInstance.invoke('render', p)
-            assertEquals('''
-                <title>Foo</title>
-                '''.toString, new String(out.toByteArray))
+            assertEquals('<title>Foo</title>', new String(out.toByteArray).trim)
         ]
     }
 
@@ -136,12 +126,10 @@ class IntegrationTest {
             val out = new ByteArrayOutputStream();
             val p = new PrintStream(out)
             compiledClass.newInstance.invoke('render', p)
-            assertEquals('''
-              <h1>Foo</h1>
+            assertEquals('''<h1>Foo</h1>
               <h2>Foo</h2>
               <h3>null</h3>
-              <h4></h4>
-                '''.toString, new String(out.toByteArray))
+              <h4></h4>'''.toString, new String(out.toByteArray).trim)
         ]
     }
 

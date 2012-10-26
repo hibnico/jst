@@ -33,7 +33,7 @@ class JstJvmModelInferrer extends AbstractModelInferrer {
 
    		acceptor.accept(javaClass).initializeLater [
             for (function : element.functions) {
-                members += element.toMethod(function.name, element.newTypeRef(typeof(Object))) [
+                members += element.toMethod(function.name, element.newTypeRef(Void::TYPE)) [
                     parameters += element.toParameter(
                         "out",
                         element.newTypeRef(typeof(PrintStream))
