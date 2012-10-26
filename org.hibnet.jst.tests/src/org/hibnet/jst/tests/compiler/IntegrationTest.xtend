@@ -36,7 +36,7 @@ class IntegrationTest {
             val out = new ByteArrayOutputStream();
 		    val p = new PrintStream(out)
 			compiledClass.newInstance.invoke('render', p)
-			assertEquals('Hello World', new String(out.toByteArray))
+			assertEquals('Hello World', new String(out.toByteArray).trim)
 		]
 	}
 	
