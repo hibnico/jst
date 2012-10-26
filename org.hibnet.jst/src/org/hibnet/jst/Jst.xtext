@@ -37,13 +37,12 @@ Parameter:
 
 RichString returns xbase::XBlockExpression:
 	{RichString}
-	(  expressions+=RichStringPart
-	   | DIRECTIVE BRACE_OPEN (expressions+=XExpressionInsideBlock ';'?)* BRACE_CLOSE
-	)*
+	expressions+=RichStringPart*
 ;
 
 RichStringPart returns xbase::XExpression:
       RichStringLiteral
+    | RichStringScript
     | RichStringInlineExpr
 	| RichStringForLoop
 	| RichStringIf
@@ -51,6 +50,15 @@ RichStringPart returns xbase::XExpression:
 
 RichStringLiteral returns xbase::XStringLiteral:
     {RichStringLiteral} value=TEXT
+;
+
+RichStringScript returns xbase::XBlockExpression:
+    {RichStringScript}
+    DIRECTIVE BRACE_OPEN (expressions+=XExpressionInsideBlock ';'?)* BRACE_CLOSE;
+
+RichStringInlineExpr returns xbase::XExpression:
+    {RichStringInlineExpr}
+    (DIRECTIVE_ECHO | elvis?=DIRECTIVE_ECHO_ELVIS) BRACE_OPEN expr=XExpression BRACE_CLOSE
 ;
 
 RichStringForLoop returns xbase::XForLoopExpression:
@@ -73,11 +81,6 @@ RichStringElseIf returns xbase::XIfExpression:
 	DIRECTIVE_ELSEIF BRACE_OPEN if=XExpression BRACE_CLOSE
 		then=RichString
 	(else=RichStringElseIf | DIRECTIVE_ELSE else=RichString)?
-;
-
-RichStringInlineExpr returns xbase::XExpression:
-    {RichStringInlineExpr}
-    (DIRECTIVE_ECHO | elvis?=DIRECTIVE_ECHO_ELVIS) BRACE_OPEN expr=XExpression BRACE_CLOSE
 ;
 
 terminal ML_COMMENT:

@@ -12,6 +12,7 @@ import org.eclipse.xtext.parser.antlr.LexerProvider;
 import org.eclipse.xtext.service.SingletonBinding;
 import org.eclipse.xtext.xbase.compiler.XbaseCompiler;
 import org.eclipse.xtext.xbase.typing.ITypeProvider;
+import org.eclipse.xtext.xtext.ecoreInference.IXtext2EcorePostProcessor;
 import org.hibnet.jst.jvmmodel.JstCompiler;
 import org.hibnet.jst.jvmmodel.JstTypeProvider;
 import org.hibnet.jst.parser.antlr.internal.InternalJstLexer;
@@ -19,26 +20,25 @@ import org.hibnet.jst.parser.antlr.internal.JstLexer;
 import org.hibnet.jst.validation.JstValidator;
 
 /**
- * Use this class to register components to be used at runtime / without the
- * Equinox extension registry.
+ * Use this class to register components to be used at runtime / without the Equinox extension registry.
  */
 public class JstRuntimeModule extends AbstractJstRuntimeModule {
-	
+
 	@Override
 	public Class<? extends IValueConverterService> bindIValueConverterService() {
 		return JstValueConverterService.class;
 	}
-	
-	@SingletonBinding(eager=true)	
+
+	@SingletonBinding(eager = true)
 	public Class<? extends JstValidator> bindJstValidator() {
 		return JstValidator.class;
 	}
-	
+
 	@Override
 	public Class<? extends ITypeProvider> bindITypeProvider() {
 		return JstTypeProvider.class;
 	}
-	
+
 	public Class<? extends XbaseCompiler> bindXbaseCompiler() {
 		return JstCompiler.class;
 	}
@@ -54,4 +54,7 @@ public class JstRuntimeModule extends AbstractJstRuntimeModule {
 		return (LexerProvider) org.eclipse.xtext.parser.antlr.LexerProvider.create(JstLexer.class);
 	}
 
+	public Class<? extends IXtext2EcorePostProcessor> bindIXtext2EcorePostProcessor() {
+		return RichStringEclassPostProcessor.class;
+	}
 }

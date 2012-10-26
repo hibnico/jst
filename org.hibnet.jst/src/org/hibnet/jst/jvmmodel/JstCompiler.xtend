@@ -14,14 +14,18 @@ import org.hibnet.jst.jst.RichString
 import org.hibnet.jst.jst.RichStringIf
 import org.hibnet.jst.jst.RichStringForLoop
 import org.hibnet.jst.jst.RichStringInlineExpr
+import org.hibnet.jst.jst.RichStringScript
 
 class JstCompiler extends XbaseCompiler {
 	
 	override protected doInternalToJavaStatement(XExpression expr, ITreeAppendable it, boolean isReferenced) {
 		switch expr {
 			RichString : {
+			    var i = 0;
 				for (nestedExpression : expr.expressions) {
-				    generatePrintExpr(nestedExpression, it)
+				    val printable = expr.printables.get(i) && isPrintable(nestedExpression)
+				    generatePrintExpr(nestedExpression, it, printable)
+                    i = i + 1
 				}
 			}
 
@@ -87,12 +91,16 @@ class JstCompiler extends XbaseCompiler {
             RichStringIf : false
             RichStringForLoop : false
             RichStringInlineExpr : false
+            RichStringScript : false
             default: true
 	    }
 	}
-	
-	def private generatePrintExpr(XExpression e, ITreeAppendable it) {
-	    val printable = isPrintable(e)
+
+    def private generatePrintExpr(XExpression e, ITreeAppendable it) {
+        generatePrintExpr(e, it, isPrintable(e))
+    }
+
+	def private generatePrintExpr(XExpression e, ITreeAppendable it, boolean printable) {
         e.internalToJavaStatement(it, printable)
         newLine
         if (printable) {
