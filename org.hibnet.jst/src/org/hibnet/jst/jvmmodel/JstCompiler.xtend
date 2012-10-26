@@ -55,7 +55,8 @@ class JstCompiler extends XbaseCompiler {
 				val paramType = typeProvider.getTypeForIdentifiable(expr.declaredParam)
 				append('''for (final ''')
 				serialize(paramType, expr, it);
-				append(''' «declareVariable(expr.declaredParam, makeJavaIdentifier(expr.declaredParam.name))» : ''')
+				val forParam = declareVariable(expr.declaredParam, makeJavaIdentifier(expr.declaredParam.name))
+				append(''' «forParam» : ''')
 				internalToJavaExpression(expr.forExpression, it)
 				append(") {").increaseIndentation
 			    generatePrintExpr(expr.eachExpression, it)
