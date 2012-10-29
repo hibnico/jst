@@ -9,17 +9,14 @@ package org.hibnet.jst.jvmmodel
 
 import com.google.inject.Inject
 import java.io.PrintStream
+import org.eclipse.xtext.EcoreUtil2
+import org.eclipse.xtext.xbase.XBlockExpression
 import org.eclipse.xtext.xbase.jvmmodel.AbstractModelInferrer
 import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
 import org.hibnet.jst.jst.JstFile
-import org.eclipse.xtext.xbase.XExpression
-import org.eclipse.xtext.xbase.XBlockExpression
-import org.eclipse.xtext.EcoreUtil2$EClassTypeHierarchyComparator
-import org.eclipse.xtext.EcoreUtil2
 import org.hibnet.jst.jst.RichString
 import org.hibnet.jst.jst.RichStringScript
-import java.util.Collections
 
 /**
  * <p>Infers a JVM model from the source model.</p> 
@@ -53,25 +50,27 @@ class JstJvmModelInferrer extends AbstractModelInferrer {
 	}
 
     /**
-     * The RichStringScript shouldn't encapsulated in its own block but should ba part of the encosing block
+     * The RichStringScript shouldn't encapsulated in its own block but should be part of the enclosing block
      */
     def private void popupRichStringScripts(XBlockExpression root) {
         val richStrings = EcoreUtil2::eAllOfType(root, typeof(RichString))
         for (richString : richStrings) {
-            val newExpressions = <XExpression>newArrayList()
-            for (expr : richString.expressions) {
+            val it = richString.expressions.listIterator;
+            while (it.hasNext) {
+                var expr = it.next;
                 if (expr instanceof RichStringScript) {
-                    for (nested : (expr as RichStringScript).expressions) {
-                        newExpressions += nested;
+                    it.remove
+                    var it2 = (expr as RichStringScript).expressions.listIterator
+                    while (it2.hasNext) {
+                        var nested = it2.next
+                        it2.remove
+                        it.add(nested)
                         richString.printables += false
                     }
                 } else {
-                    newExpressions += expr;
                     richString.printables += true
                 }
             }
-            richString.expressions.retainAll(Collections::emptyList)
-            richString.expressions.addAll(newExpressions)
         }
     }
 }
