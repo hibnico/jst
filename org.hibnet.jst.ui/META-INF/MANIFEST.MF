@@ -25,4 +25,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.hibnet.jst.ui.contentassist.antlr,
  org.hibnet.jst.ui.internal,
  org.hibnet.jst.ui.contentassist
-Bundle-Activator: org.hibnet.jst.ui.internal.TemplateActivator
+Bundle-Activator: org.hibnet.jst.ui.internal.JstActivator
