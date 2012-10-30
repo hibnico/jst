@@ -22,13 +22,25 @@ public class RichStringEclassPostProcessor implements IXtext2EcorePostProcessor 
 		for (EClassifier eclass : metamodel.getEPackage().getEClassifiers()) {
 			if (eclass instanceof EClass && eclass.getName().equals("RichString")) {
 				EClass c = (EClass) eclass;
+
+				// add an attribute to map the expressions to their printability
 				EAttribute printables = EcoreFactory.eINSTANCE.createEAttribute();
+				printables.setEType(EcorePackage.eINSTANCE.getEBoolean());
 				printables.setName("printables");
 				printables.setUnique(false);
 				printables.setLowerBound(0);
 				printables.setUpperBound(-1);
-				printables.setEType(EcorePackage.eINSTANCE.getEBoolean());
 				c.getEStructuralFeatures().add(printables);
+
+				// add an attribute to the current state of printability of the expression added
+				EAttribute printable = EcoreFactory.eINSTANCE.createEAttribute();
+				printable.setEType(EcorePackage.eINSTANCE.getEBoolean());
+				printable.setName("printable");
+				printable.setUnique(false);
+				printable.setLowerBound(1);
+				printable.setUpperBound(1);
+				printable.setDefaultValue(true);
+				c.getEStructuralFeatures().add(printable);
 			}
 		}
 	}

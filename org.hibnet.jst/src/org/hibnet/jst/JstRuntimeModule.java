@@ -16,7 +16,8 @@ import org.eclipse.xtext.xtext.ecoreInference.IXtext2EcorePostProcessor;
 import org.hibnet.jst.jvmmodel.JstCompiler;
 import org.hibnet.jst.jvmmodel.JstTypeProvider;
 import org.hibnet.jst.parser.antlr.internal.InternalJstLexer;
-import org.hibnet.jst.parser.antlr.internal.JstLexer;
+import org.hibnet.jst.parser.antlr.internal.JstLexerImpl;
+import org.hibnet.jst.parser.antlr.internal.JstParserImpl;
 import org.hibnet.jst.validation.JstValidator;
 
 /**
@@ -45,13 +46,18 @@ public class JstRuntimeModule extends AbstractJstRuntimeModule {
 
 	@Override
 	public Class<? extends org.eclipse.xtext.parser.antlr.Lexer> bindLexer() {
-		return JstLexer.class;
+		return JstLexerImpl.class;
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public com.google.inject.Provider<InternalJstLexer> provideInternalJstLexer() {
-		return (LexerProvider) org.eclipse.xtext.parser.antlr.LexerProvider.create(JstLexer.class);
+		return (LexerProvider) org.eclipse.xtext.parser.antlr.LexerProvider.create(JstLexerImpl.class);
+	}
+
+	@Override
+	public Class<? extends org.eclipse.xtext.parser.IParser> bindIParser() {
+		return JstParserImpl.class;
 	}
 
 	public Class<? extends IXtext2EcorePostProcessor> bindIXtext2EcorePostProcessor() {

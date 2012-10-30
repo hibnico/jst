@@ -24,11 +24,11 @@ class JstTypeProvider extends XbaseTypeProvider {
 	@Inject TypeReferences typeReferences
 	
 	def dispatch type(RichString string, JvmTypeReference typeRef, boolean isRawTypes) {
-		typeReferences.getTypeForName(typeof(StringBuilder), string)
+		typeReferences.getTypeForName(Void::TYPE, string)
 	}
 	
 	def dispatch type(RichStringForLoop string, JvmTypeReference typeRef, boolean isRawTypes) {
-		typeReferences.getTypeForName(typeof(StringBuilder), string)
+		typeReferences.getTypeForName(Void::TYPE, string)
 	}
 	
 	def dispatch expectedType(RichStringForLoop container, EReference reference, int index, boolean rawType) {

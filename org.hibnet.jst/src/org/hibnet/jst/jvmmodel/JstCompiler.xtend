@@ -14,7 +14,6 @@ import org.hibnet.jst.jst.RichString
 import org.hibnet.jst.jst.RichStringIf
 import org.hibnet.jst.jst.RichStringForLoop
 import org.hibnet.jst.jst.RichStringInlineExpr
-import org.hibnet.jst.jst.RichStringScript
 
 class JstCompiler extends XbaseCompiler {
 	
@@ -39,16 +38,9 @@ class JstCompiler extends XbaseCompiler {
                 decreaseIndentation.newLine.append("}")
                 val elseExpr = expr.getElse()
                 if (elseExpr != null) {
-                    switch elseExpr {
-                        RichStringIf : {
-                            elseExpr.internalToJavaStatement(it, false)
-                        }
-                        default : {
-                            append(' else {').increaseIndentation.newLine
-                            elseExpr.internalToJavaStatement(it, false)
-                            decreaseIndentation.newLine.append('}')
-                        }
-                    }
+                    append(' else {').increaseIndentation.newLine
+                    elseExpr.internalToJavaStatement(it, false)
+                    decreaseIndentation.newLine.append('}')
                 }
             }
 
@@ -91,7 +83,6 @@ class JstCompiler extends XbaseCompiler {
             RichStringIf : false
             RichStringForLoop : false
             RichStringInlineExpr : false
-            RichStringScript : false
             default: true
 	    }
 	}

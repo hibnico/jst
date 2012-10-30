@@ -152,7 +152,7 @@ class IntegrationTest {
                       <p>two</p>
                       <p>three</p>
                       <p>four</p>
-                </html>'''.toString, new String(out.toByteArray))
+                </html>'''.toString.replaceAll("( |\n)", ""), new String(out.toByteArray).replaceAll("( |\n)", ""))
         ]
     }
  
@@ -189,7 +189,7 @@ class IntegrationTest {
                       <h2>two</h2>
                       <p>three</p>
                       <p>four</p>
-                </html>'''.toString, new String(out.toByteArray))
+                </html>'''.toString.replaceAll("( |\n)", ""), new String(out.toByteArray).replaceAll("( |\n)", ""))
         ]
     }
     

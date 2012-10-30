@@ -11,7 +11,7 @@ import org.antlr.runtime.CharStream;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.RecognizerSharedState;
 
-public class JstLexer extends InternalJstLexer {
+public class JstLexerImpl extends InternalJstLexer {
 
 	private boolean rawText = false;
 
@@ -19,15 +19,15 @@ public class JstLexer extends InternalJstLexer {
 
 	private int parenthesisStackSize = 0;
 
-	public JstLexer() {
+	public JstLexerImpl() {
 		super();
 	}
 
-	public JstLexer(CharStream input) {
+	public JstLexerImpl(CharStream input) {
 		super(input);
 	}
 
-	public JstLexer(CharStream input, RecognizerSharedState state) {
+	public JstLexerImpl(CharStream input, RecognizerSharedState state) {
 		super(input, state);
 	}
 
