@@ -133,6 +133,35 @@ class IntegrationTest {
         ]
     }
 
+    @Test def void testParseAndCompile_Comment() {
+        ''' #function render()
+              #* some comment *#
+              Hello World
+              #* some
+              multiline 
+              comment *#
+            #end
+        '''.compile [
+            val out = new ByteArrayOutputStream();
+            val p = new PrintStream(out)
+            compiledClass.newInstance.invoke('render', p)
+            assertEquals('''Hello World'''.toString, new String(out.toByteArray).trim)
+        ]
+    }
+
+    @Test def void testParseAndCompile_SingleLineComment() {
+        ''' #function render()
+              Hello World
+              #-- some comment
+            #end
+        '''.compile [
+            val out = new ByteArrayOutputStream();
+            val p = new PrintStream(out)
+            compiledClass.newInstance.invoke('render', p)
+            assertEquals('''Hello World'''.toString, new String(out.toByteArray).trim)
+        ]
+    }
+
     @Test def void testParseAndCompile_For() {
         ''' #function render()
              #( var list = newArrayList("one", "two", "three", "four") )

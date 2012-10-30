@@ -49,6 +49,8 @@ public class JstLexerImpl extends InternalJstLexer {
 			}
 			switch (state.type) {
 				case RULE_DIRECTIVE_ELSE:
+//				case RULE_ML_COMMENT:
+//				case RULE_SL_COMMENT:
 					rawText = true;
 					break;
 				case RULE_DIRECTIVE_FUNCTION:
