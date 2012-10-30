@@ -80,14 +80,6 @@ RichStringElseIf returns xbase::XIfExpression:
 	(else=RichStringElseIf | DIRECTIVE_ELSE else=RichString)?
 ;
 
-//terminal JST_ML_COMMENT:
-//    DIRECTIVE_ML_COMMENT_START -> DIRECTIVE_ML_COMMENT_END
-//;
-//
-//terminal JST_SL_COMMENT:
-//    DIRECTIVE_SL_COMMENT !('\n'|'\r')* ('\r'? '\n')?
-//;
-
 terminal BRACE_OPEN: '(';
 terminal BRACE_CLOSE: ')';
 terminal COMMA: ',';
@@ -101,9 +93,6 @@ terminal DIRECTIVE_ELSE: '#else';
 terminal DIRECTIVE_ELSEIF: '#elseif';
 terminal DIRECTIVE_END: '#end';
 terminal DIRECTIVE_FOR: '#for';
-//terminal DIRECTIVE_SL_COMMENT: '#--';
-//terminal DIRECTIVE_ML_COMMENT_START: '#*';
-//terminal DIRECTIVE_ML_COMMENT_END: '*#';
 terminal DIRECTIVE: '#';
 terminal DIRECTIVE_ECHO: '$';
 terminal DIRECTIVE_ECHO_ELVIS: '$!';

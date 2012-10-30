@@ -34,8 +34,13 @@ public class JstLexerImpl extends InternalJstLexer {
 	@Override
 	public void mTokens() throws RecognitionException {
 		char next = (char) input.LA(1);
-		if (rawText && next != '#' && next != '$') {
+		char nextnext = (char) input.LA(2);
+		if (rawText && (next != '#' || nextnext == '#') && (next != '$' || nextnext == '$')) {
 			actual_mRULE_TEXT();
+		} else if (rawText && next == '#' && nextnext == '*') {
+			readMultiLineComment();
+		} else if (rawText && next == '#' && nextnext == '-') {
+			readSingleLineComment();
 		} else {
 			rawText = false;
 			super.mTokens();
@@ -49,8 +54,6 @@ public class JstLexerImpl extends InternalJstLexer {
 			}
 			switch (state.type) {
 				case RULE_DIRECTIVE_ELSE:
-//				case RULE_ML_COMMENT:
-//				case RULE_SL_COMMENT:
 					rawText = true;
 					break;
 				case RULE_DIRECTIVE_FUNCTION:
@@ -64,6 +67,52 @@ public class JstLexerImpl extends InternalJstLexer {
 						rawText = true;
 					}
 					break;
+			}
+		}
+	}
+
+	private void readSingleLineComment() {
+		state.type = RULE_SL_COMMENT;
+		state.channel = DEFAULT_TOKEN_CHANNEL;
+
+		// consume #-
+		input.consume();
+		input.consume();
+		while (true) {
+			int next = input.LA(1);
+			if (next == -1) {
+				return;
+			}
+			input.consume();
+			if (next == '\n' || next == '\r') {
+				return;
+			}
+		}
+	}
+
+	private void readMultiLineComment() {
+		state.type = RULE_ML_COMMENT;
+		state.channel = DEFAULT_TOKEN_CHANNEL;
+
+		// consume #*
+		input.consume();
+		input.consume();
+		while (true) {
+			int next = input.LA(1);
+			if (next == -1) {
+				return;
+			}
+			input.consume();
+			if (next != '*') {
+				continue;
+			}
+			int nextNext = input.LA(1);
+			if (nextNext == -1) {
+				return;
+			}
+			input.consume();
+			if (nextNext == '#') {
+				return;
 			}
 		}
 	}

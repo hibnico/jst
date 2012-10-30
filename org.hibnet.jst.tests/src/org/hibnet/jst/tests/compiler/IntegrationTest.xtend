@@ -133,7 +133,7 @@ class IntegrationTest {
         ]
     }
 
-    @Test def void testParseAndCompile_Comment() {
+    @Test def void testParseAndCompile_MultiLineComment() {
         ''' #function render()
               #* some comment *#
               Hello World
@@ -151,8 +151,9 @@ class IntegrationTest {
 
     @Test def void testParseAndCompile_SingleLineComment() {
         ''' #function render()
+              #- some comment
               Hello World
-              #-- some comment
+              #- some other comment
             #end
         '''.compile [
             val out = new ByteArrayOutputStream();
