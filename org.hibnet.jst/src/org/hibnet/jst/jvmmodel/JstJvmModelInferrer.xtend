@@ -23,7 +23,7 @@ class JstJvmModelInferrer extends AbstractModelInferrer {
 
    	def dispatch void infer(JstFile element, IJvmDeclaredTypeAcceptor acceptor, boolean isPreIndexingPhase) {
 
-   		val simpleName = element.eResource.URI.trimFileExtension.lastSegment.toFirstUpper
+   		val simpleName = element.eResource.URI.trimFileExtension.lastSegment.toFirstUpper + "JstTemplate"
    		val qualifiedName = if(element.getPackage != null) 
    				element.getPackage + "." + simpleName
    			else 
