@@ -223,4 +223,19 @@ class IntegrationTest {
         ]
     }
     
+    @Test def void testParseAndCompile_Import() {
+        ''' #import java.io.File
+            #function render()
+                #( var file = new File('testimport')
+                   var name = file.getName()
+                 )
+                $(name)
+            #end
+        '''.compile [
+            val out = new ByteArrayOutputStream();
+            val p = new PrintStream(out)
+            compiledClass.newInstance.invoke('render', p)
+            assertEquals('testimport', new String(out.toByteArray).trim)
+        ]
+    }
 }
