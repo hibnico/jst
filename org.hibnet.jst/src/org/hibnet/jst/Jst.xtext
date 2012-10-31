@@ -10,43 +10,77 @@ grammar org.hibnet.jst.Jst with org.eclipse.xtext.xbase.annotations.XbaseWithAnn
 generate jst "http://www.hibnet.org/jst/Jst"
 import 'http://www.eclipse.org/xtext/xbase/Xbase' as xbase
 import "http://www.eclipse.org/emf/2002/Ecore" as ecore
+import "http://www.eclipse.org/xtext/common/JavaVMTypes" as types
 
 JstFile:
-		(DIRECTIVE_PACKAGE package=QualifiedName)?
-		imports+=Import*
-		functions+=Function*
+    {JstFile}
+    ('package' package=QualifiedName ';')?
+    imports+=Import*
+    ( abstract?='abstract'? 'template'
+         ('extends' extends=QualifiedName)?
+         ('implements' implements+=QualifiedName (',' implements+=QualifiedName)* )?
+         ';'
+    )?
+    (
+        fields+=Field
+      | methods+=Method
+      | templates+=Template
+    )*
 ;
 
 Import:
-	DIRECTIVE_IMPORT importedNamespace=QualifiedName
+    'import' static?='static'? (importedNamespace=QualifiedName | importedNamespace=QualifiedNameWithWildCard) ';'
 ;
 
-Function:
-    DIRECTIVE_FUNCTION name=ID BRACE_OPEN params=Parameters? BRACE_CLOSE
+Field:
+    {Field}
+    (visibility=Visibility? & static?='static'? & final?='final'?) type=JvmTypeReference name=ID ('=' initialValue=XExpression)? ';'
+;
+
+Method:
+    {Method}
+    (visibility=Visibility? & (static?='static' | abstract?='abstract')? )
+    ('<' typeParameters+=JvmTypeParameter (',' typeParameters+=JvmTypeParameter)* '>')?
+    type=JvmTypeReference name=ID
+    BRACE_OPEN (parameters+=Parameter (',' parameters+=Parameter)*)? BRACE_CLOSE
+    ('throws' exceptions+=JvmTypeReference (',' exceptions+=JvmTypeReference)*)?
+    expression=XBlockExpression
+;
+
+enum Visibility returns types::JvmVisibility:
+    PUBLIC = 'public' | PROTECTED = 'protected' | PRIVATE = 'private';
+
+
+//////////////////////////////////
+// Template things
+//////////////////////////////////
+
+Template:
+    DIRECTIVE_TEMPLATE name=ID BRACE_OPEN params=Parameters? BRACE_CLOSE
     body=RichString
     DIRECTIVE_END
 ;
 
 Parameters:
-    params+=Parameter (COMMA params+=Parameter)*
+    params+=Parameter (',' params+=Parameter)*
 ;
 
 Parameter:
-	type=JvmTypeReference name=ID
+    type=JvmTypeReference name=ID
 ;
 
 RichString returns xbase::XBlockExpression:
-	{RichString}
-	( expressions+=RichStringPart
-	    | DIRECTIVE startScript+=BRACE_OPEN (expressions+=XExpressionInsideBlock ';'?)* endScript+=BRACE_CLOSE
-	)*
+    {RichString}
+    ( expressions+=RichStringPart
+        | DIRECTIVE startScript+=BRACE_OPEN (expressions+=XExpressionInsideBlock ';')* endScript+=BRACE_CLOSE
+    )*
 ;
 
 RichStringPart returns xbase::XExpression:
       RichStringLiteral
     | RichStringInlineExpr
-	| RichStringForLoop
-	| RichStringIf
+    | RichStringForLoop
+    | RichStringIf
 ;
 
 RichStringLiteral returns xbase::XStringLiteral:
@@ -59,35 +93,34 @@ RichStringInlineExpr returns xbase::XExpression:
 ;
 
 RichStringForLoop returns xbase::XForLoopExpression:
-	{RichStringForLoop}
-	DIRECTIVE_FOR BRACE_OPEN declaredParam=JvmFormalParameter COLON forExpression=XExpression BRACE_CLOSE
-		eachExpression=RichString
-	DIRECTIVE_END
+    {RichStringForLoop}
+    DIRECTIVE_FOR BRACE_OPEN declaredParam=JvmFormalParameter ':' forExpression=XExpression BRACE_CLOSE
+        eachExpression=RichString
+    DIRECTIVE_END
 ;
 
 RichStringIf returns xbase::XIfExpression:
-	{RichStringIf}
-	DIRECTIVE_IF BRACE_OPEN if=XExpression BRACE_CLOSE
-		then=RichString
-	(else=RichStringElseIf | DIRECTIVE_ELSE else=RichString)?
+    {RichStringIf}
+    DIRECTIVE_IF BRACE_OPEN if=XExpression BRACE_CLOSE
+        then=RichString
+    (else=RichStringElseIf | DIRECTIVE_ELSE else=RichString)?
     DIRECTIVE_END
 ;
 
 RichStringElseIf returns xbase::XIfExpression:
-	{RichStringIf}
-	DIRECTIVE_ELSEIF BRACE_OPEN if=XExpression BRACE_CLOSE
-		then=RichString
-	(else=RichStringElseIf | DIRECTIVE_ELSE else=RichString)?
+    {RichStringIf}
+    DIRECTIVE_ELSEIF BRACE_OPEN if=XExpression BRACE_CLOSE
+        then=RichString
+    (else=RichStringElseIf | DIRECTIVE_ELSE else=RichString)?
 ;
+
+QualifiedNameWithWildCard :
+    QualifiedName  '.' '*';
 
 terminal BRACE_OPEN: '(';
 terminal BRACE_CLOSE: ')';
-terminal COMMA: ',';
-terminal COLON: ':';
 
-terminal DIRECTIVE_PACKAGE: '#package';
-terminal DIRECTIVE_IMPORT: '#import';
-terminal DIRECTIVE_FUNCTION: '#function';
+terminal DIRECTIVE_TEMPLATE: '#template';
 terminal DIRECTIVE_IF: '#if';
 terminal DIRECTIVE_ELSE: '#else';
 terminal DIRECTIVE_ELSEIF: '#elseif';

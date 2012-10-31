@@ -15,6 +15,8 @@ public class JstLexerImpl extends InternalJstLexer {
 
 	private boolean rawText = false;
 
+	private boolean directiveParameters = false;
+
 	private int directiveStackSize = 0;
 
 	private int parenthesisStackSize = 0;
@@ -44,29 +46,40 @@ public class JstLexerImpl extends InternalJstLexer {
 		} else {
 			rawText = false;
 			super.mTokens();
-			if (next == '(') {
-				parenthesisStackSize++;
-			} else if (next == ')') {
-				parenthesisStackSize--;
-				if (parenthesisStackSize == 0) {
-					rawText = true;
-				}
-			}
-			switch (state.type) {
-				case RULE_DIRECTIVE_ELSE:
-					rawText = true;
-					break;
-				case RULE_DIRECTIVE_FUNCTION:
-				case RULE_DIRECTIVE_FOR:
-				case RULE_DIRECTIVE_IF:
-					directiveStackSize++;
-					break;
-				case RULE_DIRECTIVE_END:
-					directiveStackSize--;
-					if (directiveStackSize > 0) {
+			if (directiveParameters) {
+				if (next == '(') {
+					parenthesisStackSize++;
+				} else if (next == ')') {
+					parenthesisStackSize--;
+					if (parenthesisStackSize == 0) {
+						directiveParameters = false;
 						rawText = true;
 					}
-					break;
+				}
+			} else {
+				switch (state.type) {
+					case RULE_DIRECTIVE_ELSE:
+						rawText = true;
+						break;
+					case RULE_DIRECTIVE_TEMPLATE:
+					case RULE_DIRECTIVE_FOR:
+					case RULE_DIRECTIVE_IF:
+						directiveStackSize++;
+						directiveParameters = true;
+						break;
+					case RULE_DIRECTIVE_ELSEIF:
+					case RULE_DIRECTIVE:
+					case RULE_DIRECTIVE_ECHO:
+					case RULE_DIRECTIVE_ECHO_ELVIS:
+						directiveParameters = true;
+						break;
+					case RULE_DIRECTIVE_END:
+						directiveStackSize--;
+						if (directiveStackSize > 0) {
+							rawText = true;
+						}
+						break;
+				}
 			}
 		}
 	}

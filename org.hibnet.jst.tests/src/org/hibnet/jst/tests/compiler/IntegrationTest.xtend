@@ -29,7 +29,7 @@ class IntegrationTest {
 	
 	@Test def void testParseAndCompile_Simple() {
 		'''
-			#function render()
+			#template render()
 			Hello World
 			#end
 		'''.compile [
@@ -41,7 +41,7 @@ class IntegrationTest {
 	}
 	
     @Test def void testParseAndCompile_If() {
-        ''' #function render()
+        ''' #template render()
             #if(true)
               <h1>Hello</h1>
             #end
@@ -55,7 +55,7 @@ class IntegrationTest {
     }
     
     @Test def void testParseAndCompile_IfElse() {
-        ''' #function render()
+        ''' #template render()
                 #if(true)
                     <p>ok</p>
                 #else
@@ -71,7 +71,7 @@ class IntegrationTest {
     }
     
     @Test def void testParseAndCompile_IfElseIf() {
-        ''' #function render()
+        ''' #template render()
                 #if(false)
                   <h1>nok</h1>
                 #elseif(true)
@@ -89,7 +89,7 @@ class IntegrationTest {
     }
     
     @Test def void testParseAndCompile_Inline() {
-        ''' #function render()
+        ''' #template render()
               <i>$("Hello")</i>
             #end
         '''.compile [
@@ -101,8 +101,8 @@ class IntegrationTest {
     }
 
     @Test def void testParseAndCompile_Script() {
-        ''' #function render()
-              #( var name = "Foo")
+        ''' #template render()
+              #( var name = "Foo";)
               <title>$(name)</title>
             #end
         '''.compile [
@@ -114,9 +114,9 @@ class IntegrationTest {
     }
 
     @Test def void testParseAndCompile_InlineElvis() {
-        ''' #function render()
-              #( var name = "Foo")
-              #( var name2 = null)
+        ''' #template render()
+              #( var name = "Foo";)
+              #( var name2 = null;)
               <h1>$(name)</h1>
               <h2>$!(name)</h2>
               <h3>$(name2)</h3>
@@ -134,7 +134,7 @@ class IntegrationTest {
     }
 
     @Test def void testParseAndCompile_MultiLineComment() {
-        ''' #function render()
+        ''' #template render()
               #* some comment *#
               Hello World
               #* some
@@ -150,7 +150,7 @@ class IntegrationTest {
     }
 
     @Test def void testParseAndCompile_SingleLineComment() {
-        ''' #function render()
+        ''' #template render()
               #- some comment
               Hello World
               #- some other comment
@@ -164,8 +164,8 @@ class IntegrationTest {
     }
 
     @Test def void testParseAndCompile_For() {
-        ''' #function render()
-             #( var list = newArrayList("one", "two", "three", "four") )
+        ''' #template render()
+             #( var list = newArrayList("one", "two", "three", "four"); )
             <html>
               #for(String element : list)
                 <p>$(element)</p>
@@ -187,10 +187,10 @@ class IntegrationTest {
     }
  
     @Test def void testParseAndCompile_Complex() {
-        ''' #function render()
-             #( var nullString = null
-                var name = "Foo"
-                var list = newArrayList("one", "two", "three", "four") )
+        ''' #template render()
+             #( var nullString = null;
+                var name = "Foo";
+                var list = newArrayList("one", "two", "three", "four"); )
             <html>
               <i>$(nullString)</i>
               <b>$!(nullString)</b>
@@ -224,10 +224,10 @@ class IntegrationTest {
     }
     
     @Test def void testParseAndCompile_Import() {
-        ''' #import java.io.File
-            #function render()
-                #( var file = new File('testimport')
-                   var name = file.getName()
+        ''' import java.io.File;
+            #template render()
+                #( var file = new File('testimport');
+                   var name = file.getName();
                  )
                 $(name)
             #end

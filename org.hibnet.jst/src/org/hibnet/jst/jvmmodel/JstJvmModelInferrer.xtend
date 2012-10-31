@@ -32,13 +32,13 @@ class JstJvmModelInferrer extends AbstractModelInferrer {
 		val javaClass = element.toClass(qualifiedName)
 
    		acceptor.accept(javaClass).initializeLater [
-            for (function : element.functions) {
-                members += element.toMethod(function.name, element.newTypeRef(Void::TYPE)) [
+            for (template : element.templates) {
+                members += element.toMethod(template.name, element.newTypeRef(Void::TYPE)) [
                     parameters += element.toParameter(
                         "out",
                         element.newTypeRef(typeof(PrintStream))
                     )
-                    body = function.body
+                    body = template.body
                 ]
             }
 		]
