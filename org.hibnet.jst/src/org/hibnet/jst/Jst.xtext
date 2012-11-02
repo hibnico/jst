@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  ******************************************************************************/
-grammar org.hibnet.jst.Jst with org.eclipse.xtext.xbase.annotations.XbaseWithAnnotations
+grammar org.hibnet.jst.Jst
 
 generate jst "http://www.hibnet.org/jst/Jst"
 import 'http://www.eclipse.org/xtext/xbase/Xbase' as xbase
@@ -132,4 +132,349 @@ terminal TEXT:
     '\u10FFFF'
 // actual expected form:
 //    ( (!('#'|'$')) | '##' | '$$')*
+;
+
+//////////////////////////////////
+// Xbase fork with the Java syntax
+//////////////////////////////////
+
+XExpression returns xbase::XExpression:
+    XAssignment | XOrExpression
+;
+
+XAssignment returns xbase::XAssignment:
+    feature=[types::JvmIdentifiableElement|ValidID] OpSingleAssign value=XAssignment
+;
+
+OpSingleAssign:
+    '='
+;
+
+XOrExpression returns xbase::XExpression:
+    XAndExpression (=>({XBinaryOperation.leftOperand=current} feature=[types::JvmIdentifiableElement|OpOr]) rightOperand=XAndExpression)*
+;
+
+OpOr:
+    '||'
+;
+
+XAndExpression returns xbase::XExpression:
+    XEqualityExpression (=>({XBinaryOperation.leftOperand=current} feature=[types::JvmIdentifiableElement|OpAnd]) rightOperand=XEqualityExpression)*
+;
+
+OpAnd:
+    '&&'
+;
+
+XEqualityExpression returns xbase::XExpression:
+    XRelationalExpression (=>({XBinaryOperation.leftOperand=current} feature=[types::JvmIdentifiableElement|OpEquality])
+    rightOperand=XRelationalExpression)*
+;
+
+OpEquality:
+    '==' | '!='
+;
+
+XRelationalExpression returns xbase::XExpression:
+    XAdditiveExpression
+    (=>({XInstanceOfExpression.expression=current} 'instanceof') type=JvmTypeReference |
+     =>({XBinaryOperation.leftOperand=current} feature=[types::JvmIdentifiableElement|OpCompare]) rightOperand=XAdditiveExpression)*
+;
+
+OpCompare:
+    '>=' | '<=' | '>' | '<' 
+;
+
+XAdditiveExpression returns xbase::XExpression:
+    XMultiplicativeExpression (=>({XBinaryOperation.leftOperand=current} feature=[types::JvmIdentifiableElement|OpAdd])
+    rightOperand=XMultiplicativeExpression)*
+;
+
+OpAdd:
+    '+' | '-'
+;
+
+XMultiplicativeExpression returns xbase::XExpression:
+    XUnaryOperation (=>({XBinaryOperation.leftOperand=current} feature=[types::JvmIdentifiableElement|OpMulti]) rightOperand=XUnaryOperation)*;
+
+OpMulti:
+    '*' | '/' | '%'
+;
+
+XUnaryOperation returns xbase::XExpression:
+    {XUnaryOperation} feature=[types::JvmIdentifiableElement|OpUnary] operand=XCastedExpressionOrFeature
+    | XCastedExpressionOrFeature
+;
+
+OpUnary:
+    "!" | "-" | "+"
+;
+
+XCastedExpressionOrFeature returns xbase::XExpression:
+    XCastedExpression | XMemberFeatureCall
+;
+
+XCastedExpression returns xbase::XCastedExpression:
+    BRACE_OPEN type=JvmTypeReference BRACE_CLOSE target=XCastedExpression
+;
+
+XMemberFeatureCall returns xbase::XExpression:
+    XPrimaryExpression
+    ( =>({XAssignment.assignable=current} '.' feature=[types::JvmIdentifiableElement|ValidID] OpSingleAssign) value=XAssignment
+     |=>({XMemberFeatureCall.memberCallTarget=current} ".") 
+        ('<' typeArguments+=JvmArgumentTypeReference (',' typeArguments+=JvmArgumentTypeReference)* '>')?  
+        feature=[types::JvmIdentifiableElement|ValidID]
+        explicitOperationCall?=BRACE_OPEN
+            ( memberCallArguments+=XExpression (',' memberCallArguments+=XExpression)* )? 
+        BRACE_CLOSE
+    )*
+;
+
+XPrimaryExpression returns xbase::XExpression:
+    XConstructorCall |
+    XBlockExpression |
+    XSwitchExpression |
+    XFeatureCall |
+    XLiteral |
+    XIfExpression |
+    XForLoopExpression |
+    XWhileExpression |
+    XDoWhileExpression |
+    XThrowExpression |
+    XReturnExpression |
+    XTryCatchFinallyExpression |
+    XParenthesizedExpression
+;
+
+XLiteral returns xbase::XExpression:
+    XBooleanLiteral |
+    XNumberLiteral |
+    XNullLiteral |
+    XStringLiteral
+;
+
+XParenthesizedExpression returns xbase::XExpression:
+    BRACE_OPEN XExpression BRACE_CLOSE
+;
+
+XIfExpression returns xbase::XIfExpression:
+    'if' BRACE_OPEN if=XExpression BRACE_CLOSE
+    then=XExpression
+    (=>'else' else=XExpression)?
+;
+
+XSwitchExpression returns xbase::XSwitchExpression:
+    'switch' BRACE_OPEN switch=XExpression BRACE_CLOSE '{'
+    (cases+=XCasePart)+
+    ('default' ':' default=XExpression )?
+    '}'
+;
+
+XCasePart returns xbase::XCasePart:
+    'case' case=XExpression ':' then=XExpression
+;
+
+XForLoopExpression returns xbase::XForLoopExpression:
+    'for' BRACE_OPEN declaredParam=JvmFormalParameter ':' forExpression=XExpression BRACE_CLOSE
+        eachExpression=XExpression
+;
+
+XWhileExpression returns xbase::XWhileExpression:
+    'while' BRACE_OPEN predicate=XExpression BRACE_CLOSE
+        body=XExpression
+;
+    
+XDoWhileExpression returns xbase::XDoWhileExpression:
+   'do'
+       body=XExpression
+   'while' BRACE_OPEN predicate=XExpression BRACE_CLOSE
+;
+
+XBlockExpression returns xbase::XBlockExpression:
+    {XBlockExpression} 
+    '{'
+        (expressions+=XExpressionInsideBlock ';')*
+    '}'
+;
+
+XExpressionInsideBlock returns xbase::XExpression:
+    XVariableDeclaration | XExpression
+;
+
+XVariableDeclaration returns xbase::XVariableDeclaration:
+    /* FIXME (writeable?='final') */ type=JvmTypeReference name=ValidID ('=' right=XExpression)?
+;
+
+JvmFormalParameter returns types::JvmFormalParameter:
+    (parameterType=JvmTypeReference)? name=ValidID
+;
+    
+FullJvmFormalParameter returns types::JvmFormalParameter:
+    parameterType=JvmTypeReference name=ValidID
+;
+
+XFeatureCall returns xbase::XFeatureCall:
+    (declaringType=[types::JvmDeclaredType|StaticQualifier])?
+    ('<' typeArguments+=JvmArgumentTypeReference (',' typeArguments+=JvmArgumentTypeReference)* '>')? 
+    feature=[types::JvmIdentifiableElement|IdOrSuper] 
+    explicitOperationCall?=BRACE_OPEN 
+        ( featureCallArguments+=XExpression (',' featureCallArguments+=XExpression)* )? 
+    BRACE_CLOSE
+;
+   
+IdOrSuper:
+    ValidID | 'super'
+;
+    
+// This is a workaround since ANTLR will not be able to resolve
+// StaticQualifier: ValidID ('::' ValidID)*; and XFeatureCall: (StaticQualifier '::')? ValidID
+// Make sure to change the value converter if you change the syntax of the StaticQualifier
+StaticQualifier:
+    (ValidID '::')+
+;
+
+XConstructorCall returns xbase::XConstructorCall:
+    'new' constructor=[types::JvmConstructor|QualifiedName] 
+    (=>'<' typeArguments+=JvmArgumentTypeReference (',' typeArguments+=JvmArgumentTypeReference)* '>')?
+    BRACE_OPEN 
+        ( arguments+=XExpression (',' arguments+=XExpression)* )? 
+    BRACE_CLOSE
+;
+
+XBooleanLiteral returns xbase::XBooleanLiteral:
+    {XBooleanLiteral}
+    ('false' | isTrue?='true')
+;
+
+XNullLiteral returns xbase::XNullLiteral:
+    {XNullLiteral}
+    'null'
+;
+
+XNumberLiteral returns xbase::XNumberLiteral:
+    {XNumberLiteral}
+    value=Number
+;
+
+XStringLiteral returns xbase::XStringLiteral:
+    {XStringLiteral}
+    value=STRING
+;
+
+XThrowExpression returns xbase::XThrowExpression:
+    'throw' expression=XExpression
+;
+    
+XReturnExpression returns xbase::XReturnExpression:
+    {XReturnExpression}
+    'return' (=>expression=XExpression)?
+;
+    
+XTryCatchFinallyExpression returns xbase::XTryCatchFinallyExpression:
+    'try' expression=XBlockExpression
+    (
+        catchClauses+=XCatchClause+
+        (=>'finally' finallyExpression=XBlockExpression)?
+    |   'finally' finallyExpression=XBlockExpression
+    )
+;
+
+XCatchClause returns xbase::XCatchClause:
+    =>'catch' BRACE_OPEN declaredParam=FullJvmFormalParameter BRACE_CLOSE expression=XBlockExpression
+;
+
+QualifiedName:
+    ValidID (=>'.' ValidID)*
+;
+
+Number hidden():
+    HEX | (INT | DECIMAL) ('.' (INT | DECIMAL))?
+;
+
+terminal HEX:
+    ('0x'|'0X') ('0'..'9'|'a'..'f'|'A'..'F'|'_')+ 
+    ('#' (('b'|'B')('i'|'I') | ('l'|'L')))?
+;
+    
+terminal INT returns ecore::EInt:
+    '0'..'9' ('0'..'9'|'_')*
+; 
+
+terminal DECIMAL:
+    INT 
+    (('e'|'E') ('+'|'-')? INT)? 
+    (('b'|'B')('i'|'I'|'d'|'D') | ('l'|'L'|'d'|'D'|'f'|'F'))?
+;
+    
+//////////////////////////////////
+// Xtype fork with the Java syntax
+//////////////////////////////////
+
+JvmTypeReference returns types::JvmTypeReference:
+    JvmParameterizedTypeReference =>({JvmGenericArrayTypeReference.componentType=current} '['']')* 
+;
+
+JvmParameterizedTypeReference returns types::JvmParameterizedTypeReference:
+    type=[types::JvmType|QualifiedName] (=>'<' arguments+=JvmArgumentTypeReference (',' arguments+=JvmArgumentTypeReference)* '>')?
+;
+
+JvmArgumentTypeReference returns types::JvmTypeReference:
+    JvmTypeReference | JvmWildcardTypeReference
+;
+
+JvmWildcardTypeReference returns types::JvmWildcardTypeReference:
+    {JvmWildcardTypeReference} '?' (constraints+=JvmUpperBound | constraints+=JvmLowerBound)?
+;
+  
+JvmUpperBound returns types::JvmUpperBound: 
+    'extends' typeReference=JvmTypeReference
+;
+
+JvmUpperBoundAnded returns types::JvmUpperBound: 
+    '&' typeReference=JvmTypeReference
+;
+
+JvmLowerBound returns types::JvmUpperBound:
+    'super' typeReference=JvmTypeReference
+;
+
+JvmTypeParameter returns types::JvmTypeParameter:
+    name=ValidID
+    ( (constraints+=JvmUpperBound (constraints+=JvmUpperBoundAnded)*) |
+      (constraints+=JvmLowerBound)
+    )?
+;
+
+// overided in xbase fork
+//QualifiedName:
+//    ValidID ('.' ValidID)*
+//;
+  
+ValidID:
+    ID
+;
+
+terminal ID:
+    '^'? ('a'..'z'|'A'..'Z'|'$'|'_') ('a'..'z'|'A'..'Z'|'$'|'_'|'0'..'9')*
+;
+    
+terminal STRING: 
+    '"' ( '\\' ('b'|'t'|'n'|'f'|'r'|'u'|'"'|"'"|'\\') | !('\\'|'"') )* '"' |
+    "'" ( '\\' ('b'|'t'|'n'|'f'|'r'|'u'|'"'|"'"|'\\') | !('\\'|"'") )* "'"
+;
+             
+terminal ML_COMMENT:
+    '/*' -> '*/'
+;
+
+terminal SL_COMMENT:
+    '//' !('\n'|'\r')* ('\r'? '\n')?
+;
+
+terminal WS:
+    (' '|'\t'|'\r'|'\n')+
+;
+
+terminal ANY_OTHER: 
+    .
 ;
