@@ -17,8 +17,8 @@ JstFile returns types::JvmGenericType:
     ('package' packageName=QualifiedName ';')?
     imports+=Import*
     ( abstract?='abstract'? 'template'
-         ('extends' extended=QualifiedName)?
-         ('implements' implemented+=QualifiedName (',' implemented+=QualifiedName)* )?
+         ('extends' superTypes+=JvmParameterizedTypeReference)?
+         ('implements' superTypes+=JvmParameterizedTypeReference (',' superTypes+=JvmParameterizedTypeReference)* )?
          ';'
     )?
     (

@@ -52,12 +52,6 @@ class JstJvmModelInferrer extends AbstractModelInferrer {
                     method.body = method.getExpression()
    		        }
    		    }
-   		    if (element.getExtended() != null) {
-   		         superTypes += element.newTypeRef(element.getExtended())
-   		    }
-   		    for (implemented : element.implemented) {
-                 superTypes += element.newTypeRef(implemented)   		        
-   		    }
 		]
 	}
 

@@ -265,4 +265,54 @@ class IntegrationTest {
             assertEquals('testmethod', new String(out.toByteArray).trim)
         ]
     }
+
+    @Test def void testParseAndCompile_Implements() {
+        ''' template implements java.io.Serializable;
+            #template render()
+               testimplements
+            #end
+        '''.compile [
+            val template = compiledClass.newInstance
+            val out = new ByteArrayOutputStream();
+            val p = new PrintStream(out)
+            template.invoke('render', p)
+            assertTrue(template instanceof java.io.Serializable)
+            assertEquals('testimplements', new String(out.toByteArray).trim)
+        ]
+    }
+
+    @Test def void testParseAndCompile_ImportImplements() {
+        ''' import java.io.Serializable;
+            template implements Serializable;
+            #template render()
+               testimportimplements
+            #end
+        '''.compile [
+            val template = compiledClass.newInstance
+            val out = new ByteArrayOutputStream();
+            val p = new PrintStream(out)
+            template.invoke('render', p)
+            assertTrue(template instanceof java.io.Serializable)
+            assertEquals('testimportimplements', new String(out.toByteArray).trim)
+        ]
+    }
+
+    @Test def void testParseAndCompile_Extends() {
+        ''' template extends java.util.ArrayList<String>;
+            #template render()
+               #( add("test");
+                  add("extends"); )
+               #for(text : this)
+                  <p>$(text)</p>
+               #end
+            #end
+        '''.compile [
+            val template = compiledClass.newInstance
+            val out = new ByteArrayOutputStream();
+            val p = new PrintStream(out)
+            template.invoke('render', p)
+            assertTrue(template instanceof java.io.Serializable)
+            assertEquals('<p>test</p><p>extends</p>', new String(out.toByteArray).replaceAll("( |\n)", ""))
+        ]
+    }
 }
