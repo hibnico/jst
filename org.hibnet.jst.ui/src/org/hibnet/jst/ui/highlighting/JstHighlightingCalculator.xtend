@@ -32,13 +32,9 @@ class JstHighlightingCalculator extends XbaseHighlightingCalculator {
 
 	override doProvideHighlightingFor(XtextResource resource, IHighlightedPositionAcceptor acceptor) {
 		super.doProvideHighlightingFor(resource, acceptor)
-		acceptor.addPosition(0, 4, TEXT)
-		acceptor.addPosition(4, 1, ESCAPE)
 		for (leafNode : resource.parseResult.rootNode.leafNodes) {
 			if (isText(leafNode)) {
-				acceptor.addPosition(leafNode.offset, 1, ESCAPE)
-				acceptor.addPosition(leafNode.offset + 1, leafNode.length - 2, TEXT)
-				acceptor.addPosition((leafNode.offset + leafNode.length) - 1, 1, ESCAPE)
+				acceptor.addPosition(leafNode.offset, leafNode.length, TEXT)
 			}
 		}
 	}

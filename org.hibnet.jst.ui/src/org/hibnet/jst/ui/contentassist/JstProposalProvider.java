@@ -3,21 +3,9 @@
 */
 package org.hibnet.jst.ui.contentassist;
 
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.jface.text.contentassist.CompletionProposal;
-import org.eclipse.xtext.RuleCall;
-import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext;
-import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor;
-import org.hibnet.jst.ui.contentassist.AbstractJstProposalProvider;
 /**
  * see http://www.eclipse.org/Xtext/documentation/latest/xtext.html#contentAssist on how to customize content assistant
  */
 public class JstProposalProvider extends AbstractJstProposalProvider {
-
-	@Override
-	public void complete_TEXT(EObject model, RuleCall ruleCall, ContentAssistContext context,
-			ICompletionProposalAcceptor acceptor) {
-		acceptor.accept(new CompletionProposal("«»", context.getOffset(), 0, 1));
-	}
 
 }

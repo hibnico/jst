@@ -15,11 +15,9 @@ import org.eclipse.swt.graphics.RGB
 class JstHighlightingConfiguration extends XbaseHighlightingConfiguration {
 
 	public static val TEXT = 'jst.text'
-	public static val ESCAPE = 'jst.escape'
 
 	override configure(IHighlightingConfigurationAcceptor acceptor) {
 		acceptor.acceptDefaultHighlighting(TEXT, 'Text', staticText)
-		acceptor.acceptDefaultHighlighting(ESCAPE, 'Statement/Expression Escape Symbols', staticEscape)
 		super.configure([id, name, style| 
 			style.backgroundColor = new RGB(230, 230, 230)
 			acceptor.acceptDefaultHighlighting(id, name, style)
