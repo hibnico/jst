@@ -238,4 +238,31 @@ class IntegrationTest {
             assertEquals('testimport', new String(out.toByteArray).trim)
         ]
     }
+
+    @Test def void testParseAndCompile_Field() {
+        ''' String field = "testfield";
+            #template render()
+                $(field)
+            #end
+        '''.compile [
+            val out = new ByteArrayOutputStream();
+            val p = new PrintStream(out)
+            compiledClass.newInstance.invoke('render', p)
+            assertEquals('testfield', new String(out.toByteArray).trim)
+        ]
+    }
+
+    @Test def void testParseAndCompile_Method() {
+        ''' String getString() { return "testmethod"; }
+            #template render()
+                #( var v = getString(); )
+                $(v)
+            #end
+        '''.compile [
+            val out = new ByteArrayOutputStream();
+            val p = new PrintStream(out)
+            compiledClass.newInstance.invoke('render', p)
+            assertEquals('testmethod', new String(out.toByteArray).trim)
+        ]
+    }
 }

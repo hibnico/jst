@@ -12,19 +12,19 @@ import 'http://www.eclipse.org/xtext/xbase/Xbase' as xbase
 import "http://www.eclipse.org/emf/2002/Ecore" as ecore
 import "http://www.eclipse.org/xtext/common/JavaVMTypes" as types
 
-JstFile:
+JstFile returns types::JvmGenericType:
     {JstFile}
-    ('package' package=QualifiedName ';')?
+    ('package' packageName=QualifiedName ';')?
     imports+=Import*
     ( abstract?='abstract'? 'template'
-         ('extends' extends=QualifiedName)?
-         ('implements' implements+=QualifiedName (',' implements+=QualifiedName)* )?
+         ('extends' extended=QualifiedName)?
+         ('implements' implemented+=QualifiedName (',' implemented+=QualifiedName)* )?
          ';'
     )?
     (
-        fields+=Field
-      | methods+=Method
-      | templates+=Template
+        members+=Field
+      | members+=Method
+      | members+=Template
     )*
 ;
 
@@ -32,17 +32,17 @@ Import:
     'import' static?='static'? (importedNamespace=QualifiedName | importedNamespace=QualifiedNameWithWildCard) ';'
 ;
 
-Field:
+Field returns types::JvmField:
     {Field}
-    (visibility=Visibility? & static?='static'? & final?='final'?) type=JvmTypeReference name=ID ('=' initialValue=XExpression)? ';'
+    (visibility=Visibility? & static?='static'? & final?='final'?) type=JvmTypeReference simpleName=ID ('=' initialValue=XExpression)? ';'
 ;
 
-Method:
+Method returns types::JvmOperation:
     {Method}
     (visibility=Visibility? & (static?='static' | abstract?='abstract')? )
     ('<' typeParameters+=JvmTypeParameter (',' typeParameters+=JvmTypeParameter)* '>')?
-    type=JvmTypeReference name=ID
-    BRACE_OPEN (parameters+=Parameter (',' parameters+=Parameter)*)? BRACE_CLOSE
+    returnType=JvmTypeReference simpleName=ID
+    BRACE_OPEN (parameters+=JvmFormalParameter (',' parameters+=JvmFormalParameter)*)? BRACE_CLOSE
     ('throws' exceptions+=JvmTypeReference (',' exceptions+=JvmTypeReference)*)?
     expression=XBlockExpression
 ;
@@ -55,18 +55,15 @@ enum Visibility returns types::JvmVisibility:
 // Template things
 //////////////////////////////////
 
-Template:
-    DIRECTIVE_TEMPLATE name=ID BRACE_OPEN params=Parameters? BRACE_CLOSE
-    body=RichString
+Template returns types::JvmOperation:
+    {Template}
+    DIRECTIVE_TEMPLATE simpleName=ID BRACE_OPEN (parameters+=JvmFormalParameter (',' parameters+=JvmFormalParameter)*)? BRACE_CLOSE
+    expression=RichString
     DIRECTIVE_END
 ;
 
-Parameters:
-    params+=Parameter (',' params+=Parameter)*
-;
-
-Parameter:
-    type=JvmTypeReference name=ID
+Parameter returns types::JvmFormalParameter:
+   parameterType=JvmTypeReference name=ID
 ;
 
 RichString returns xbase::XBlockExpression:
