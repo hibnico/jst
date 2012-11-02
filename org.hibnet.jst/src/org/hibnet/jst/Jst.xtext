@@ -129,7 +129,7 @@ terminal DIRECTIVE_ECHO_ELVIS: '$!';
 
 terminal TEXT:
 // we fake the generated parser so it never match it and we can handle it ourself
-    '\uAAAA'
+    '\u10FFFF'
 // actual expected form:
 //    ( (!('#'|'$')) | '##' | '$$')*
 ;
