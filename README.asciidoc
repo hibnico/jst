@@ -14,7 +14,7 @@ JST can be compared to JSP. But JST doesn't need you to run in a J2EE framework,
 
 It can be also be compared to the template engine from Playframework 2, since a JST template produces a class callable from your code. But JST don't need a framework, and don't need scala.
 
-The syntax of JST is quite closed to the Velocity one, because it is a nicely concise syntax. But unlike Velocity, JST is typed and properly scoped, no weird side effect is sight.
+The syntax of JST is quite closed to the Velocity one, because it is a nicely concise syntax. But unlike Velocity, JST is typed and properly scoped, no weird side effect in sight.
 
 Last but not least, JST is based on Xtext. Which means an Eclipse editor is already available for use, with syntax coloring, semantic highlighting, compilation error reporting, refactoring.
 
