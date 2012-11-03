@@ -33,9 +33,11 @@ NB: the programming lnaguage is based on Xbase which a language close to Java, s
 The minimum: define a rendering method in your template
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  #template renderHello()
-    Hello World
-  #end
+--------------------------------------
+#template renderHello()
+  Hello World
+#end
+--------------------------------------
 
 - +#template+ defines a new rendering funtion.
 - +myrenderfunction+ is the name of the method to be called from your Java code.
@@ -48,10 +50,11 @@ Outputing expressions
 In the outputed content, juste use +$(aJavaExpression)+. And to output an empty string rather than 'null' on null values, use +$!(aMaybeNullExpression)+
 
 Exemple:
-
-  #template renderHello(String name)
-    Hello $(name) !
-  #end
+--------------------------------------
+#template renderHello(String name)
+  Hello $(name) !
+#end
+--------------------------------------
 
 Outputting +#+ or +$+
 ~~~~~~~~~~~~~~~~~~~~~
@@ -59,10 +62,11 @@ Outputting +#+ or +$+
 Just double the letters: +##+ and +$$+
 
 Exemple:
-
-  #template renderAccount(int account, int amount)
-    Account ##$(account) owns $(amount)$$
-  #end
+--------------------------------------
+#template renderAccount(int account, int amount)
+  Account ##$(account) owns $(amount)$$
+#end
+--------------------------------------
 
 Scripting
 ~~~~~~~~~
@@ -70,11 +74,12 @@ Scripting
 To declare variables or just do some Java code, do it within +#(...)+
 
 Exemple:
-
-  #template renderHello(String name)
-    #( var hello = "Hello " + name.trim() + " !" )
-    $(hello)
-  #end
+--------------------------------------
+#template renderHello(String name)
+  #( var hello = "Hello " + name.trim() + " !" )
+  $(hello)
+#end
+--------------------------------------
 
 Java Imports
 ~~~~~~~~~~~~
@@ -82,11 +87,12 @@ Java Imports
 At the begining of your template, just do like you would do in plain Java, declares your imports.
 
 Exemple:
-
-  import java.util.List;
-  #template renderSize(List list)
-    List size is $(list.size())
-  #end
+--------------------------------------
+import java.util.List;
+#template renderSize(List list)
+  List size is $(list.size())
+#end
+--------------------------------------
 
 Loops
 ~~~~~
@@ -94,15 +100,16 @@ Loops
 Loops are like in Java but with the keywords +#for+ and +#end+
 
 Exemple:
-
-  import java.util.List
-  #template renderList(List list)
-    <ul>
-    #for (item : list)
-      <li>$(item)</li>
-    #end
-    <ul>
+--------------------------------------
+import java.util.List
+#template renderList(List list)
+  <ul>
+  #for (item : list)
+    <li>$(item)</li>
   #end
+  <ul>
+#end
+--------------------------------------
 
 Branching
 ~~~~~~~~~
@@ -110,19 +117,20 @@ Branching
 To do branching, just like in Java but with the keywords +#if+, +#else+, +#elseif+ and +#end+.
 
 Exemple:
-
-  import java.util.List
-  #template renderSize(List list)
-	#if (list == null)
-	  The list is null
-	#elseif(list.isEmpty())
-	  The list is empty
-	#elseif(list.size() == 1)
-	  The list contains one element
-	#else
-      The list contains $(list.size()) elements
-    #end
+--------------------------------------
+import java.util.List
+#template renderSize(List list)
+  #if (list == null)
+    The list is null
+  #elseif(list.isEmpty())
+    The list is empty
+  #elseif(list.size() == 1)
+    The list contains one element
+  #else
+    The list contains $(list.size()) elements
   #end
+#end
+--------------------------------------
 
 Template Class
 ~~~~~~~~~~~~~~
@@ -135,15 +143,16 @@ Template Class Hierarchy
 The generated class can implement some interfaces and extend classes. After declaring the imports, the declaration of the template's hierachy is like in java but with the keyword +template+ and without the need to name it.
 
 Exemple:
+--------------------------------------
+import java.io.Serializable;
+import java.util.ArrayList;
 
-  import java.io.Serializable;
-  import java.util.ArrayList;
-  
-  template extends ArrayList implements Serializable;
-  
-  #template renderHello()
-    Hello World
-  #end
+template extends ArrayList implements Serializable;
+
+#template renderHello()
+  Hello World
+#end
+--------------------------------------
 
 Abstract Template Class
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -151,12 +160,13 @@ Abstract Template Class
 A template class can also be asbtract. The keyword +abstract+ in front of the keyword +template+ make the class abstract.
 
 Exemple:
+--------------------------------------
+abstract template;
 
-  abstract template;
-  
-  #template renderHello()
-    Hello World
-  #end
+#template renderHello()
+  Hello World
+#end
+--------------------------------------
 
 Fields and Methods
 ^^^^^^^^^^^^^^^^^^
@@ -164,18 +174,19 @@ Fields and Methods
 Fields and methods can be defined on the template class. It is just regular Java.
 
 Exemple:
+--------------------------------------
+import java.io.File
 
-  import java.io.File
+private File path;
 
-  private File path;
+private void setPath(File path) {
+  this.path = path;
+}
 
-  private void setPath(File path) {
-    this.path = path;
-  }
-  
-  #template renderPath()
-    $(path.getAbsolutePath())
-  #end
+#template renderPath()
+  $(path.getAbsolutePath())
+#end
+--------------------------------------
 
 Layout pattern
 ~~~~~~~~~~~~~~
@@ -184,18 +195,22 @@ When working with templates, some are designed to be layouts of some other templ
 
 Exemple:
 - layout.jst
-  import java.util.List;
-  abstract template;
-  abstract void renderItem(PrintStream out, String item);
-  #template render(List<String> list)
-    <ul>
-    #for(item : list)
-      <li>#( renderItem(out, item); )</li>
-    #end
-    </ul>
+--------------------------------------
+import java.util.List;
+abstract template;
+abstract void renderItem(PrintStream out, String item);
+#template render(List<String> list)
+  <ul>
+  #for(item : list)
+    <li>#( renderItem(out, item); )</li>
   #end
+  </ul>
+#end
+--------------------------------------
 - item.jst
-  template extends LayoutJstTemplate;
-  #template renderItem(String item)
-    <i>$(item)</i>
-  #end
+--------------------------------------
+template extends LayoutJstTemplate;
+#template renderItem(String item)
+  <i>$(item)</i>
+#end
+--------------------------------------
