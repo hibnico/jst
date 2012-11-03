@@ -1,0 +1,125 @@
+JST - Java Simple Template
+==========================
+
+JST is a simple template engine which use Java as its programming language and produces Java files to be called anywhere from your code.
+
+Why Yet Another Template Engine
+-------------------------------
+
+Lot's of template engines try to enforce the MVC pattern (Model View Controller) by limitting the algorithmic features of the language used in the template. Whereas MVC is definitively a good pattern to avoid writing messy software, the philosophy of JST is to let to the developper the responsability to making the separation of the model and the view, not the template engine.
+
+Unlike some template engine, JST is only targeted to the Java environment. The goal is to have a better integration between a business model and the view. Since both are of the same enviroment, they can shares types, and refactoring can be done more easily.
+
+JST can be compared to JSP. But JST doesn't need you to run in a J2EE framework, JST is just about plain Java.
+
+It can be also be compared to the template engine from Playframework 2, since a JST template produces a class callable from your code. But JST don't need a framework, and don't need scala.
+
+The syntax of JST is quite closed to the Velocity one, because it is a nicely concise syntax. But unlike Velocity, JST is typed and properly scoped, no weird side effect is sight.
+
+Last but not least, JST is based on Xtext. Which means an Eclipse editor is already available for use, with syntax coloring, semantic highlighting, compilation error reporting, refactoring.
+
+TODO
+----
+
+Escaping: there is currently no escaping when outputing data in an html template.
+
+Template Language
+-----------------
+
+NB: the programming lnaguage is based on Xbase which a language close to Java, see http://www.eclipse.org/Xtext/documentation.html#xbaseLanguageRef_Introduction
+
+The minimum: define a rendering method in your template
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  #template renderHello()
+    Hello World
+  #end
+
+- +#template+ defines a new rendering funtion.
+- +myrenderfunction+ is the name of the method to be called from your Java code.
+- +()+ is then the list or arguments of your rendering method, here empty.
+- +#end+ defines when the rendering of the current method ends.
+
+Outputing expressions
+~~~~~~~~~~~~~~~~~~~~~
+
+In the outputed content, juste use +$(aJavaExpression)+. And to output an empty string rather than 'null' on null values, use +$!(aMaybeNullExpression)+
+
+Exemple:
+
+  #template renderHello(String name)
+    Hello $(name) !
+  #end
+
+Outputting +#+ or +$+
+~~~~~~~~~~~~~~~~~~~~~
+
+Just double the letters: +##+ and +$$+
+
+Exemple:
+
+  #template renderAccount(int account, int amount)
+    Account ##$(account) owns $(amount)$$
+  #end
+
+Scripting
+~~~~~~~~~
+
+To declare variables or just do some Java code, do it within +#(...)+
+
+Exemple:
+
+  #template renderHello(String name)
+    #( var hello = "Hello " + name.trim() + " !" )
+    $(hello)
+  #end
+
+Java Imports
+~~~~~~~~~~~~
+
+At the begining of your template, just do like you would do in plain Java, declares your imports.
+
+Exemple:
+
+  import java.util.List
+  #template renderSize(List list)
+    List size is $(list.size())
+  #end
+
+Loops
+~~~~~
+
+Loops are like in Java but with the keywords +#for+ and +#end+
+
+Exemple:
+
+  import java.util.List
+  #template renderList(List list)
+    <ul>
+    #for (item : list)
+      <li>$(item)</li>
+    #end
+    <ul>
+  #end
+
+Branching
+~~~~~~~~~
+
+To do branching, just like in Java but with the keywords +#if+, +#else+, +#elseif+ and +#end+.
+
+Exemple:
+
+  import java.util.List
+  #template renderSize(List list)
+	#if (list == null)
+	  The list is null
+	#elseif(list.isEmpty())
+	  The list is empty
+	#elseif(list.size() == 1)
+	  The list contains one element
+	#else
+      The list contains $(list.size()) elements
+    #end
+  #end
+
+
