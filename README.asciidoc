@@ -3,10 +3,10 @@ JST - Java Simple Template
 
 JST is a simple template engine which use Java as its programming language and produces Java files to be called anywhere from your code.
 
-Why Yet Another Template Engine
--------------------------------
+Why Yet Another Template Engine ?
+---------------------------------
 
-Lot's of template engines try to enforce the MVC pattern (Model View Controller) by limitting the algorithmic features of the language used in the template. Whereas MVC is definitively a good pattern to avoid writing messy software, the philosophy of JST is to let to the developper the responsability to making the separation of the model and the view, not the template engine.
+Lot's of template engines try to enforce the MVC pattern (Model View Controller) by limitting the algorithmic features of the language used in the templates. Whereas MVC is definitively a good pattern to avoid writing messy software, the philosophy of JST is to let to the developper the responsability to making the separation of the model and the view, not the template engine.
 
 Unlike some template engine, JST is only targeted to the Java environment. The goal is to have a better integration between a business model and the view. Since both are of the same enviroment, they can shares types, and refactoring can be done more easily.
 
@@ -21,7 +21,9 @@ Last but not least, JST is based on Xtext. Which means an Eclipse editor is alre
 TODO
 ----
 
-Escaping: there is currently no escaping when outputing data in an html template.
+- escaping: there is currently no escaping when outputing data in an html template.
+- while, do-while: these loops are not yet implemented
+- for(inst; condition; increm): currently for loops can only iterate on +Iterable+s (+for(item : list)+)
 
 Template Language
 -----------------
@@ -81,7 +83,7 @@ At the begining of your template, just do like you would do in plain Java, decla
 
 Exemple:
 
-  import java.util.List
+  import java.util.List;
   #template renderSize(List list)
     List size is $(list.size())
   #end
@@ -122,4 +124,78 @@ Exemple:
     #end
   #end
 
+Template Class
+~~~~~~~~~~~~~~
 
+The JST engine will generate a plain Java class named after the template file name. The file name is appended with JstTemplate and the first letter is capitalized to build the name of the generated class. For instance +user.jst+ will generate +UserJstTemplate.java+.
+
+Template Class Hierarchy
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+The generated class can implement some interfaces and extend classes. After declaring the imports, the declaration of the template's hierachy is like in java but with the keyword +template+ and without the need to name it.
+
+Exemple:
+
+  import java.io.Serializable;
+  import java.util.ArrayList;
+  
+  template extends ArrayList implements Serializable;
+  
+  #template renderHello()
+    Hello World
+  #end
+
+Abstract Template Class
+^^^^^^^^^^^^^^^^^^^^^^^
+
+A template class can also be asbtract. The keyword +abstract+ in front of the keyword +template+ make the class abstract.
+
+Exemple:
+
+  abstract template;
+  
+  #template renderHello()
+    Hello World
+  #end
+
+Fields and Methods
+^^^^^^^^^^^^^^^^^^
+
+Fields and methods can be defined on the template class. It is just regular Java.
+
+Exemple:
+
+  import java.io.File
+
+  private File path;
+
+  private void setPath(File path) {
+    this.path = path;
+  }
+  
+  #template renderPath()
+    $(path.getAbsolutePath())
+  #end
+
+Layout pattern
+~~~~~~~~~~~~~~
+
+When working with templates, some are designed to be layouts of some other templates. With JST, no special keyword or contruction is required, just use the Java class hierarchy. The template layout will be an abstract template, and the layouted template will extend it.
+
+Exemple:
+- layout.jst
+  import java.util.List;
+  abstract template;
+  abstract void renderItem(PrintStream out, String item);
+  #template render(List<String> list)
+    <ul>
+    #for(item : list)
+      <li>#( renderItem(out, item); )</li>
+    #end
+    </ul>
+  #end
+- item.jst
+  template extends LayoutJstTemplate;
+  #template renderItem(String item)
+    <i>$(item)</i>
+  #end
