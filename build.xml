@@ -78,11 +78,6 @@
         <mkdir dir="${basedir}/org.hibnet.jst.tests/src-gen" />
     </target>
 
-    <target name="generate-antlr" depends="init" description="Generate the simple ANTLR parser">
-        <mkdir dir="${basedir}/org.hibnet.jst/src/org/apache/ant/antdsl/antlr" />
-        <antlr3 target="${basedir}/org.hibnet.jst/src/org/apache/ant/antdsl/AntDSL.g" outputdirectory="${basedir}/org.hibnet.jst/src/org/apache/ant/antdsl/antlr" />
-    </target>
-
     <target name="generate-xtext" description="Generate XText and Ecore files for the full plugin">
         <loadpath pathid="generate.classpath" file=".generate.classpath" />
         <java classname="org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher" dir="${basedir}/org.hibnet.jst" fork="true" failonerror="true">
@@ -95,18 +90,19 @@
     </target>
 
     <target name="build" description="Full build of a jst jar">
-        <loadpath pathid="runtime.classpath" file=".runtime.classpath" />
+        <loadpath pathid="generate.classpath" file=".generate.classpath" />
         <mkdir dir="${basedir}/build/classes" />
-        <javac srcdir="${basedir}/org.hibnet.jst/src/:${basedir}/org.hibnet.jst/src-gen/:${basedir}/org.hibnet.jst/xtend-gen" destdir="${basedir}/build/classes" debug="on" includeantruntime="false" source="1.6" target="1.6" classpathref="runtime.classpath" />
+        <javac srcdir="${basedir}/org.hibnet.jst/src/:${basedir}/org.hibnet.jst/src-gen/:${basedir}/org.hibnet.jst/xtend-gen" destdir="${basedir}/build/classes" debug="on" includeantruntime="false" source="1.6" target="1.6" classpathref="generate.classpath" />
         <copy todir="${basedir}/build/classes">
             <fileset dir="${basedir}/org.hibnet.jst/src">
-                <exclude name="*.java" />
+                <exclude name="**/*.java" />
+                <exclude name="**/*.xtend" />
             </fileset>
             <fileset dir="${basedir}/org.hibnet.jst/src-gen">
-                <exclude name="*.java" />
+                <exclude name="**/*.java" />
             </fileset>
             <fileset dir="${basedir}/org.hibnet.jst/xtend-gen">
-                <exclude name="*.java" />
+                <exclude name="**/*.java" />
             </fileset>
             <fileset dir="${basedir}/org.hibnet.jst" includes="META-INF/**/*" />
         </copy>
