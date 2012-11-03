@@ -194,6 +194,7 @@ Layout pattern
 When working with templates, some are designed to be layouts of some other templates. With JST, no special keyword or contruction is required, just use the Java class hierarchy. The template layout will be an abstract template, and the layouted template will extend it.
 
 Exemple:
+
 - layout.jst
 --------------------------------------
 import java.util.List;
