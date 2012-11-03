@@ -21,7 +21,6 @@ import org.eclipse.xtext.service.SingletonBinding;
 import org.eclipse.xtext.xbase.compiler.XbaseCompiler;
 import org.eclipse.xtext.xbase.typing.ITypeProvider;
 import org.eclipse.xtext.xtext.ecoreInference.IXtext2EcorePostProcessor;
-import org.hibnet.jst.jvmmodel.JstBatchCompiler;
 import org.hibnet.jst.jvmmodel.JstCompiler;
 import org.hibnet.jst.jvmmodel.JstTypeProvider;
 import org.hibnet.jst.parser.antlr.internal.InternalJstLexer;
@@ -73,7 +72,7 @@ public class JstRuntimeModule extends AbstractJstRuntimeModule {
 		return RichStringEclassPostProcessor.class;
 	}
 
-	public Class<? extends JstBatchCompiler> bindJstBatchCompiler() {
-		return JstBatchCompiler.class;
+	public Class<? extends JstJavaFileGenerator> bindJstJavaFileGenerator() {
+		return JstJavaFileGenerator.class;
 	}
 }
