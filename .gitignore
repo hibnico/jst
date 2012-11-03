@@ -4,3 +4,6 @@
 org.hibnet.jst/.antlr-generator-3.2.0.jar
 */plugin.xml_gen
 .DS_Store
+build-deps
+build
+.*.classpath

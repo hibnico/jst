@@ -1,0 +1,46 @@
+<!--
+    Copyright 2012 JST contributors
+    
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+    
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<ivy-module version="2.0">
+    <info organisation="org.apache.ant" module="ant-dsl">
+        <extends organisation="bundle" module="org.hibnet.jst" revision="1.0.0" location="org.hibnet.jst/META-INF/MANIFEST.MF"/>
+    </info>
+    <configurations>
+        <conf name="runtime" extends="default" />
+        <conf name="generate" extends="optional" />
+    </configurations>
+    <dependencies>
+        <!-- ambiguity fix -->
+        <dependency org="bundle" name="org.apache.log4j" rev="1.2.15.v201012070815" conf="default->default" />
+        <dependency org="bundle" name="org.apache.commons.logging" rev="1.1.1.v201101211721" conf="default->default" />
+        <dependency org="bundle" name="com.ibm.icu" rev="4.4.2.v20110823" conf="default->default" />
+        <dependency org="bundle" name="org.eclipse.ui.forms" rev="3.5.200.v20120521-2329" conf="default->default" />
+
+        <!-- some optional dependency we do need -->
+        <dependency org="bundle" name="org.eclipse.emf.mwe2.lib" rev="2.2.0+" conf="generate->default" />
+
+        <!-- provided -->
+        <exclude org="package" module="javax.xml.parsers" />
+        <exclude org="package" module="javax.xml.transform" />
+        <exclude org="package" module="javax.xml.transform.dom" />
+        <exclude org="package" module="javax.xml.transform.stream" />
+        <exclude org="package" module="org.xml.sax" />
+        <exclude org="package" module="org.xml.sax.helpers" />
+        <exclude org="package" module="org.xml.sax.ext" />
+        <exclude org="package" module="org.w3c.dom" />
+        <exclude org="package" module="org.w3c.dom.events" />
+        <exclude org="package" module="javax.annotation" />
+    </dependencies>
+</ivy-module>
