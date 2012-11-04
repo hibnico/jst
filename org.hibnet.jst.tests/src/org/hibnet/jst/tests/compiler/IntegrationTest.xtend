@@ -31,23 +31,23 @@ import java.io.ByteArrayOutputStream
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(JstInjectorProvider))
 class IntegrationTest {
-	
-	@Inject extension CompilationTestHelper
-	@Inject extension ReflectExtensions
-	
-	@Test def void testParseAndCompile_Simple() {
-		'''
-			#renderer main()
-			Hello World
-			#end
-		'''.compile [
+
+    @Inject extension CompilationTestHelper
+    @Inject extension ReflectExtensions
+
+    @Test def void testParseAndCompile_Simple() {
+        '''
+            #renderer main()
+            Hello World
+            #end
+        '''.compile [
             val out = new ByteArrayOutputStream();
-		    val p = new PrintStream(out)
-			compiledClass.newInstance.invoke('renderMain', p)
-			assertEquals('Hello World', new String(out.toByteArray).trim)
-		]
-	}
-	
+            val p = new PrintStream(out)
+            compiledClass.newInstance.invoke('renderMain', p)
+            assertEquals('Hello World', new String(out.toByteArray).trim)
+        ]
+    }
+
     @Test def void testParseAndCompile_If() {
         ''' #renderer main()
             #if(true)
@@ -61,7 +61,7 @@ class IntegrationTest {
             assertEquals('<h1>Hello</h1>', new String(out.toByteArray).trim)
         ]
     }
-    
+
     @Test def void testParseAndCompile_IfElse() {
         ''' #renderer main()
                 #if(true)
@@ -95,7 +95,7 @@ class IntegrationTest {
             assertEquals('<h2>ok</h2>', new String(out.toByteArray).trim)
         ]
     }
-    
+
     @Test def void testParseAndCompile_Inline() {
         ''' #renderer main()
               <i>$("Hello")</i>
@@ -243,7 +243,7 @@ class IntegrationTest {
                 </html>'''.toString.replaceAll("( |\n)", ""), new String(out.toByteArray).replaceAll("( |\n)", ""))
         ]
     }
-    
+
     @Test def void testParseAndCompile_Import() {
         ''' import java.io.File;
             #renderer main()
