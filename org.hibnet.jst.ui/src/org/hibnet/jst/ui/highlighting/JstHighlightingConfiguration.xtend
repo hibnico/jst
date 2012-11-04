@@ -19,29 +19,35 @@ import org.eclipse.xtext.xbase.ui.highlighting.XbaseHighlightingConfiguration
 import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfigurationAcceptor
 import org.eclipse.xtext.ui.editor.utils.TextStyle
 import org.eclipse.swt.graphics.RGB
+import org.eclipse.swt.SWT
 
 class JstHighlightingConfiguration extends XbaseHighlightingConfiguration {
 
-	public static val TEXT = 'jst.text'
+    public static val TEXT = 'jst.text'
+
+    public static val DIRECTIVES = 'jst.directives'
 
 	override configure(IHighlightingConfigurationAcceptor acceptor) {
-		acceptor.acceptDefaultHighlighting(TEXT, 'Text', staticText)
+        acceptor.acceptDefaultHighlighting(TEXT, 'Text', staticText)
+        acceptor.acceptDefaultHighlighting(DIRECTIVES, 'Directives', staticDirectives)
 		super.configure([id, name, style| 
-			style.backgroundColor = new RGB(230, 230, 230)
+			style.backgroundColor = new RGB(240, 240, 240)
 			acceptor.acceptDefaultHighlighting(id, name, style)
 		])
 	}
 
-	def TextStyle staticText() {
-		defaultTextStyle.copy => [
-			color= new RGB(0, 0, 0)
-		]
-	}
+    def TextStyle staticText() {
+        defaultTextStyle.copy => [
+            color = new RGB(0, 0, 0)
+        ]
+    }
 
-	def TextStyle staticEscape() {
-		defaultTextStyle.copy => [
-			color = new RGB(180, 180, 180)
-			backgroundColor = new RGB(230, 230, 230)
-		]
-	}
+    def TextStyle staticDirectives() {
+        defaultTextStyle.copy => [
+            color = new RGB(0, 20, 90)
+            backgroundColor = new RGB(240, 240, 240)
+            style = SWT::BOLD;
+        ]
+    }
+
 }

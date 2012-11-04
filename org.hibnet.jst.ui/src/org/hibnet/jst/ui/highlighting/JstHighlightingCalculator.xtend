@@ -17,6 +17,7 @@ package org.hibnet.jst.ui.highlighting
 
 import com.google.inject.Inject
 import org.eclipse.xtext.RuleCall
+import org.eclipse.xtext.TerminalRule
 import org.eclipse.xtext.nodemodel.ILeafNode
 import org.eclipse.xtext.resource.XtextResource
 import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightedPositionAcceptor
@@ -29,20 +30,27 @@ class JstHighlightingCalculator extends XbaseHighlightingCalculator {
 
 	@Inject JstGrammarAccess grammarAccess
 
-	def isText(ILeafNode node) {
-		switch grammarElement: node.getGrammarElement {
-			RuleCall: 
-				grammarElement.rule == grammarAccess.TEXTRule
-			default: 
-				false
-		}
-	}
+    def isRule(ILeafNode node, TerminalRule... expecteds) {
+        for (expected : expecteds) {
+            if (node.getGrammarElement instanceof RuleCall) {
+                if ((node.getGrammarElement as RuleCall).rule == expected) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
 	override doProvideHighlightingFor(XtextResource resource, IHighlightedPositionAcceptor acceptor) {
 		super.doProvideHighlightingFor(resource, acceptor)
 		for (leafNode : resource.parseResult.rootNode.leafNodes) {
-			if (isText(leafNode)) {
+			if (isRule(leafNode, grammarAccess.TEXTRule)) {
 				acceptor.addPosition(leafNode.offset, leafNode.length, TEXT)
+			} else if (isRule(leafNode, grammarAccess.BRACE_OPENRule, grammarAccess.BRACE_CLOSERule, grammarAccess.DIRECTIVERule,
+			    grammarAccess.DIRECTIVE_ECHORule, grammarAccess.DIRECTIVE_ECHO_ELVISRule, grammarAccess.DIRECTIVE_ELSEIFRule, grammarAccess.DIRECTIVE_ELSERule,
+			    grammarAccess.DIRECTIVE_ENDRule, grammarAccess.DIRECTIVE_FORRule, grammarAccess.DIRECTIVE_IFRule, grammarAccess.DIRECTIVE_RENDERERRule,
+			    grammarAccess.DIRECTIVE_RENDERRule)) {
+                acceptor.addPosition(leafNode.offset, leafNode.length, DIRECTIVES)			    
 			}
 		}
 	}
