@@ -108,6 +108,19 @@ class IntegrationTest {
         ]
     }
 
+    @Test def void testParseAndCompile_Param() {
+        '''
+            #renderer main(String name)
+            Hello $(name)
+            #end
+        '''.compile [
+            val out = new ByteArrayOutputStream();
+            val p = new PrintStream(out)
+            compiledClass.newInstance.invoke('renderMain', p, "John")
+            assertEquals('Hello John', new String(out.toByteArray).trim)
+        ]
+    }
+
     @Test def void testParseAndCompile_Script() {
         ''' #renderer main()
               #( var name = "Foo";)
