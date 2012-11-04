@@ -16,7 +16,36 @@
 package org.hibnet.jst
 
 import org.eclipse.xtext.xbase.conversion.XbaseValueConverterService
+import org.eclipse.xtext.conversion.ValueConverter
+import org.eclipse.xtext.conversion.IValueConverter
+import javax.inject.Inject
+import org.eclipse.xtext.conversion.impl.KeywordAlternativeConverter
+import org.eclipse.xtext.conversion.ValueConverterException
+import org.eclipse.xtext.nodemodel.INode
 
 class JstValueConverterService extends XbaseValueConverterService {
 
+    @Inject RendererIDValueConverter rendererIDValueConverter
+
+    @ValueConverter(rule = "RendererID")
+    def IValueConverter<String> RenderID() {
+        return rendererIDValueConverter;
+    }
+
+    @ValueConverter(rule = "RendererValidID")
+    def IValueConverter<String> RenderValidID() {
+        return rendererIDValueConverter;
+    }
+}
+
+class RendererIDValueConverter extends KeywordAlternativeConverter {
+
+    override toString(String value) throws ValueConverterException {
+        super.toString(value).substring(6).toFirstLower
+    }
+    
+    override toValue(String string, INode node) throws ValueConverterException {
+        "render" + super.toValue(string, node).toFirstUpper
+    }
+    
 }

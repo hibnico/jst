@@ -32,7 +32,7 @@ JstFile returns types::JvmGenericType:
     (
         members+=Field
       | members+=Method
-      | members+=Template
+      | members+=Renderer
     )*
 ;
 
@@ -60,18 +60,14 @@ enum Visibility returns types::JvmVisibility:
 
 
 //////////////////////////////////
-// Template things
+// Renderer things
 //////////////////////////////////
 
-Template returns types::JvmOperation:
-    {Template}
-    DIRECTIVE_TEMPLATE simpleName=ID BRACE_OPEN (parameters+=JvmFormalParameter (',' parameters+=JvmFormalParameter)*)? BRACE_CLOSE
+Renderer returns types::JvmOperation:
+    {Renderer}
+    DIRECTIVE_RENDERER simpleName=RendererID BRACE_OPEN (parameters+=JvmFormalParameter (',' parameters+=JvmFormalParameter)*)? BRACE_CLOSE
     expression=RichString
     DIRECTIVE_END
-;
-
-Parameter returns types::JvmFormalParameter:
-   parameterType=JvmTypeReference name=ID
 ;
 
 RichString returns xbase::XBlockExpression:
@@ -86,6 +82,8 @@ RichStringPart returns xbase::XExpression:
     | RichStringInlineExpr
     | RichStringForLoop
     | RichStringIf
+    | RichStringRender
+    | RichStringTemplateRender
 ;
 
 RichStringLiteral returns xbase::XStringLiteral:
@@ -119,18 +117,39 @@ RichStringElseIf returns xbase::XIfExpression:
     (else=RichStringElseIf | DIRECTIVE_ELSE else=RichString)?
 ;
 
+RichStringRender returns xbase::XFeatureCall:
+    {RichStringRender}
+    DIRECTIVE_RENDER feature=[types::JvmIdentifiableElement|RendererValidID]
+         BRACE_OPEN (featureCallArguments+=XExpression (',' featureCallArguments+=XExpression)* )? BRACE_CLOSE
+;
+
+RichStringTemplateRender returns xbase::XMemberFeatureCall:
+    {RichStringTemplateRender}
+    DIRECTIVE_RENDER memberCallTarget=XPrimaryExpression '.' feature=[types::JvmIdentifiableElement|RendererValidID]
+         BRACE_OPEN (memberCallArguments+=XExpression (',' memberCallArguments+=XExpression)*)? BRACE_CLOSE
+;
+
 QualifiedNameWithWildCard :
     QualifiedName  '.' '*';
+
+RendererID:
+    ID
+;
+
+RendererValidID:
+    ValidID
+;
 
 terminal BRACE_OPEN: '(';
 terminal BRACE_CLOSE: ')';
 
-terminal DIRECTIVE_TEMPLATE: '#template';
+terminal DIRECTIVE_RENDERER: '#renderer';
 terminal DIRECTIVE_IF: '#if';
 terminal DIRECTIVE_ELSE: '#else';
 terminal DIRECTIVE_ELSEIF: '#elseif';
 terminal DIRECTIVE_END: '#end';
 terminal DIRECTIVE_FOR: '#for';
+terminal DIRECTIVE_RENDER: '#render';
 terminal DIRECTIVE: '#';
 terminal DIRECTIVE_ECHO: '$';
 terminal DIRECTIVE_ECHO_ELVIS: '$!';

@@ -15,16 +15,28 @@
  */
 package org.hibnet.jst.jvmmodel
 
+import java.util.List
+import javax.inject.Inject
 import org.eclipse.xtext.xbase.XExpression
 import org.eclipse.xtext.xbase.compiler.XbaseCompiler
 import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable
+import org.eclipse.xtext.xbase.featurecalls.IdentifiableSimpleNameProvider
+import org.eclipse.xtext.xbase.impl.FeatureCallToJavaMapping
 import org.hibnet.jst.jst.RichString
-import org.hibnet.jst.jst.RichStringIf
 import org.hibnet.jst.jst.RichStringForLoop
+import org.hibnet.jst.jst.RichStringIf
 import org.hibnet.jst.jst.RichStringInlineExpr
+import org.hibnet.jst.jst.RichStringRender
+import org.hibnet.jst.jst.RichStringTemplateRender
 
 class JstCompiler extends XbaseCompiler {
-	
+
+    @Inject
+    private IdentifiableSimpleNameProvider featureNameProvider;
+
+    @Inject
+    private FeatureCallToJavaMapping featureCallToJavaMapping;
+
 	override protected doInternalToJavaStatement(XExpression expr, ITreeAppendable it, boolean isReferenced) {
 		switch expr {
 			RichString : {
@@ -80,6 +92,39 @@ class JstCompiler extends XbaseCompiler {
                 append(');')
             }
 
+            RichStringRender : {
+                val name = featureNameProvider.getSimpleName(expr.feature);
+                append(name)
+                append("(out, ")
+                val List<XExpression> arguments = featureCallToJavaMapping.getActualArguments(expr);
+                if (!arguments.empty) {
+                    append(", ")
+                    appendArguments(arguments, it, true);                    
+                }
+                append(")")
+            }
+
+            RichStringTemplateRender : {
+                val XExpression receiver = featureCallToJavaMapping.getActualReceiver(expr);
+                prepareExpression(receiver, it);
+                for (XExpression arg : featureCallToJavaMapping.getActualArguments(expr)) {
+                    prepareExpression(arg, it);
+                }
+                newLine
+                internalToJavaExpression(receiver, it);
+                append(".");
+                appendTypeArguments(expr, it)
+                val name = featureNameProvider.getSimpleName(expr.feature);
+                append(name)
+                append("(out, ")
+                val List<XExpression> arguments = featureCallToJavaMapping.getActualArguments(expr);
+                if (!arguments.empty) {
+                    append(", ")
+                    appendArguments(arguments, it, true);                    
+                }
+                append(")")
+            }
+
 			default :
 				super.doInternalToJavaStatement(expr, it, isReferenced)
 		}
@@ -91,6 +136,8 @@ class JstCompiler extends XbaseCompiler {
             RichStringIf : false
             RichStringForLoop : false
             RichStringInlineExpr : false
+            RichStringRender: false
+            RichStringTemplateRender: false
             default: true
 	    }
 	}

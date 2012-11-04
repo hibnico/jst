@@ -24,7 +24,7 @@ import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
 import org.hibnet.jst.jst.Field
 import org.hibnet.jst.jst.JstFile
 import org.hibnet.jst.jst.Method
-import org.hibnet.jst.jst.Template
+import org.hibnet.jst.jst.Renderer
 
 /**
  * <p>Infers a JVM model from the source model.</p> 
@@ -46,15 +46,15 @@ class JstJvmModelInferrer extends AbstractModelInferrer {
    		            if (field.initialValue != null) {
    		                field.setInitializer(field.initialValue)
    		            }
-                } else if (member instanceof Template) {
-                    val template = (member as Template)
-                    template.setVisibility(JvmVisibility::PUBLIC)
-                    template.parameters.add(0, element.toParameter(
+                } else if (member instanceof Renderer) {
+                    val renderer = (member as Renderer)
+                    renderer.setVisibility(JvmVisibility::PUBLIC)
+                    renderer.parameters.add(0, element.toParameter(
                         "out",
-                        template.newTypeRef(typeof(PrintStream))
+                        renderer.newTypeRef(typeof(PrintStream))
                     ))
-                    template.returnType = element.newTypeRef(Void::TYPE)
-                    template.body = template.getExpression()
+                    renderer.returnType = element.newTypeRef(Void::TYPE)
+                    renderer.body = renderer.getExpression()
    		        } else if (member instanceof Method) {
                     val method = (member as Method)
                     method.body = method.getExpression()
@@ -62,5 +62,4 @@ class JstJvmModelInferrer extends AbstractModelInferrer {
    		    }
 		]
 	}
-
 }

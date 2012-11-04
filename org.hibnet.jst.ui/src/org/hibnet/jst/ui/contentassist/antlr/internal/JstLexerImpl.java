@@ -69,7 +69,7 @@ public class JstLexerImpl extends InternalJstLexer {
 					case RULE_DIRECTIVE_ELSE:
 						rawText = true;
 						break;
-					case RULE_DIRECTIVE_TEMPLATE:
+					case RULE_DIRECTIVE_RENDERER:
 					case RULE_DIRECTIVE_FOR:
 					case RULE_DIRECTIVE_IF:
 						directiveStackSize++;
@@ -79,6 +79,7 @@ public class JstLexerImpl extends InternalJstLexer {
 					case RULE_DIRECTIVE:
 					case RULE_DIRECTIVE_ECHO:
 					case RULE_DIRECTIVE_ECHO_ELVIS:
+					case RULE_DIRECTIVE_RENDER:
 						directiveParameters = true;
 						break;
 					case RULE_DIRECTIVE_END:

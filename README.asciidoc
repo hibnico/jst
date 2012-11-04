@@ -37,13 +37,13 @@ The minimum: define a rendering method in your template
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 --------------------------------------
-#template renderHello()
+#renderer hello()
   Hello World
 #end
 --------------------------------------
 
-- +#template+ defines a new rendering funtion.
-- +myrenderfunction+ is the name of the method to be called from your Java code.
+- +#renderer+ defines a new rendering funtion.
+- +hello+ is the name; in your Java code it will be a method called +renderHello+.
 - +()+ is then the list or arguments of your rendering method, here empty.
 - +#end+ defines when the rendering of the current method ends.
 
@@ -54,7 +54,7 @@ In the outputed content, juste use +$(aJavaExpression)+. And to output an empty 
 
 Exemple:
 --------------------------------------
-#template renderHello(String name)
+#renderer hello(String name)
   Hello $(name) !
 #end
 --------------------------------------
@@ -66,7 +66,7 @@ Just double the letters: +##+ and +$$+
 
 Exemple:
 --------------------------------------
-#template renderAccount(int account, int amount)
+#renderer account(int account, int amount)
   Account ##$(account) owns $(amount)$$
 #end
 --------------------------------------
@@ -78,7 +78,7 @@ To declare variables or just do some Java code, do it within +#(...)+
 
 Exemple:
 --------------------------------------
-#template renderHello(String name)
+#renderer hello(String name)
   #( var hello = "Hello " + name.trim() + " !" )
   $(hello)
 #end
@@ -92,7 +92,7 @@ At the begining of your template, just do like you would do in plain Java, decla
 Exemple:
 --------------------------------------
 import java.util.List;
-#template renderSize(List list)
+#renderer size(List list)
   List size is $(list.size())
 #end
 --------------------------------------
@@ -105,7 +105,7 @@ Loops are like in Java but with the keywords +#for+ and +#end+
 Exemple:
 --------------------------------------
 import java.util.List
-#template renderList(List list)
+#renderer list(List list)
   <ul>
   #for (item : list)
     <li>$(item)</li>
@@ -122,7 +122,7 @@ To do branching, just like in Java but with the keywords +#if+, +#else+, +#elsei
 Exemple:
 --------------------------------------
 import java.util.List
-#template renderSize(List list)
+#renderer size(List list)
   #if (list == null)
     The list is null
   #elseif(list.isEmpty())
@@ -152,7 +152,7 @@ import java.util.ArrayList;
 
 template extends ArrayList implements Serializable;
 
-#template renderHello()
+#renderer hello()
   Hello World
 #end
 --------------------------------------
@@ -166,7 +166,7 @@ Exemple:
 --------------------------------------
 abstract template;
 
-#template renderHello()
+#renderer hello()
   Hello World
 #end
 --------------------------------------
@@ -186,8 +186,24 @@ private void setPath(File path) {
   this.path = path;
 }
 
-#template renderPath()
+#renderer path()
   $(path.getAbsolutePath())
+#end
+--------------------------------------
+
+Renderer call
+~~~~~~~~~~~~~
+
+Within a renderer, another renderer can be called with the directive +#render+. The syntax is like a function call in Java.
+
+Exemple:
+--------------------------------------
+#renderer hello()
+  Hello
+  #render name("World")
+#end
+#renderer name(String n)
+  $(n)
 #end
 --------------------------------------
 
@@ -203,10 +219,10 @@ Exemple:
 import java.util.List;
 abstract template;
 abstract void renderItem(PrintStream out, String item);
-#template render(List<String> list)
+#renderer body(List<String> list)
   <ul>
-  #for(item : list)
-    <li>#( renderItem(out, item); )</li>
+  #for(i : list)
+    <li>#render item(i)</li>
   #end
   </ul>
 #end
@@ -214,7 +230,7 @@ abstract void renderItem(PrintStream out, String item);
 - item.jst
 --------------------------------------
 template extends LayoutJstTemplate;
-#template renderItem(String item)
+#renderer item(String item)
   <i>$(item)</i>
 #end
 --------------------------------------

@@ -37,19 +37,19 @@ class IntegrationTest {
 	
 	@Test def void testParseAndCompile_Simple() {
 		'''
-			#template render()
+			#renderer main()
 			Hello World
 			#end
 		'''.compile [
             val out = new ByteArrayOutputStream();
 		    val p = new PrintStream(out)
-			compiledClass.newInstance.invoke('render', p)
+			compiledClass.newInstance.invoke('renderMain', p)
 			assertEquals('Hello World', new String(out.toByteArray).trim)
 		]
 	}
 	
     @Test def void testParseAndCompile_If() {
-        ''' #template render()
+        ''' #renderer main()
             #if(true)
               <h1>Hello</h1>
             #end
@@ -57,13 +57,13 @@ class IntegrationTest {
         '''.compile [
             val out = new ByteArrayOutputStream();
             val p = new PrintStream(out)
-            compiledClass.newInstance.invoke('render', p)
+            compiledClass.newInstance.invoke('renderMain', p)
             assertEquals('<h1>Hello</h1>', new String(out.toByteArray).trim)
         ]
     }
     
     @Test def void testParseAndCompile_IfElse() {
-        ''' #template render()
+        ''' #renderer main()
                 #if(true)
                     <p>ok</p>
                 #else
@@ -73,13 +73,13 @@ class IntegrationTest {
         '''.compile [
             val out = new ByteArrayOutputStream();
             val p = new PrintStream(out)
-            compiledClass.newInstance.invoke('render', p)
+            compiledClass.newInstance.invoke('renderMain', p)
             assertEquals('<p>ok</p>', new String(out.toByteArray).trim)
         ]
     }
     
     @Test def void testParseAndCompile_IfElseIf() {
-        ''' #template render()
+        ''' #renderer main()
                 #if(false)
                   <h1>nok</h1>
                 #elseif(true)
@@ -91,38 +91,38 @@ class IntegrationTest {
         '''.compile [
             val out = new ByteArrayOutputStream();
             val p = new PrintStream(out)
-            compiledClass.newInstance.invoke('render', p)
+            compiledClass.newInstance.invoke('renderMain', p)
             assertEquals('<h2>ok</h2>', new String(out.toByteArray).trim)
         ]
     }
     
     @Test def void testParseAndCompile_Inline() {
-        ''' #template render()
+        ''' #renderer main()
               <i>$("Hello")</i>
             #end
         '''.compile [
             val out = new ByteArrayOutputStream();
             val p = new PrintStream(out)
-            compiledClass.newInstance.invoke('render', p)
+            compiledClass.newInstance.invoke('renderMain', p)
             assertEquals('<i>Hello</i>', new String(out.toByteArray).trim)
         ]
     }
 
     @Test def void testParseAndCompile_Script() {
-        ''' #template render()
+        ''' #renderer main()
               #( var name = "Foo";)
               <title>$(name)</title>
             #end
         '''.compile [
             val out = new ByteArrayOutputStream();
             val p = new PrintStream(out)
-            compiledClass.newInstance.invoke('render', p)
+            compiledClass.newInstance.invoke('renderMain', p)
             assertEquals('<title>Foo</title>', new String(out.toByteArray).trim)
         ]
     }
 
     @Test def void testParseAndCompile_InlineElvis() {
-        ''' #template render()
+        ''' #renderer main()
               #( var name = "Foo";)
               #( var name2 = null;)
               <h1>$(name)</h1>
@@ -133,7 +133,7 @@ class IntegrationTest {
         '''.compile [
             val out = new ByteArrayOutputStream();
             val p = new PrintStream(out)
-            compiledClass.newInstance.invoke('render', p)
+            compiledClass.newInstance.invoke('renderMain', p)
             assertEquals('''<h1>Foo</h1>
               <h2>Foo</h2>
               <h3>null</h3>
@@ -142,7 +142,7 @@ class IntegrationTest {
     }
 
     @Test def void testParseAndCompile_MultiLineComment() {
-        ''' #template render()
+        ''' #renderer main()
               #* some comment *#
               Hello World
               #* some
@@ -152,13 +152,13 @@ class IntegrationTest {
         '''.compile [
             val out = new ByteArrayOutputStream();
             val p = new PrintStream(out)
-            compiledClass.newInstance.invoke('render', p)
+            compiledClass.newInstance.invoke('renderMain', p)
             assertEquals('''Hello World'''.toString, new String(out.toByteArray).trim)
         ]
     }
 
     @Test def void testParseAndCompile_SingleLineComment() {
-        ''' #template render()
+        ''' #renderer main()
               #- some comment
               Hello World
               #- some other comment
@@ -166,13 +166,13 @@ class IntegrationTest {
         '''.compile [
             val out = new ByteArrayOutputStream();
             val p = new PrintStream(out)
-            compiledClass.newInstance.invoke('render', p)
+            compiledClass.newInstance.invoke('renderMain', p)
             assertEquals('''Hello World'''.toString, new String(out.toByteArray).trim)
         ]
     }
 
     @Test def void testParseAndCompile_For() {
-        ''' #template render()
+        ''' #renderer main()
              #( var list = newArrayList("one", "two", "three", "four"); )
             <html>
               #for(String element : list)
@@ -183,7 +183,7 @@ class IntegrationTest {
         '''.compile [
             val out = new ByteArrayOutputStream();
             val p = new PrintStream(out)
-            compiledClass.newInstance.invoke('render', p)
+            compiledClass.newInstance.invoke('renderMain', p)
             assertEquals('''
                 <html>
                       <p>one</p>
@@ -195,7 +195,7 @@ class IntegrationTest {
     }
  
     @Test def void testParseAndCompile_Complex() {
-        ''' #template render()
+        ''' #renderer main()
              #( var nullString = null;
                 var name = "Foo";
                 var list = newArrayList("one", "two", "three", "four"); )
@@ -217,7 +217,7 @@ class IntegrationTest {
         '''.compile [
             val out = new ByteArrayOutputStream();
             val p = new PrintStream(out)
-            compiledClass.newInstance.invoke('render', p)
+            compiledClass.newInstance.invoke('renderMain', p)
             assertEquals('''
                 <html>
                   <i>null</i>
@@ -233,7 +233,7 @@ class IntegrationTest {
     
     @Test def void testParseAndCompile_Import() {
         ''' import java.io.File;
-            #template render()
+            #renderer main()
                 #( var file = new File('testimport');
                    var name = file.getName();
                  )
@@ -242,48 +242,48 @@ class IntegrationTest {
         '''.compile [
             val out = new ByteArrayOutputStream();
             val p = new PrintStream(out)
-            compiledClass.newInstance.invoke('render', p)
+            compiledClass.newInstance.invoke('renderMain', p)
             assertEquals('testimport', new String(out.toByteArray).trim)
         ]
     }
 
     @Test def void testParseAndCompile_Field() {
         ''' String field = "testfield";
-            #template render()
+            #renderer main()
                 $(field)
             #end
         '''.compile [
             val out = new ByteArrayOutputStream();
             val p = new PrintStream(out)
-            compiledClass.newInstance.invoke('render', p)
+            compiledClass.newInstance.invoke('renderMain', p)
             assertEquals('testfield', new String(out.toByteArray).trim)
         ]
     }
 
     @Test def void testParseAndCompile_Method() {
         ''' String getString() { return "testmethod"; }
-            #template render()
+            #renderer main()
                 #( var v = getString(); )
                 $(v)
             #end
         '''.compile [
             val out = new ByteArrayOutputStream();
             val p = new PrintStream(out)
-            compiledClass.newInstance.invoke('render', p)
+            compiledClass.newInstance.invoke('renderMain', p)
             assertEquals('testmethod', new String(out.toByteArray).trim)
         ]
     }
 
     @Test def void testParseAndCompile_Implements() {
         ''' template implements java.io.Serializable;
-            #template render()
+            #renderer main()
                testimplements
             #end
         '''.compile [
             val template = compiledClass.newInstance
             val out = new ByteArrayOutputStream();
             val p = new PrintStream(out)
-            template.invoke('render', p)
+            template.invoke('renderMain', p)
             assertTrue(template instanceof java.io.Serializable)
             assertEquals('testimplements', new String(out.toByteArray).trim)
         ]
@@ -292,14 +292,14 @@ class IntegrationTest {
     @Test def void testParseAndCompile_ImportImplements() {
         ''' import java.io.Serializable;
             template implements Serializable;
-            #template render()
+            #renderer main()
                testimportimplements
             #end
         '''.compile [
             val template = compiledClass.newInstance
             val out = new ByteArrayOutputStream();
             val p = new PrintStream(out)
-            template.invoke('render', p)
+            template.invoke('renderMain', p)
             assertTrue(template instanceof java.io.Serializable)
             assertEquals('testimportimplements', new String(out.toByteArray).trim)
         ]
@@ -307,7 +307,7 @@ class IntegrationTest {
 
     @Test def void testParseAndCompile_Extends() {
         ''' template extends java.util.ArrayList<String>;
-            #template render()
+            #renderer main()
                #( add("test");
                   add("extends"); )
                #for(text : this)
@@ -318,9 +318,23 @@ class IntegrationTest {
             val template = compiledClass.newInstance
             val out = new ByteArrayOutputStream();
             val p = new PrintStream(out)
-            template.invoke('render', p)
+            template.invoke('renderMain', p)
             assertTrue(template instanceof java.io.Serializable)
             assertEquals('<p>test</p><p>extends</p>', new String(out.toByteArray).replaceAll("( |\n)", ""))
+        ]
+    }
+
+    @Test def void testParseAndCompile_Render() {
+        ''' #renderer main()
+               #render strong("testrender")
+            #end
+            #renderer strong(String item)
+               <strong>$(item)</strong>
+            #end
+        '''.compile [
+            val out = new ByteArrayOutputStream();
+            compiledClass.newInstance.invoke('renderMain', new PrintStream(out))
+            assertEquals('<strong>testrender</strong>', new String(out.toByteArray).trim)
         ]
     }
 }
