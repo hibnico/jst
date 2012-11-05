@@ -129,7 +129,7 @@ class IntegrationTest {
 
     @Test def void testParseAndCompile_Script() {
         ''' #renderer main()
-              #( var name = "Foo";)
+              #{ var name = "Foo";}
               <title>$(name)</title>
             #end
         '''.compile [
@@ -141,12 +141,12 @@ class IntegrationTest {
 
     @Test def void testParseAndCompile_InlineElvis() {
         ''' #renderer main()
-              #( var name = "Foo";)
-              #( var name2 = null;)
+              #{ var name = "Foo";}
+              #{ var name2 = null;}
               <h1>$(name)</h1>
-              <h2>$!(name)</h2>
+              <h2>$?(name)</h2>
               <h3>$(name2)</h3>
-              <h4>$!(name2)</h4>
+              <h4>$?(name2)</h4>
             #end
         '''.compile [
             val out = new StringWriter()
@@ -188,7 +188,7 @@ class IntegrationTest {
 
     @Test def void testParseAndCompile_For() {
         ''' #renderer main()
-             #( var list = newArrayList("one", "two", "three", "four"); )
+             #{ var list = newArrayList("one", "two", "three", "four"); }
             <html>
               #for(String element : list)
                 <p>$(element)</p>
@@ -210,12 +210,12 @@ class IntegrationTest {
  
     @Test def void testParseAndCompile_Complex() {
         ''' #renderer main()
-             #( var nullString = null;
+             #{ var nullString = null;
                 var name = "Foo";
-                var list = newArrayList("one", "two", "three", "four"); )
+                var list = newArrayList("one", "two", "three", "four"); }
             <html>
               <i>$(nullString)</i>
-              <b>$!(nullString)</b>
+              <b>$?(nullString)</b>
               <title>$(name)</title>
               #for(String element : list)
                 #if(element.equals("one"))
@@ -247,9 +247,9 @@ class IntegrationTest {
     @Test def void testParseAndCompile_Import() {
         ''' import java.io.File;
             #renderer main()
-                #( var file = new File('testimport');
+                #{ var file = new File('testimport');
                    var name = file.getName();
-                 )
+                 }
                 $(name)
             #end
         '''.compile [
@@ -274,7 +274,7 @@ class IntegrationTest {
     @Test def void testParseAndCompile_Method() {
         ''' String getString() { return "testmethod"; }
             #renderer main()
-                #( var v = getString(); )
+                #{ var v = getString(); }
                 $(v)
             #end
         '''.compile [
@@ -316,8 +316,8 @@ class IntegrationTest {
     @Test def void testParseAndCompile_Extends() {
         ''' template extends java.util.ArrayList<String>;
             #renderer main()
-               #( add("test");
-                  add("extends"); )
+               #{ add("test");
+                  add("extends"); }
                #for(text : this)
                   <p>$(text)</p>
                #end

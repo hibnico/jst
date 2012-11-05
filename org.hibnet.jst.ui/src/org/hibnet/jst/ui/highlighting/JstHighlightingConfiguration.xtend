@@ -25,14 +25,20 @@ class JstHighlightingConfiguration extends XbaseHighlightingConfiguration {
 
     public static val TEXT = 'jst.text'
 
-    public static val DIRECTIVES = 'jst.directives'
+    public static val DIRECTIVE = 'jst.directive'
 
     public static val ESCAPED = 'jst.escaped'
 
+    public static val DELIMITER = 'jst.delimiter'
+
+    public static val KEYWORD = 'jst.keyword'
+
 	override configure(IHighlightingConfigurationAcceptor acceptor) {
         acceptor.acceptDefaultHighlighting(TEXT, 'Text', staticText)
-        acceptor.acceptDefaultHighlighting(DIRECTIVES, 'Directives', staticDirectives)
+        acceptor.acceptDefaultHighlighting(DIRECTIVE, 'Directive', staticDirective)
         acceptor.acceptDefaultHighlighting(ESCAPED, 'Escaped', staticEscapedText)
+        acceptor.acceptDefaultHighlighting(DELIMITER, 'Delimiter', staticDelimiter)
+        acceptor.acceptDefaultHighlighting(KEYWORD, 'Keyword', staticKeyword)
 		super.configure([id, name, style| 
 			style.backgroundColor = new RGB(240, 240, 240)
 			acceptor.acceptDefaultHighlighting(id, name, style)
@@ -45,7 +51,7 @@ class JstHighlightingConfiguration extends XbaseHighlightingConfiguration {
         ]
     }
 
-    def TextStyle staticDirectives() {
+    def TextStyle staticDirective() {
         defaultTextStyle.copy => [
             color = new RGB(0, 20, 90)
             backgroundColor = new RGB(240, 240, 240)
@@ -57,6 +63,20 @@ class JstHighlightingConfiguration extends XbaseHighlightingConfiguration {
         defaultTextStyle.copy => [
             color = new RGB(0, 0, 0)
             style = SWT::BOLD;
+        ]
+    }
+
+    def TextStyle staticDelimiter() {
+        defaultTextStyle.copy => [
+            color = new RGB(0, 0, 0)
+            backgroundColor = new RGB(240, 240, 240)
+            style = SWT::BOLD;
+        ]
+    }
+
+    def TextStyle staticKeyword() {
+        keywordTextStyle.copy => [
+            backgroundColor = new RGB(240, 240, 240)
         ]
     }
 

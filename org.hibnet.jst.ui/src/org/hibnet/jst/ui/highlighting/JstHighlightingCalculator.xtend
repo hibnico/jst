@@ -44,15 +44,44 @@ class JstHighlightingCalculator extends XbaseHighlightingCalculator {
 	override doProvideHighlightingFor(XtextResource resource, IHighlightedPositionAcceptor acceptor) {
 		super.doProvideHighlightingFor(resource, acceptor)
 		for (leafNode : resource.parseResult.rootNode.leafNodes) {
+
 			if (isRule(leafNode, grammarAccess.TEXTRule)) {
+
 				acceptor.addPosition(leafNode.offset, leafNode.length, TEXT)
-			} else if (isRule(leafNode, grammarAccess.BRACE_OPENRule, grammarAccess.BRACE_CLOSERule, grammarAccess.DIRECTIVERule,
-			    grammarAccess.DIRECTIVE_ECHORule, grammarAccess.DIRECTIVE_ECHO_ELVISRule, grammarAccess.DIRECTIVE_ELSEIFRule, grammarAccess.DIRECTIVE_ELSERule,
-			    grammarAccess.DIRECTIVE_ENDRule, grammarAccess.DIRECTIVE_FORRule, grammarAccess.DIRECTIVE_IFRule, grammarAccess.DIRECTIVE_RENDERERRule,
-			    grammarAccess.DIRECTIVE_RENDERRule)) {
-                acceptor.addPosition(leafNode.offset, leafNode.length, DIRECTIVES)
-            } else if (isRule(leafNode, grammarAccess.DOLLARRule, grammarAccess.SHARPRule)) {
-                acceptor.addPosition(leafNode.offset, leafNode.length, ESCAPED)              
+
+            } else if (isRule(leafNode, grammarAccess.ABSTRACTRule)) {
+
+                acceptor.addPosition(leafNode.offset, leafNode.length, KEYWORD)
+
+            } else if (isRule(leafNode, grammarAccess.DIRECTIVE_ELSERule,
+                                        grammarAccess.DIRECTIVE_ENDRule,
+                                        grammarAccess.DIRECTIVE_RENDERERRule,
+                                        grammarAccess.DIRECTIVE_RENDERRule)) {
+
+                acceptor.addPosition(leafNode.offset, leafNode.length, DIRECTIVE)
+
+            } else if (isRule(leafNode, grammarAccess.DIRECTIVE_SCRIPTRule,
+                                        grammarAccess.DIRECTIVE_ECHORule,
+                                        grammarAccess.DIRECTIVE_ECHO_ELVISRule,
+                                        grammarAccess.DIRECTIVE_ELSEIFRule,
+                                        grammarAccess.DIRECTIVE_FORRule,
+                                        grammarAccess.DIRECTIVE_IFRule)) {
+
+                acceptor.addPosition(leafNode.offset, leafNode.length - 1, DIRECTIVE)
+                acceptor.addPosition(leafNode.offset + leafNode.length - 1, 1, DELIMITER)
+
+            } else if (isRule(leafNode, grammarAccess.PARENTHESE_OPENRule,
+                                        grammarAccess.PARENTHESE_CLOSERule,
+                                        grammarAccess.CURLY_BRACKET_OPENRule,
+                                        grammarAccess.CURLY_BRACKET_CLOSERule)) {
+
+                acceptor.addPosition(leafNode.offset, leafNode.length, DELIMITER)
+
+            } else if (isRule(leafNode, grammarAccess.DOLLARRule,
+                                        grammarAccess.SHARPRule)) {
+
+                acceptor.addPosition(leafNode.offset, leafNode.length, ESCAPED)
+
             }
 		}
 	}

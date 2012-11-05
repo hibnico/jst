@@ -33,6 +33,10 @@ public class JstLexerImpl extends InternalJstLexer {
 
 	private int parenthesisStackSize = 0;
 
+	private int curlyBracketStackSize = 0;
+
+	private boolean inScript = false;
+
 	public JstLexerImpl() {
 		super();
 	}
@@ -65,13 +69,13 @@ public class JstLexerImpl extends InternalJstLexer {
 							abstractRenderer = true;
 						}
 						break;
-					case RULE_BRACE_OPEN:
+					case RULE_PARENTHESE_OPEN:
 						if (rendererDef) {
 							rendererDef = false;
 						}
 						parenthesisStackSize++;
 						break;
-					case RULE_BRACE_CLOSE:
+					case RULE_PARENTHESE_CLOSE:
 						parenthesisStackSize--;
 						if (parenthesisStackSize == 0) {
 							directiveParameters = false;
@@ -83,6 +87,20 @@ public class JstLexerImpl extends InternalJstLexer {
 						}
 						break;
 				}
+			} else if (inScript) {
+				switch (state.type) {
+					case RULE_CURLY_BRACKET_OPEN:
+						curlyBracketStackSize++;
+						break;
+					case RULE_CURLY_BRACKET_CLOSE:
+						curlyBracketStackSize--;
+						if (curlyBracketStackSize == 0) {
+							inScript = false;
+							rawText = true;
+						}
+						break;
+				}
+				
 			} else {
 				switch (state.type) {
 					case RULE_DOLLAR:
@@ -99,15 +117,23 @@ public class JstLexerImpl extends InternalJstLexer {
 						break;
 					case RULE_DIRECTIVE_RENDERER:
 						rendererDef = true;
+						directiveStackSize++;
+						directiveParameters = true;
+						break;
 					case RULE_DIRECTIVE_FOR:
 					case RULE_DIRECTIVE_IF:
+						parenthesisStackSize++;
 						directiveStackSize++;
 						directiveParameters = true;
 						break;
 					case RULE_DIRECTIVE_ELSEIF:
-					case RULE_DIRECTIVE:
 					case RULE_DIRECTIVE_ECHO:
 					case RULE_DIRECTIVE_ECHO_ELVIS:
+					case RULE_DIRECTIVE_ECHO_UNESCAPE:
+					case RULE_DIRECTIVE_ECHO_ELVIS_UNESCAPE:
+						parenthesisStackSize++;
+						directiveParameters = true;
+						break;
 					case RULE_DIRECTIVE_RENDER:
 						directiveParameters = true;
 						break;
@@ -116,6 +142,10 @@ public class JstLexerImpl extends InternalJstLexer {
 						if (directiveStackSize > 0) {
 							rawText = true;
 						}
+						break;
+					case RULE_DIRECTIVE_SCRIPT:
+						curlyBracketStackSize++;
+						inScript  = true;
 						break;
 				}
 			}

@@ -49,7 +49,7 @@ The minimum: define a rendering method in your template
 Outputing expressions
 ~~~~~~~~~~~~~~~~~~~~~
 
-In the outputed content, juste use +$(aJavaExpression)+. And to output an empty string rather than 'null' on null values, use +$!(aMaybeNullExpression)+
+In the outputed content, juste use +$(aJavaExpression)+. And to output an empty string rather than 'null' on null values, use +$?(aMaybeNullExpression)+
 
 Exemple:
 --------------------------------------
@@ -73,12 +73,12 @@ Exemple:
 Scripting
 ~~~~~~~~~
 
-To declare variables or just do some Java code, do it within +#(...)+
+To declare variables or just do some Java code, do it within +#{...}+
 
 Exemple:
 --------------------------------------
 #renderer hello(String name)
-  #( var hello = "Hello " + name.trim() + " !" )
+  #{ var hello = "Hello " + name.trim() + " !" }
   $(hello)
 #end
 --------------------------------------
