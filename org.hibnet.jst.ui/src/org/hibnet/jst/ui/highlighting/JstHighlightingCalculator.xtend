@@ -50,8 +50,10 @@ class JstHighlightingCalculator extends XbaseHighlightingCalculator {
 			    grammarAccess.DIRECTIVE_ECHORule, grammarAccess.DIRECTIVE_ECHO_ELVISRule, grammarAccess.DIRECTIVE_ELSEIFRule, grammarAccess.DIRECTIVE_ELSERule,
 			    grammarAccess.DIRECTIVE_ENDRule, grammarAccess.DIRECTIVE_FORRule, grammarAccess.DIRECTIVE_IFRule, grammarAccess.DIRECTIVE_RENDERERRule,
 			    grammarAccess.DIRECTIVE_RENDERRule)) {
-                acceptor.addPosition(leafNode.offset, leafNode.length, DIRECTIVES)			    
-			}
+                acceptor.addPosition(leafNode.offset, leafNode.length, DIRECTIVES)
+            } else if (isRule(leafNode, grammarAccess.DOLLARRule, grammarAccess.SHARPRule)) {
+                acceptor.addPosition(leafNode.offset, leafNode.length, ESCAPED)              
+            }
 		}
 	}
 }

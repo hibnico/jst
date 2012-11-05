@@ -22,10 +22,14 @@ import javax.inject.Inject
 import org.eclipse.xtext.conversion.impl.KeywordAlternativeConverter
 import org.eclipse.xtext.conversion.ValueConverterException
 import org.eclipse.xtext.nodemodel.INode
+import org.eclipse.xtext.conversion.impl.STRINGValueConverter
+import org.eclipse.xtext.conversion.impl.AbstractValueConverter
 
 class JstValueConverterService extends XbaseValueConverterService {
 
     @Inject RendererIDValueConverter rendererIDValueConverter
+
+    @Inject DoubleTokenValueConverter doubleTokenValueConverter;
 
     @ValueConverter(rule = "RendererID")
     def IValueConverter<String> RenderID() {
@@ -35,6 +39,16 @@ class JstValueConverterService extends XbaseValueConverterService {
     @ValueConverter(rule = "RendererValidID")
     def IValueConverter<String> RenderValidID() {
         return rendererIDValueConverter;
+    }
+
+    @ValueConverter(rule = "DOLLAR")
+    def IValueConverter<String> DOLLAR() {
+        return doubleTokenValueConverter;
+    }
+
+    @ValueConverter(rule = "SHARP")
+    def IValueConverter<String> SHARP() {
+        return doubleTokenValueConverter;
     }
 }
 
@@ -46,6 +60,18 @@ class RendererIDValueConverter extends KeywordAlternativeConverter {
     
     override toValue(String string, INode node) throws ValueConverterException {
         "render" + super.toValue(string, node).toFirstUpper
+    }
+    
+}
+
+class DoubleTokenValueConverter extends AbstractValueConverter<String> {
+
+    override toString(String value) throws ValueConverterException {
+        value + value
+    }
+
+    override toValue(String string, INode node) throws ValueConverterException {
+        string.substring(1)
     }
     
 }

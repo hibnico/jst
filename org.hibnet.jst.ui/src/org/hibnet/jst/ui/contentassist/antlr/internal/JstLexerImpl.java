@@ -49,7 +49,7 @@ public class JstLexerImpl extends InternalJstLexer {
 	public void mTokens() throws RecognitionException {
 		char next = (char) input.LA(1);
 		char nextnext = (char) input.LA(2);
-		if (rawText && (next != '#' || nextnext == '#') && (next != '$' || nextnext == '$')) {
+		if (rawText && next != '#' && next != '$') {
 			actual_mRULE_TEXT();
 		} else if (rawText && next == '#' && nextnext == '*') {
 			readMultiLineComment();
@@ -85,6 +85,10 @@ public class JstLexerImpl extends InternalJstLexer {
 				}
 			} else {
 				switch (state.type) {
+					case RULE_DOLLAR:
+					case RULE_SHARP:
+						rawText = true;
+						break;
 					case RULE_ABSTRACT:
 						if (rendererDef) {
 							abstractRenderer = true;
@@ -176,13 +180,7 @@ public class JstLexerImpl extends InternalJstLexer {
 			if (next != '#' && next != '$') {
 				input.consume();
 			} else {
-				int nextNext = input.LA(2);
-				if (next == '#' && nextNext == '#' || next == '$' && nextNext == '$') {
-					input.consume();
-					input.consume();
-				} else {
-					return;
-				}
+				return;
 			}
 		}
 	}

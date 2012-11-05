@@ -25,9 +25,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 import static org.junit.Assert.*
-import java.io.PrintStream
-import java.io.ByteArrayOutputStream
-import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 import java.io.StringWriter
 
@@ -47,6 +44,18 @@ class IntegrationTest {
             val out = new StringWriter()
             compiledClass.newInstance.invoke('renderMain', out)
             assertEquals('Hello World', out.toString.trim)
+        ]
+    }
+
+    @Test def void testParseAndCompile_Dollar() {
+        '''
+            #renderer main()
+            $$ ##
+            #end
+        '''.compile [
+            val out = new StringWriter()
+            compiledClass.newInstance.invoke('renderMain', out)
+            assertEquals('$ #', out.toString.trim)
         ]
     }
 

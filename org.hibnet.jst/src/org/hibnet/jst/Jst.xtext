@@ -95,7 +95,7 @@ RichStringPart returns xbase::XExpression:
 ;
 
 RichStringLiteral returns xbase::XStringLiteral:
-    {RichStringLiteral} value=TEXT
+    {RichStringLiteral} value=(TEXT | SHARP | DOLLAR)
 ;
 
 RichStringInlineExpr returns xbase::XExpression:
@@ -161,6 +161,14 @@ terminal DIRECTIVE_RENDER: '#render';
 terminal DIRECTIVE: '#';
 terminal DIRECTIVE_ECHO: '$';
 terminal DIRECTIVE_ECHO_ELVIS: '$!';
+
+terminal DOLLAR:
+    '$$'
+;
+
+terminal SHARP:
+    '##'
+;
 
 terminal TEXT:
 // we fake the generated parser so it never match it and we can handle it ourself
