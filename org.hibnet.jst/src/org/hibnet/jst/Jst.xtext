@@ -32,7 +32,7 @@ JstFile returns types::JvmGenericType:
     (
         members+=Field
       | members+=Method
-      | members+=Renderer
+      | renderers+=Renderer
     )*
 ;
 
@@ -63,12 +63,14 @@ enum Visibility returns types::JvmVisibility:
 // Renderer things
 //////////////////////////////////
 
-Renderer returns types::JvmOperation:
-    {Renderer}
-    DIRECTIVE_RENDERER simpleName=RendererID BRACE_OPEN (parameters+=JvmFormalParameter (',' parameters+=JvmFormalParameter)*)? BRACE_CLOSE
+Renderer:
+    DIRECTIVE_RENDERER simpleName=RendererID BRACE_OPEN (parameters+=RendererParameter (',' parameters+=RendererParameter)*)? BRACE_CLOSE
     expression=RichString
     DIRECTIVE_END
 ;
+
+RendererParameter:
+    (parameterType=JvmTypeReference)? name=ValidID;
 
 RichString returns xbase::XBlockExpression:
     {RichString}
