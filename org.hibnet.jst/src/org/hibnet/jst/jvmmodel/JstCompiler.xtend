@@ -21,7 +21,6 @@ import org.eclipse.xtext.xbase.XExpression
 import org.eclipse.xtext.xbase.compiler.XbaseCompiler
 import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable
 import org.eclipse.xtext.xbase.featurecalls.IdentifiableSimpleNameProvider
-import org.eclipse.xtext.xbase.impl.FeatureCallToJavaMapping
 import org.hibnet.jst.jst.RichString
 import org.hibnet.jst.jst.RichStringForLoop
 import org.hibnet.jst.jst.RichStringIf
@@ -34,8 +33,8 @@ class JstCompiler extends XbaseCompiler {
     @Inject
     private IdentifiableSimpleNameProvider featureNameProvider;
 
-    @Inject
-    private FeatureCallToJavaMapping featureCallToJavaMapping;
+//    @Inject
+//    private FeatureCallToJavaMapping featureCallToJavaMapping;
 
 	override protected doInternalToJavaStatement(XExpression expr, ITreeAppendable it, boolean isReferenced) {
 		switch expr {
@@ -95,34 +94,38 @@ class JstCompiler extends XbaseCompiler {
             RichStringRender : {
                 val name = featureNameProvider.getSimpleName(expr.feature);
                 append(name)
-                append("(out, ")
-                val List<XExpression> arguments = featureCallToJavaMapping.getActualArguments(expr);
+                append("(out")
+                // val List<XExpression> arguments = featureCallToJavaMapping.getActualArguments(expr);
+                val List<XExpression> arguments = expr.featureCallArguments;
                 if (!arguments.empty) {
                     append(", ")
                     appendArguments(arguments, it, true);                    
                 }
-                append(")")
+                append(");")
             }
 
             RichStringTemplateRender : {
-                val XExpression receiver = featureCallToJavaMapping.getActualReceiver(expr);
+                // val XExpression receiver = featureCallToJavaMapping.getActualReceiver(expr);
+                val XExpression receiver = expr.memberCallTarget;
                 prepareExpression(receiver, it);
-                for (XExpression arg : featureCallToJavaMapping.getActualArguments(expr)) {
+                // val List<XExpression> arguments = featureCallToJavaMapping.getActualArguments(expr);
+                val List<XExpression> arguments = expr.memberCallArguments;
+                for (XExpression arg : arguments) {
                     prepareExpression(arg, it);
                 }
                 newLine
                 internalToJavaExpression(receiver, it);
                 append(".");
-                appendTypeArguments(expr, it)
+                // TODO
+                // appendTypeArguments(expr, it)
                 val name = featureNameProvider.getSimpleName(expr.feature);
                 append(name)
-                append("(out, ")
-                val List<XExpression> arguments = featureCallToJavaMapping.getActualArguments(expr);
+                append("(out")
                 if (!arguments.empty) {
                     append(", ")
                     appendArguments(arguments, it, true);                    
                 }
-                append(")")
+                append(");")
             }
 
 			default :

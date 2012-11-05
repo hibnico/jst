@@ -24,6 +24,13 @@ import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
 import org.hibnet.jst.jst.Field
 import org.hibnet.jst.jst.JstFile
 import org.hibnet.jst.jst.Method
+import org.hibnet.jst.jst.RichStringRender
+import org.eclipse.xtext.xbase.XbaseFactory
+import org.hibnet.jst.jst.RichStringTemplateRender
+import org.eclipse.xtext.xbase.XExpression
+import org.eclipse.emf.ecore.EObject
+import org.eclipse.xtext.common.types.TypesFactory
+import org.eclipse.xtext.common.types.JvmFormalParameter
 
 /**
  * <p>Infers a JVM model from the source model.</p> 
@@ -31,6 +38,9 @@ import org.hibnet.jst.jst.Method
 class JstJvmModelInferrer extends AbstractModelInferrer {
 
 	@Inject extension JvmTypesBuilder
+
+    @Inject
+    private TypesFactory typesFactory;
 
    	def dispatch void infer(JstFile element, IJvmDeclaredTypeAcceptor acceptor, boolean isPreIndexingPhase) {
 
@@ -62,4 +72,29 @@ class JstJvmModelInferrer extends AbstractModelInferrer {
    		    }
 		]
 	}
+
+    def dispatch void infer(RichStringRender render, IJvmDeclaredTypeAcceptor acceptor, boolean isPreIndexingPhase) {
+        val call = XbaseFactory::eINSTANCE.createXFeatureCall
+        call.feature = render.feature
+        call.featureCallArguments += getOutParam(render)
+        call.featureCallArguments += render.featureCallArguments
+    }
+
+    def dispatch void infer(RichStringTemplateRender render, IJvmDeclaredTypeAcceptor acceptor, boolean isPreIndexingPhase) {
+        val call = XbaseFactory::eINSTANCE.createXMemberFeatureCall
+        call.memberCallTarget = render.memberCallTarget
+        call.feature = render.feature
+        call.memberCallArguments += getOutParam(render)
+        call.memberCallArguments += render.memberCallArguments
+    }
+    
+    def private XExpression getOutParam(EObject element) {
+        val featureCall = XbaseFactory::eINSTANCE.createXFeatureCall();
+        val JvmFormalParameter out = typesFactory.createJvmFormalParameter();
+        out.setName("out");
+        out.setParameterType(cloneWithProxies(element.newTypeRef(typeof(PrintStream))));
+        featureCall.setFeature(out)
+        return featureCall;
+    }
+    
 }

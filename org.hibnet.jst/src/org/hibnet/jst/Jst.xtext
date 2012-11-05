@@ -119,14 +119,12 @@ RichStringElseIf returns xbase::XIfExpression:
     (else=RichStringElseIf | DIRECTIVE_ELSE else=RichString)?
 ;
 
-RichStringRender returns xbase::XFeatureCall:
-    {RichStringRender}
+RichStringRender:
     DIRECTIVE_RENDER feature=[types::JvmIdentifiableElement|RendererValidID]
          BRACE_OPEN (featureCallArguments+=XExpression (',' featureCallArguments+=XExpression)* )? BRACE_CLOSE
 ;
 
-RichStringTemplateRender returns xbase::XMemberFeatureCall:
-    {RichStringTemplateRender}
+RichStringTemplateRender:
     DIRECTIVE_RENDER memberCallTarget=XPrimaryExpression '.' feature=[types::JvmIdentifiableElement|RendererValidID]
          BRACE_OPEN (memberCallArguments+=XExpression (',' memberCallArguments+=XExpression)*)? BRACE_CLOSE
 ;
