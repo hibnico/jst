@@ -131,6 +131,8 @@ public class JstLexerImpl extends InternalJstLexer {
 					case RULE_DIRECTIVE_ECHO_ELVIS:
 					case RULE_DIRECTIVE_ECHO_UNESCAPE:
 					case RULE_DIRECTIVE_ECHO_ELVIS_UNESCAPE:
+					case RULE_DIRECTIVE_ECHO_ESCAPE:
+					case RULE_DIRECTIVE_ECHO_ELVIS_ESCAPE:
 						parenthesisStackSize++;
 						directiveParameters = true;
 						break;

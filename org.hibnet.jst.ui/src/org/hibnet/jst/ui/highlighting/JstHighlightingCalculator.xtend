@@ -63,6 +63,10 @@ class JstHighlightingCalculator extends XbaseHighlightingCalculator {
             } else if (isRule(leafNode, grammarAccess.DIRECTIVE_SCRIPTRule,
                                         grammarAccess.DIRECTIVE_ECHORule,
                                         grammarAccess.DIRECTIVE_ECHO_ELVISRule,
+                                        grammarAccess.DIRECTIVE_ECHO_UNESCAPERule,
+                                        grammarAccess.DIRECTIVE_ECHO_ELVIS_UNESCAPERule,
+                                        grammarAccess.DIRECTIVE_ECHO_ESCAPERule,
+                                        grammarAccess.DIRECTIVE_ECHO_ELVIS_ESCAPERule,
                                         grammarAccess.DIRECTIVE_ELSEIFRule,
                                         grammarAccess.DIRECTIVE_FORRule,
                                         grammarAccess.DIRECTIVE_IFRule)) {
