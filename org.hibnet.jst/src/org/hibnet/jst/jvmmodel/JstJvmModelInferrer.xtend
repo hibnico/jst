@@ -31,6 +31,7 @@ import org.eclipse.xtext.xbase.XExpression
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.common.types.TypesFactory
 import org.eclipse.xtext.common.types.JvmFormalParameter
+import org.hibnet.jst.jst.AbstractRenderer
 
 /**
  * <p>Infers a JVM model from the source model.</p> 
@@ -67,7 +68,11 @@ class JstJvmModelInferrer extends AbstractModelInferrer {
                     for (parameter : renderer.parameters) {
                         parameters += element.toParameter(parameter.name, parameter.parameterType)
                     }
-                    body = renderer.getExpression()
+                    if (renderer instanceof AbstractRenderer) {
+                        setAbstract(true)                    
+                    } else {
+                        body = renderer.getExpression()                        
+                    }
                 ]
    		    }
 		]

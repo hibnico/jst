@@ -27,6 +27,8 @@ import org.junit.runner.RunWith
 import static org.junit.Assert.*
 import java.io.PrintStream
 import java.io.ByteArrayOutputStream
+import java.lang.reflect.Method
+import java.lang.reflect.Modifier
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(JstInjectorProvider))
@@ -348,6 +350,31 @@ class IntegrationTest {
             val out = new ByteArrayOutputStream();
             compiledClass.newInstance.invoke('renderMain', new PrintStream(out))
             assertEquals('<strong>testrender</strong>', new String(out.toByteArray).trim)
+        ]
+    }
+
+    @Test def void testParseAndCompile_Abstract() {
+        ''' abstract template;
+            #renderer main()
+               #render strong("testrender")
+            #end
+            #renderer abstract strong(String item)
+        '''.compile [
+            val methods = compiledClass.declaredMethods;
+            assertEquals(2, methods.size())
+            var Method mainMethod = null;
+            var Method strongMethod = null;
+            if (methods.get(0).name.equals("renderMain")) {
+                mainMethod = methods.get(0)
+                strongMethod = methods.get(1)
+            } else {
+                mainMethod = methods.get(1)
+                strongMethod = methods.get(0)
+            } 
+            assertEquals("renderMain", mainMethod.name)
+            assertFalse(mainMethod.synthetic)
+            assertEquals("renderStrong", strongMethod.name)
+            assertEquals(Modifier::ABSTRACT + Modifier::PUBLIC, strongMethod.modifiers)
         ]
     }
 }

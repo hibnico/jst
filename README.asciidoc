@@ -24,7 +24,6 @@ TODO
 - escaping: there is currently no escaping when outputing data in an html template.
 - while, do-while: these loops are not yet implemented
 - for(inst; condition; increm): currently for loops can only iterate on +Iterable+s (+for(item : list)+)
-- add a #abstracttemplate: same as #template, but generate an abstract method
 - add a servlet option: PrintStream out would come from the HttpServletResponse and HttpServletRequest would be available in the template
 
 Template Language
@@ -206,6 +205,24 @@ Exemple:
 #end
 --------------------------------------
 
+Abstract Renderer
+~~~~~~~~~~~~~~~~~
+
+As the template class, a renderer can be declared abstract. Just add the keyword +abstract+.
+
+Exemple:
+--------------------------------------
+abstract template;
+#renderer body(List<String> list)
+  <ul>
+  #for(i : list)
+    <li>#render item(i)</li>
+  #end
+  </ul>
+#end
+#renderer abstract item(String i)
+--------------------------------------
+
 Layout pattern
 ~~~~~~~~~~~~~~
 
@@ -217,7 +234,6 @@ Exemple:
 --------------------------------------
 import java.util.List;
 abstract template;
-abstract void renderItem(PrintStream out, String item);
 #renderer body(List<String> list)
   <ul>
   #for(i : list)
@@ -225,11 +241,12 @@ abstract void renderItem(PrintStream out, String item);
   #end
   </ul>
 #end
+#renderer abstract item(String i)
 --------------------------------------
 - item.jst
 --------------------------------------
 template extends LayoutJstTemplate;
-#renderer item(String item)
-  <i>$(item)</i>
+#renderer item(String i)
+  <i>$(i)</i>
 #end
 --------------------------------------

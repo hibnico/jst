@@ -23,6 +23,10 @@ public class JstLexerImpl extends InternalJstLexer {
 
 	private boolean rawText = false;
 
+	private boolean rendererDef = false;
+
+	private boolean abstractRenderer = false;
+
 	private boolean directiveParameters = false;
 
 	private int directiveStackSize = 0;
@@ -55,21 +59,42 @@ public class JstLexerImpl extends InternalJstLexer {
 			rawText = false;
 			super.mTokens();
 			if (directiveParameters) {
-				if (next == '(') {
-					parenthesisStackSize++;
-				} else if (next == ')') {
-					parenthesisStackSize--;
-					if (parenthesisStackSize == 0) {
-						directiveParameters = false;
-						rawText = true;
-					}
+				switch (state.type) {
+					case RULE_ABSTRACT:
+						if (rendererDef) {
+							abstractRenderer = true;
+						}
+						break;
+					case RULE_BRACE_OPEN:
+						if (rendererDef) {
+							rendererDef = false;
+						}
+						parenthesisStackSize++;
+						break;
+					case RULE_BRACE_CLOSE:
+						parenthesisStackSize--;
+						if (parenthesisStackSize == 0) {
+							directiveParameters = false;
+							if (abstractRenderer) {
+								rawText = false;
+							} else {
+								rawText = true;
+							}
+						}
+						break;
 				}
 			} else {
 				switch (state.type) {
+					case RULE_ABSTRACT:
+						if (rendererDef) {
+							abstractRenderer = true;
+						}
+						break;
 					case RULE_DIRECTIVE_ELSE:
 						rawText = true;
 						break;
 					case RULE_DIRECTIVE_RENDERER:
+						rendererDef = true;
 					case RULE_DIRECTIVE_FOR:
 					case RULE_DIRECTIVE_IF:
 						directiveStackSize++;

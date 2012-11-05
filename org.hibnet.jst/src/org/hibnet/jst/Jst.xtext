@@ -24,7 +24,7 @@ JstFile returns types::JvmGenericType:
     {JstFile}
     ('package' packageName=QualifiedName ';')?
     imports+=Import*
-    ( abstract?='abstract'? 'template'
+    ( abstract?=ABSTRACT? 'template'
          ('extends' superTypes+=JvmParameterizedTypeReference)?
          ('implements' superTypes+=JvmParameterizedTypeReference (',' superTypes+=JvmParameterizedTypeReference)* )?
          ';'
@@ -33,6 +33,7 @@ JstFile returns types::JvmGenericType:
         members+=Field
       | members+=Method
       | renderers+=Renderer
+      | renderers+=AbstractRenderer
     )*
 ;
 
@@ -47,7 +48,7 @@ Field returns types::JvmField:
 
 Method returns types::JvmOperation:
     {Method}
-    (visibility=Visibility? & (static?='static' | abstract?='abstract')? )
+    (visibility=Visibility? & (static?='static' | abstract?=ABSTRACT)? )
     ('<' typeParameters+=JvmTypeParameter (',' typeParameters+=JvmTypeParameter)* '>')?
     returnType=JvmTypeReference simpleName=ID
     BRACE_OPEN (parameters+=JvmFormalParameter (',' parameters+=JvmFormalParameter)*)? BRACE_CLOSE
@@ -67,6 +68,11 @@ Renderer:
     DIRECTIVE_RENDERER simpleName=RendererID BRACE_OPEN (parameters+=RendererParameter (',' parameters+=RendererParameter)*)? BRACE_CLOSE
     expression=RichString
     DIRECTIVE_END
+;
+
+AbstractRenderer returns Renderer:
+    {AbstractRenderer}
+    DIRECTIVE_RENDERER ABSTRACT simpleName=RendererID BRACE_OPEN (parameters+=RendererParameter (',' parameters+=RendererParameter)*)? BRACE_CLOSE
 ;
 
 RendererParameter:
@@ -142,6 +148,8 @@ RendererValidID:
 
 terminal BRACE_OPEN: '(';
 terminal BRACE_CLOSE: ')';
+
+terminal ABSTRACT: 'abstract';
 
 terminal DIRECTIVE_RENDERER: '#renderer';
 terminal DIRECTIVE_IF: '#if';
