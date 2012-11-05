@@ -77,24 +77,34 @@ class JstJvmModelInferrer extends AbstractModelInferrer {
                     }
                 ]
    		    }
-   		    element.members += element.toMethod("_write", element.newTypeRef(Void::TYPE)) [
+            element.members += element.toMethod("_jst_write", element.newTypeRef(Void::TYPE)) [
                 visibility = JvmVisibility::PRIVATE
                 parameters += element.toParameter("out", element.newTypeRef(typeof(Writer)))
                 parameters += element.toParameter("object", element.newTypeRef(typeof(Object)))
-                parameters += element.toParameter("printNull", element.newTypeRef(Boolean::TYPE))
                 exceptions += element.newTypeRef(typeof(IOException))
                 body = [
                     append('''
                         if (object == null) {
-                            if (printNull) {
-                                out.append("null");
-                            }
+                            out.append("null");
                         } else {
                             out.append(object.toString());
                         }
                     ''')
                 ]
-   		    ]
+            ]
+            element.members += element.toMethod("_jst_writeWithoutNull", element.newTypeRef(Void::TYPE)) [
+                visibility = JvmVisibility::PRIVATE
+                parameters += element.toParameter("out", element.newTypeRef(typeof(Writer)))
+                parameters += element.toParameter("object", element.newTypeRef(typeof(Object)))
+                exceptions += element.newTypeRef(typeof(IOException))
+                body = [
+                    append('''
+                        if (object != null) {
+                            out.append(object.toString());
+                        }
+                    ''')
+                ]
+            ]
 		]
 	}
 
