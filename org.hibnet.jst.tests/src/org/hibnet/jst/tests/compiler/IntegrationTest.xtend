@@ -158,6 +158,25 @@ class IntegrationTest {
         ]
     }
 
+    @Test def void testParseAndCompile_InlineUnescape() {
+        ''' #renderer main()
+              #{ var name = "Foo";}
+              #{ var name2 = null;}
+              <h1>$\\(name)</h1>
+              <h2>$?\\(name)</h2>
+              <h3>$\\(name2)</h3>
+              <h4>$?\\(name2)</h4>
+            #end
+        '''.compile [
+            val out = new StringWriter()
+            compiledClass.newInstance.invoke('renderMain', out)
+            assertEquals('''<h1>Foo</h1>
+              <h2>Foo</h2>
+              <h3>null</h3>
+              <h4></h4>'''.toString, out.toString.trim)
+        ]
+    }
+
     @Test def void testParseAndCompile_MultiLineComment() {
         ''' #renderer main()
               #* some comment *#

@@ -82,6 +82,10 @@ class JstCompiler extends XbaseCompiler {
                 newLine
                 if (expr.elvis) {
                     append('_jst_writeWithoutNull(out, ')
+                } else if (expr.elvisUnescape) {
+                    append('_jst_writeUnescapeWithoutNull(out, ')
+                } else if (expr.unescape) {
+                    append('_jst_writeUnescape(out, ')
                 } else {
                     append('_jst_write(out, ')
                 }

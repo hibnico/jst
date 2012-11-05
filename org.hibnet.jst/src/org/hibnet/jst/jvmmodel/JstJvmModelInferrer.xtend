@@ -85,11 +85,10 @@ class JstJvmModelInferrer extends AbstractModelInferrer {
                 body = [
                     append('''
                         if (object == null) {
-                            out.append("null");
+                          out.append("null");
                         } else {
-                            out.append(object.toString());
-                        }
-                    ''')
+                          out.append(_jst_escape(object.toString()));
+                        }''')
                 ]
             ]
             element.members += element.toMethod("_jst_writeWithoutNull", element.newTypeRef(Void::TYPE)) [
@@ -100,9 +99,43 @@ class JstJvmModelInferrer extends AbstractModelInferrer {
                 body = [
                     append('''
                         if (object != null) {
-                            out.append(object.toString());
-                        }
-                    ''')
+                          out.append(_jst_escape(object.toString()));
+                        }''')
+                ]
+            ]
+            element.members += element.toMethod("_jst_writeUnescape", element.newTypeRef(Void::TYPE)) [
+                visibility = JvmVisibility::PRIVATE
+                parameters += element.toParameter("out", element.newTypeRef(typeof(Writer)))
+                parameters += element.toParameter("object", element.newTypeRef(typeof(Object)))
+                exceptions += element.newTypeRef(typeof(IOException))
+                body = [
+                    append('''
+                        if (object == null) {
+                          out.append("null");
+                        } else {
+                          out.append(object.toString());
+                        }''')
+                ]
+            ]
+            element.members += element.toMethod("_jst_writeUnescapeWithoutNull", element.newTypeRef(Void::TYPE)) [
+                visibility = JvmVisibility::PRIVATE
+                parameters += element.toParameter("out", element.newTypeRef(typeof(Writer)))
+                parameters += element.toParameter("object", element.newTypeRef(typeof(Object)))
+                exceptions += element.newTypeRef(typeof(IOException))
+                body = [
+                    append('''
+                        if (object != null) {
+                          out.append(object.toString());
+                        }''')
+                ]
+            ]
+            element.members += element.toMethod("_jst_escape", element.newTypeRef(typeof(String))) [
+                visibility = JvmVisibility::PRIVATE
+                parameters += element.toParameter("in", element.newTypeRef(typeof(String)))
+                body = [
+                    append('''
+                        // TODO
+                        return in;''')
                 ]
             ]
 		]
