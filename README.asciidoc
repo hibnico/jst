@@ -21,16 +21,21 @@ Last but not least, JST is based on Xtext. Which means an Eclipse editor is alre
 TODO
 ----
 
-- escaping: there is currently no escaping when outputing data in an html template.
+- escaping: it is not possible to define a default escaping
 - while, do-while: these loops are not yet implemented
 - for(inst; condition; increm): currently for loops can only iterate on +Iterable+ (+for(item : list)+)
 - add a servlet option: the Writer would come from the HttpServletResponse and HttpServletRequest would be available in the template
 - try catch support ? #renderer cannot thow anything else than IOException for now.
 
+Dependencies
+------------
+
+Once generated, the templates need commons-lang at runtime.
+
 Template Language
 -----------------
 
-NB: the programming lnaguage is based on Xbase which a language close to Java, see http://www.eclipse.org/Xtext/documentation.html#xbaseLanguageRef_Introduction
+NB: the programming language is based on Xbase which is not Java but is close to it. For further documentation about that language, see http://www.eclipse.org/Xtext/documentation.html#xbaseLanguageRef_Introduction
 
 The minimum: define a rendering method in your template
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -67,6 +72,35 @@ Exemple:
 --------------------------------------
 #renderer account(int account, int amount)
   Account ##$(account) owns $(amount)$$
+#end
+--------------------------------------
+
+Escaping and unescaping
+~~~~~~~~~~~~~~~~~~~~~~~
+
+When rendering variables into the template, you may want to render your variables in the proper encoding of your generated files. For instance, chevrons should be replaced by +&lt;+ and +&gt;+ in html files. Each expression can be escaped individualy, it overrides the global escaping.
+
+Several encodings are available:
+
+- XML: use +$\xml(...)+ or +$?\xml(...)+
+- HTML: use +$\html(...)+ or +$?\html(...)+
+- JavaScript: use +$\js(...)+ or +$?\js(...)+
+- Java: use +$\java(...)+ or +$?\java(...)+
+- CSV: use +$\csv(...)+ or +$?\csv(...)+
+- SQL: use +$\sql(...)+ or +$?\sql(...)+
+
+You can also disable the global escaping and output your expression in a raw format. For that, use +$\\(...)+ or +$?\\(...)+
+
+Exemple:
+--------------------------------------
+#renderer main(String name, String htmlData, String script)
+<html><body>
+  Hello $\html(name) !
+  <p>$\\(htmlData)</p>
+  <script>
+  $?\js(script)
+  </script>
+</body></html>
 #end
 --------------------------------------
 

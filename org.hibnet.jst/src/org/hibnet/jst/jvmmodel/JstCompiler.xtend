@@ -80,16 +80,18 @@ class JstCompiler extends XbaseCompiler {
             RichStringInlineExpr : {
                 expr.expr.internalToJavaStatement(it, true)
                 newLine
-                if (expr.elvis) {
-                    append('_jst_writeWithoutNull(out, ')
-                } else if (expr.elvisUnescape) {
-                    append('_jst_writeUnescapeWithoutNull(out, ')
-                } else if (expr.unescape) {
-                    append('_jst_writeUnescape(out, ')
+                if (expr.unescape || expr.elvisUnescape) {
+                    append('_jst_write_unescape(out, ')
+                } else if (expr.escape != null) {
+                    append('_jst_write_escape_' + expr.escape + '(out, ')
+                } else if (expr.elvisEscape != null) {
+                    append('_jst_write_escape_' + expr.elvisEscape + '(out, ')
                 } else {
-                    append('_jst_write(out, ')
+                    append('_jst_write_escape(out, ')
                 }
                 expr.expr.internalToJavaExpression(it)
+                append(', ')
+                append((expr.elvis || expr.elvisUnescape || expr.elvisEscape != null).toString);
                 append(');')
             }
 
@@ -155,9 +157,9 @@ class JstCompiler extends XbaseCompiler {
         e.internalToJavaStatement(it, printable)
         newLine
         if (printable) {
-            append('_jst_write(out, ')
+            append('_jst_write_escape(out, ')
             e.internalToJavaExpression(it)
-            append(');')
+            append(', false);')
             newLine
         }
     }

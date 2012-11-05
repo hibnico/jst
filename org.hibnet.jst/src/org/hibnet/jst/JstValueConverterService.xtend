@@ -22,7 +22,6 @@ import javax.inject.Inject
 import org.eclipse.xtext.conversion.impl.KeywordAlternativeConverter
 import org.eclipse.xtext.conversion.ValueConverterException
 import org.eclipse.xtext.nodemodel.INode
-import org.eclipse.xtext.conversion.impl.STRINGValueConverter
 import org.eclipse.xtext.conversion.impl.AbstractValueConverter
 
 class JstValueConverterService extends XbaseValueConverterService {
@@ -30,6 +29,10 @@ class JstValueConverterService extends XbaseValueConverterService {
     @Inject RendererIDValueConverter rendererIDValueConverter
 
     @Inject DoubleTokenValueConverter doubleTokenValueConverter;
+
+    @Inject EchoEscapeValueConverter echoEscapeValueConverter;
+
+    @Inject EchoElvisEscapeValueConverter echoElvisEscapeValueConverter;
 
     @ValueConverter(rule = "RendererID")
     def IValueConverter<String> RenderID() {
@@ -50,6 +53,16 @@ class JstValueConverterService extends XbaseValueConverterService {
     def IValueConverter<String> SHARP() {
         return doubleTokenValueConverter;
     }
+
+    @ValueConverter(rule = "DIRECTIVE_ECHO_ESCAPE")
+    def IValueConverter<String> DIRECTIVE_ECHO_ESCAPE() {
+        return echoEscapeValueConverter;
+    }
+
+    @ValueConverter(rule = "DIRECTIVE_ECHO_ELVIS_ESCAPE")
+    def IValueConverter<String> DIRECTIVE_ECHO_ELVIS_ESCAPE() {
+        return echoElvisEscapeValueConverter;
+    }
 }
 
 class RendererIDValueConverter extends KeywordAlternativeConverter {
@@ -57,7 +70,7 @@ class RendererIDValueConverter extends KeywordAlternativeConverter {
     override toString(String value) throws ValueConverterException {
         super.toString(value).substring(6).toFirstLower
     }
-    
+
     override toValue(String string, INode node) throws ValueConverterException {
         "render" + super.toValue(string, node).toFirstUpper
     }
@@ -74,4 +87,28 @@ class DoubleTokenValueConverter extends AbstractValueConverter<String> {
         string.substring(1)
     }
     
+}
+
+class EchoEscapeValueConverter extends AbstractValueConverter<String> {
+
+    override toString(String value) throws ValueConverterException {
+        "$\\" + value + "("
+    }
+
+    override toValue(String string, INode node) throws ValueConverterException {
+        string.substring(2, string.length - 1)
+    }
+
+}
+
+class EchoElvisEscapeValueConverter extends AbstractValueConverter<String> {
+
+    override toString(String value) throws ValueConverterException {
+        "$?\\" + value + "("
+    }
+
+    override toValue(String string, INode node) throws ValueConverterException {
+        string.substring(3, string.length - 1)
+    }
+
 }

@@ -100,7 +100,13 @@ RichStringLiteral returns xbase::XStringLiteral:
 
 RichStringInlineExpr returns xbase::XExpression:
     {RichStringInlineExpr}
-    (DIRECTIVE_ECHO | elvis?=DIRECTIVE_ECHO_ELVIS | unescape?=DIRECTIVE_ECHO_UNESCAPE | elvisUnescape?=DIRECTIVE_ECHO_ELVIS_UNESCAPE)
+    (   DIRECTIVE_ECHO
+      | elvis?=DIRECTIVE_ECHO_ELVIS
+      | escape=DIRECTIVE_ECHO_ESCAPE
+      | elvisEscape=DIRECTIVE_ECHO_ELVIS_ESCAPE
+      | unescape?=DIRECTIVE_ECHO_UNESCAPE
+      | elvisUnescape?=DIRECTIVE_ECHO_ELVIS_UNESCAPE
+    )
     expr=XExpression PARENTHESE_CLOSE
 ;
 
@@ -166,6 +172,8 @@ terminal DIRECTIVE_ECHO: '$(';
 terminal DIRECTIVE_ECHO_ELVIS: '$?(';
 terminal DIRECTIVE_ECHO_UNESCAPE: '$\\\\(';
 terminal DIRECTIVE_ECHO_ELVIS_UNESCAPE: '$?\\\\(';
+terminal DIRECTIVE_ECHO_ESCAPE: '$\\' ('a'..'z')+ '(';
+terminal DIRECTIVE_ECHO_ELVIS_ESCAPE: '$?\\' ('a'..'z')+ '(';
 
 terminal DOLLAR:
     '$$'

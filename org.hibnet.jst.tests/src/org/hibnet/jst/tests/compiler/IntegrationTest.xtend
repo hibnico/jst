@@ -177,6 +177,32 @@ class IntegrationTest {
         ]
     }
 
+    @Test def void testParseAndCompile_InlineEscape() {
+        ''' #renderer main()
+              #{ var html = "<&éa>a";}
+              #{ var xml = "<&éa>a";}
+              #{ var js = "call('')";}
+              <html>$\\(html)</html>
+              <html>$\html(html)</html>
+              <xml>$\\(xml)</xml>
+              <xml>$\xml(xml)</xml>
+              <js>$\\(js)</js>
+              <js>$\js(js)</js>
+            #end
+        '''.compile [
+            val out = new StringWriter()
+            compiledClass.newInstance.invoke('renderMain', out)
+            assertEquals('''
+                <html><&éa>a</html>
+                <html>&lt;&amp;&eacute;a&gt;a</html>
+                <xml><&éa>a</xml>
+                <xml>&lt;&amp;&#233;a&gt;a</xml>
+                <js>call('')</js>
+                <js>call(\'\')</js>
+              '''.toString.replaceAll("( |\n)", ""), out.toString.replaceAll("( |\n)", ""))
+        ]
+    }
+
     @Test def void testParseAndCompile_MultiLineComment() {
         ''' #renderer main()
               #* some comment *#
