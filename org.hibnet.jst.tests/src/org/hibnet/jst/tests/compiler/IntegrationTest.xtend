@@ -29,6 +29,7 @@ import java.io.PrintStream
 import java.io.ByteArrayOutputStream
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
+import java.io.StringWriter
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(JstInjectorProvider))
@@ -43,10 +44,9 @@ class IntegrationTest {
             Hello World
             #end
         '''.compile [
-            val out = new ByteArrayOutputStream();
-            val p = new PrintStream(out)
-            compiledClass.newInstance.invoke('renderMain', p)
-            assertEquals('Hello World', new String(out.toByteArray).trim)
+            val out = new StringWriter()
+            compiledClass.newInstance.invoke('renderMain', out)
+            assertEquals('Hello World', out.toString.trim)
         ]
     }
 
@@ -57,10 +57,9 @@ class IntegrationTest {
             #end
             #end
         '''.compile [
-            val out = new ByteArrayOutputStream();
-            val p = new PrintStream(out)
-            compiledClass.newInstance.invoke('renderMain', p)
-            assertEquals('<h1>Hello</h1>', new String(out.toByteArray).trim)
+            val out = new StringWriter()
+            compiledClass.newInstance.invoke('renderMain', out)
+            assertEquals('<h1>Hello</h1>', out.toString.trim)
         ]
     }
 
@@ -73,10 +72,9 @@ class IntegrationTest {
                 #end
             #end
         '''.compile [
-            val out = new ByteArrayOutputStream();
-            val p = new PrintStream(out)
-            compiledClass.newInstance.invoke('renderMain', p)
-            assertEquals('<p>ok</p>', new String(out.toByteArray).trim)
+            val out = new StringWriter()
+            compiledClass.newInstance.invoke('renderMain', out)
+            assertEquals('<p>ok</p>', out.toString.trim)
         ]
     }
     
@@ -91,10 +89,9 @@ class IntegrationTest {
                 #end
             #end
         '''.compile [
-            val out = new ByteArrayOutputStream();
-            val p = new PrintStream(out)
-            compiledClass.newInstance.invoke('renderMain', p)
-            assertEquals('<h2>ok</h2>', new String(out.toByteArray).trim)
+            val out = new StringWriter()
+            compiledClass.newInstance.invoke('renderMain', out)
+            assertEquals('<h2>ok</h2>', out.toString.trim)
         ]
     }
 
@@ -103,10 +100,9 @@ class IntegrationTest {
               <i>$("Hello")</i>
             #end
         '''.compile [
-            val out = new ByteArrayOutputStream();
-            val p = new PrintStream(out)
-            compiledClass.newInstance.invoke('renderMain', p)
-            assertEquals('<i>Hello</i>', new String(out.toByteArray).trim)
+            val out = new StringWriter()
+            compiledClass.newInstance.invoke('renderMain', out)
+            assertEquals('<i>Hello</i>', out.toString.trim)
         ]
     }
 
@@ -116,10 +112,9 @@ class IntegrationTest {
             Hello $(name)
             #end
         '''.compile [
-            val out = new ByteArrayOutputStream();
-            val p = new PrintStream(out)
-            compiledClass.newInstance.invoke('renderMain', p, "John")
-            assertEquals('Hello John', new String(out.toByteArray).trim)
+            val out = new StringWriter()
+            compiledClass.newInstance.invoke('renderMain', out, "John")
+            assertEquals('Hello John', out.toString.trim)
         ]
     }
 
@@ -129,10 +124,9 @@ class IntegrationTest {
               <title>$(name)</title>
             #end
         '''.compile [
-            val out = new ByteArrayOutputStream();
-            val p = new PrintStream(out)
-            compiledClass.newInstance.invoke('renderMain', p)
-            assertEquals('<title>Foo</title>', new String(out.toByteArray).trim)
+            val out = new StringWriter()
+            compiledClass.newInstance.invoke('renderMain', out)
+            assertEquals('<title>Foo</title>', out.toString.trim)
         ]
     }
 
@@ -146,13 +140,12 @@ class IntegrationTest {
               <h4>$!(name2)</h4>
             #end
         '''.compile [
-            val out = new ByteArrayOutputStream();
-            val p = new PrintStream(out)
-            compiledClass.newInstance.invoke('renderMain', p)
+            val out = new StringWriter()
+            compiledClass.newInstance.invoke('renderMain', out)
             assertEquals('''<h1>Foo</h1>
               <h2>Foo</h2>
               <h3>null</h3>
-              <h4></h4>'''.toString, new String(out.toByteArray).trim)
+              <h4></h4>'''.toString, out.toString.trim)
         ]
     }
 
@@ -165,10 +158,9 @@ class IntegrationTest {
               comment *#
             #end
         '''.compile [
-            val out = new ByteArrayOutputStream();
-            val p = new PrintStream(out)
-            compiledClass.newInstance.invoke('renderMain', p)
-            assertEquals('''Hello World'''.toString, new String(out.toByteArray).trim)
+            val out = new StringWriter()
+            compiledClass.newInstance.invoke('renderMain', out)
+            assertEquals('''Hello World'''.toString, out.toString.trim)
         ]
     }
 
@@ -179,10 +171,9 @@ class IntegrationTest {
               #- some other comment
             #end
         '''.compile [
-            val out = new ByteArrayOutputStream();
-            val p = new PrintStream(out)
-            compiledClass.newInstance.invoke('renderMain', p)
-            assertEquals('''Hello World'''.toString, new String(out.toByteArray).trim)
+            val out = new StringWriter()
+            compiledClass.newInstance.invoke('renderMain', out)
+            assertEquals('''Hello World'''.toString, out.toString.trim)
         ]
     }
 
@@ -196,16 +187,15 @@ class IntegrationTest {
             </html>
             #end
         '''.compile [
-            val out = new ByteArrayOutputStream();
-            val p = new PrintStream(out)
-            compiledClass.newInstance.invoke('renderMain', p)
+            val out = new StringWriter()
+            compiledClass.newInstance.invoke('renderMain', out)
             assertEquals('''
                 <html>
                       <p>one</p>
                       <p>two</p>
                       <p>three</p>
                       <p>four</p>
-                </html>'''.toString.replaceAll("( |\n)", ""), new String(out.toByteArray).replaceAll("( |\n)", ""))
+                </html>'''.toString.replaceAll("( |\n)", ""), out.toString.replaceAll("( |\n)", ""))
         ]
     }
  
@@ -230,9 +220,8 @@ class IntegrationTest {
             </html>
             #end
         '''.compile [
-            val out = new ByteArrayOutputStream();
-            val p = new PrintStream(out)
-            compiledClass.newInstance.invoke('renderMain', p)
+            val out = new StringWriter()
+            compiledClass.newInstance.invoke('renderMain', out)
             assertEquals('''
                 <html>
                   <i>null</i>
@@ -242,7 +231,7 @@ class IntegrationTest {
                       <h2>two</h2>
                       <p>three</p>
                       <p>four</p>
-                </html>'''.toString.replaceAll("( |\n)", ""), new String(out.toByteArray).replaceAll("( |\n)", ""))
+                </html>'''.toString.replaceAll("( |\n)", ""), out.toString.replaceAll("( |\n)", ""))
         ]
     }
 
@@ -255,10 +244,9 @@ class IntegrationTest {
                 $(name)
             #end
         '''.compile [
-            val out = new ByteArrayOutputStream();
-            val p = new PrintStream(out)
-            compiledClass.newInstance.invoke('renderMain', p)
-            assertEquals('testimport', new String(out.toByteArray).trim)
+            val out = new StringWriter()
+            compiledClass.newInstance.invoke('renderMain', out)
+            assertEquals('testimport', out.toString.trim)
         ]
     }
 
@@ -268,10 +256,9 @@ class IntegrationTest {
                 $(field)
             #end
         '''.compile [
-            val out = new ByteArrayOutputStream();
-            val p = new PrintStream(out)
-            compiledClass.newInstance.invoke('renderMain', p)
-            assertEquals('testfield', new String(out.toByteArray).trim)
+            val out = new StringWriter()
+            compiledClass.newInstance.invoke('renderMain', out)
+            assertEquals('testfield', out.toString.trim)
         ]
     }
 
@@ -282,10 +269,9 @@ class IntegrationTest {
                 $(v)
             #end
         '''.compile [
-            val out = new ByteArrayOutputStream();
-            val p = new PrintStream(out)
-            compiledClass.newInstance.invoke('renderMain', p)
-            assertEquals('testmethod', new String(out.toByteArray).trim)
+            val out = new StringWriter()
+            compiledClass.newInstance.invoke('renderMain', out)
+            assertEquals('testmethod', out.toString.trim)
         ]
     }
 
@@ -296,11 +282,10 @@ class IntegrationTest {
             #end
         '''.compile [
             val template = compiledClass.newInstance
-            val out = new ByteArrayOutputStream();
-            val p = new PrintStream(out)
-            template.invoke('renderMain', p)
+            val out = new StringWriter()
+            template.invoke('renderMain', out)
             assertTrue(template instanceof java.io.Serializable)
-            assertEquals('testimplements', new String(out.toByteArray).trim)
+            assertEquals('testimplements', out.toString.trim)
         ]
     }
 
@@ -312,11 +297,10 @@ class IntegrationTest {
             #end
         '''.compile [
             val template = compiledClass.newInstance
-            val out = new ByteArrayOutputStream();
-            val p = new PrintStream(out)
-            template.invoke('renderMain', p)
+            val out = new StringWriter()
+            template.invoke('renderMain', out)
             assertTrue(template instanceof java.io.Serializable)
-            assertEquals('testimportimplements', new String(out.toByteArray).trim)
+            assertEquals('testimportimplements', out.toString.trim)
         ]
     }
 
@@ -331,11 +315,10 @@ class IntegrationTest {
             #end
         '''.compile [
             val template = compiledClass.newInstance
-            val out = new ByteArrayOutputStream();
-            val p = new PrintStream(out)
-            template.invoke('renderMain', p)
+            val out = new StringWriter()
+            template.invoke('renderMain', out)
             assertTrue(template instanceof java.io.Serializable)
-            assertEquals('<p>test</p><p>extends</p>', new String(out.toByteArray).replaceAll("( |\n)", ""))
+            assertEquals('<p>test</p><p>extends</p>', out.toString.replaceAll("( |\n)", ""))
         ]
     }
 
@@ -347,9 +330,9 @@ class IntegrationTest {
                <strong>$(item)</strong>
             #end
         '''.compile [
-            val out = new ByteArrayOutputStream();
-            compiledClass.newInstance.invoke('renderMain', new PrintStream(out))
-            assertEquals('<strong>testrender</strong>', new String(out.toByteArray).trim)
+            val out = new StringWriter()
+            compiledClass.newInstance.invoke('renderMain', out)
+            assertEquals('<strong>testrender</strong>', out.toString.trim)
         ]
     }
 
@@ -361,20 +344,14 @@ class IntegrationTest {
             #renderer abstract strong(String item)
         '''.compile [
             val methods = compiledClass.declaredMethods;
-            assertEquals(2, methods.size())
-            var Method mainMethod = null;
-            var Method strongMethod = null;
-            if (methods.get(0).name.equals("renderMain")) {
-                mainMethod = methods.get(0)
-                strongMethod = methods.get(1)
-            } else {
-                mainMethod = methods.get(1)
-                strongMethod = methods.get(0)
-            } 
-            assertEquals("renderMain", mainMethod.name)
-            assertFalse(mainMethod.synthetic)
-            assertEquals("renderStrong", strongMethod.name)
-            assertEquals(Modifier::ABSTRACT + Modifier::PUBLIC, strongMethod.modifiers)
+            var renderStringFound = false;
+            for (method : methods) {
+                if (method.name.equals("renderStrong")) {
+                    renderStringFound = true;
+                    assertEquals(Modifier::ABSTRACT + Modifier::PUBLIC, method.modifiers)                    
+                }
+            }
+            assertTrue(renderStringFound)
         ]
     }
 }

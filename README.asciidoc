@@ -24,7 +24,7 @@ TODO
 - escaping: there is currently no escaping when outputing data in an html template.
 - while, do-while: these loops are not yet implemented
 - for(inst; condition; increm): currently for loops can only iterate on +Iterable+s (+for(item : list)+)
-- add a servlet option: PrintStream out would come from the HttpServletResponse and HttpServletRequest would be available in the template
+- add a servlet option: the Writer would come from the HttpServletResponse and HttpServletRequest would be available in the template
 
 Template Language
 -----------------

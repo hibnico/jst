@@ -16,7 +16,7 @@
 package org.hibnet.jst.jvmmodel
 
 import com.google.inject.Inject
-import java.io.PrintStream
+import java.io.Writer
 import org.eclipse.xtext.common.types.JvmVisibility
 import org.eclipse.xtext.xbase.jvmmodel.AbstractModelInferrer
 import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
@@ -32,6 +32,7 @@ import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.common.types.TypesFactory
 import org.eclipse.xtext.common.types.JvmFormalParameter
 import org.hibnet.jst.jst.AbstractRenderer
+import java.io.IOException
 
 /**
  * <p>Infers a JVM model from the source model.</p> 
@@ -64,10 +65,11 @@ class JstJvmModelInferrer extends AbstractModelInferrer {
    		    for (renderer : element.renderers) {
    		        element.members += element.toMethod(renderer.simpleName, element.newTypeRef(Void::TYPE)) [
                     visibility = JvmVisibility::PUBLIC
-                    parameters += element.toParameter("out", renderer.newTypeRef(typeof(PrintStream)))
+                    parameters += element.toParameter("out", renderer.newTypeRef(typeof(Writer)))
                     for (parameter : renderer.parameters) {
                         parameters += element.toParameter(parameter.name, parameter.parameterType)
                     }
+                    exceptions += element.newTypeRef(typeof(IOException))
                     if (renderer instanceof AbstractRenderer) {
                         setAbstract(true)                    
                     } else {
@@ -75,6 +77,24 @@ class JstJvmModelInferrer extends AbstractModelInferrer {
                     }
                 ]
    		    }
+   		    element.members += element.toMethod("_write", element.newTypeRef(Void::TYPE)) [
+                visibility = JvmVisibility::PRIVATE
+                parameters += element.toParameter("out", element.newTypeRef(typeof(Writer)))
+                parameters += element.toParameter("object", element.newTypeRef(typeof(Object)))
+                parameters += element.toParameter("printNull", element.newTypeRef(Boolean::TYPE))
+                exceptions += element.newTypeRef(typeof(IOException))
+                body = [
+                    append('''
+                        if (object == null) {
+                            if (printNull) {
+                                out.append("null");
+                            }
+                        } else {
+                            out.append(object.toString());
+                        }
+                    ''')
+                ]
+   		    ]
 		]
 	}
 
@@ -97,7 +117,7 @@ class JstJvmModelInferrer extends AbstractModelInferrer {
         val featureCall = XbaseFactory::eINSTANCE.createXFeatureCall();
         val JvmFormalParameter out = typesFactory.createJvmFormalParameter();
         out.setName("out");
-        out.setParameterType(cloneWithProxies(element.newTypeRef(typeof(PrintStream))));
+        out.setParameterType(cloneWithProxies(element.newTypeRef(typeof(Writer))));
         featureCall.setFeature(out)
         return featureCall;
     }
