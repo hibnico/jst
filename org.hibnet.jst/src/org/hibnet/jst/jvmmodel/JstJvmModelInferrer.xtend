@@ -34,6 +34,7 @@ import org.eclipse.xtext.common.types.JvmFormalParameter
 import org.hibnet.jst.jst.AbstractRenderer
 import java.io.IOException
 import org.eclipse.xtext.common.types.JvmOperation
+import org.eclipse.xtext.xbase.XStringLiteral
 
 /**
  * <p>Infers a JVM model from the source model.</p> 
@@ -78,7 +79,6 @@ class JstJvmModelInferrer extends AbstractModelInferrer {
                     }
                 ]
    		    }
-            element.members += buildWriteMethod(element, "escape", "_jst_escape(")
             element.members += buildWriteMethod(element, "unescape", null)
             element.members += buildWriteMethod(element, "escape_xml", "org.apache.commons.lang.StringEscapeUtils.escapeXml(")
             element.members += buildWriteMethod(element, "escape_html", "org.apache.commons.lang.StringEscapeUtils.escapeHtml(")
@@ -86,21 +86,28 @@ class JstJvmModelInferrer extends AbstractModelInferrer {
             element.members += buildWriteMethod(element, "escape_java", "org.apache.commons.lang.StringEscapeUtils.escapeJava(")
             element.members += buildWriteMethod(element, "escape_csv", "org.apache.commons.lang.StringEscapeUtils.escapeCsv(")
             element.members += buildWriteMethod(element, "escape_sql", "org.apache.commons.lang.StringEscapeUtils.escapeSql(")
-            element.members += element.toMethod("_jst_escape", element.newTypeRef(typeof(String))) [
+
+            element.members +=  element.toMethod("_jst_write_escape", element.newTypeRef(Void::TYPE)) [
                 visibility = JvmVisibility::PRIVATE
-                parameters += element.toParameter("in", element.newTypeRef(typeof(String)))
+                parameters += element.toParameter("out", element.newTypeRef(typeof(Writer)))
+                parameters += element.toParameter("object", element.newTypeRef(typeof(Object)))
+                parameters += element.toParameter("elvis", element.newTypeRef(Boolean::TYPE))
+                exceptions += element.newTypeRef(typeof(IOException))
                 body = [
-                    append('''
-                        // TODO
-                        return in;''')
+                    var escape = getEscapeOption(element)
+                    if (escape == null) {
+                        escape = 'unescape'
+                    }
+                    append('_jst_write_escape_')
+                    append(escape)
+                    append('(out, object, elvis);')
                 ]
             ]
 		]
 	}
 
     def private JvmOperation buildWriteMethod(JstFile element, String escapeName, String escapeFunction) {
-        val methodName = ("_jst_write_" + escapeName);
-        return element.toMethod(methodName, element.newTypeRef(Void::TYPE)) [
+        return element.toMethod("_jst_write_" + escapeName, element.newTypeRef(Void::TYPE)) [
             visibility = JvmVisibility::PRIVATE
             parameters += element.toParameter("out", element.newTypeRef(typeof(Writer)))
             parameters += element.toParameter("object", element.newTypeRef(typeof(Object)))
@@ -123,6 +130,16 @@ class JstJvmModelInferrer extends AbstractModelInferrer {
             ]
         ]
     } 
+
+    def private String getEscapeOption(JstFile element) {
+        for (option : element.options) {
+            if (option.key.equals('escape') && option.value instanceof XStringLiteral) {
+                return (option.value as XStringLiteral).value
+            }
+        }
+        return null;
+    }
+
     def dispatch void infer(RichStringRender render, IJvmDeclaredTypeAcceptor acceptor, boolean isPreIndexingPhase) {
         val call = XbaseFactory::eINSTANCE.createXFeatureCall
         call.feature = render.feature

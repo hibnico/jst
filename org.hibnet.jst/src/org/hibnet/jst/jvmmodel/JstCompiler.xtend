@@ -27,6 +27,7 @@ import org.hibnet.jst.jst.RichStringIf
 import org.hibnet.jst.jst.RichStringInlineExpr
 import org.hibnet.jst.jst.RichStringRender
 import org.hibnet.jst.jst.RichStringTemplateRender
+import org.hibnet.jst.jst.RichStringLiteral
 
 class JstCompiler extends XbaseCompiler {
 
@@ -42,7 +43,7 @@ class JstCompiler extends XbaseCompiler {
                 var i = 0;
                 for (nestedExpression : expr.expressions) {
                     val printable = expr.printables.get(i) && isPrintable(nestedExpression)
-                    generatePrintExpr(nestedExpression, it, printable)
+                    generatePrintExpr(nestedExpression, it, printable, isEscape(nestedExpression))
                     i = i + 1
                 }
             }
@@ -149,15 +150,26 @@ class JstCompiler extends XbaseCompiler {
         }
     }
 
-    def private generatePrintExpr(XExpression e, ITreeAppendable it) {
-        generatePrintExpr(e, it, isPrintable(e))
+    def private isEscape(XExpression e) {
+        switch e {
+            RichStringLiteral : false
+            default: true
+        }
     }
 
-    def private generatePrintExpr(XExpression e, ITreeAppendable it, boolean printable) {
+    def private generatePrintExpr(XExpression e, ITreeAppendable it) {
+        generatePrintExpr(e, it, isPrintable(e), isEscape(e))
+    }
+
+    def private generatePrintExpr(XExpression e, ITreeAppendable it, boolean printable, boolean escape) {
         e.internalToJavaStatement(it, printable)
         newLine
         if (printable) {
-            append('_jst_write_escape(out, ')
+            if (escape) {
+                append('_jst_write_escape(out, ')
+            } else {
+                append('_jst_write_unescape(out, ')
+            }
             e.internalToJavaExpression(it)
             append(', false);')
             newLine

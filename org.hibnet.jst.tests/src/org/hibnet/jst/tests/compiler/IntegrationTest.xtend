@@ -203,6 +203,25 @@ class IntegrationTest {
         ]
     }
 
+    @Test def void testParseAndCompile_Escape() {
+        ''' template with escape = 'html';
+            #renderer main()
+              #{ var html = "<&éa>a";}
+              <html>$\\(html)</html>
+              <html>$\html(html)</html>
+              <html>$(html)</html>
+            #end
+        '''.compile [
+            val out = new StringWriter()
+            compiledClass.newInstance.invoke('renderMain', out)
+            assertEquals('''
+                <html><&éa>a</html>
+                <html>&lt;&amp;&eacute;a&gt;a</html>
+                <html>&lt;&amp;&eacute;a&gt;a</html>
+              '''.toString.replaceAll("( |\n)", ""), out.toString.replaceAll("( |\n)", ""))
+        ]
+    }
+
     @Test def void testParseAndCompile_MultiLineComment() {
         ''' #renderer main()
               #* some comment *#

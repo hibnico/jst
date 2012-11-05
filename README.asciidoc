@@ -21,7 +21,6 @@ Last but not least, JST is based on Xtext. Which means an Eclipse editor is alre
 TODO
 ----
 
-- escaping: it is not possible to define a default escaping
 - while, do-while: these loops are not yet implemented
 - for(inst; condition; increm): currently for loops can only iterate on +Iterable+ (+for(item : list)+)
 - add a servlet option: the Writer would come from the HttpServletResponse and HttpServletRequest would be available in the template
@@ -256,6 +255,24 @@ abstract template;
   </ul>
 #end
 #renderer abstract item(String i)
+--------------------------------------
+
+Template Options
+~~~~~~~~~~~~~~~~
+
+Options are available to modify globally the rendering methods. They are defined in the header of the template, on the line which defines the template. After the keyword +with+ comes a comma separated list of keys and values.
+
+The supported options are:
+
+- +escape+: defines how inline expressions should be escaped by default. Expected value: +'xml'+, +'html'+, +'js'+, +'java'+, +'csv'+, or +'sql'+.
+- +servlet+: changes the signature of the rendering method to accept an HttpServletRequest and an HttpServletResponse as parameters. Expected value: +true+ or +false+.
+
+Exemple:
+--------------------------------------
+template with escape = 'html', servlet = true;
+#renderer hello()
+  Hello World !
+#end
 --------------------------------------
 
 Layout pattern

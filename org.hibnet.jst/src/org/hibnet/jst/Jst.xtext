@@ -27,6 +27,7 @@ JstFile returns types::JvmGenericType:
     ( abstract?=ABSTRACT? 'template'
          ('extends' superTypes+=JvmParameterizedTypeReference)?
          ('implements' superTypes+=JvmParameterizedTypeReference (',' superTypes+=JvmParameterizedTypeReference)* )?
+         ('with' options+=JstOption (',' options+=JstOption)*)?
          ';'
     )?
     (
@@ -35,6 +36,17 @@ JstFile returns types::JvmGenericType:
       | renderers+=Renderer
       | renderers+=AbstractRenderer
     )*
+;
+
+JstOption:
+    key=ValidID '=' value=JstOptionValue
+;
+
+JstOptionValue returns xbase::XExpression:
+    XBooleanLiteral |
+    XNumberLiteral |
+    XNullLiteral |
+    XStringLiteral
 ;
 
 Import:
@@ -175,13 +187,8 @@ terminal DIRECTIVE_ECHO_ELVIS_UNESCAPE: '$?\\\\(';
 terminal DIRECTIVE_ECHO_ESCAPE: '$\\' ('a'..'z')+ '(';
 terminal DIRECTIVE_ECHO_ELVIS_ESCAPE: '$?\\' ('a'..'z')+ '(';
 
-terminal DOLLAR:
-    '$$'
-;
-
-terminal SHARP:
-    '##'
-;
+terminal DOLLAR: '$$';
+terminal SHARP: '##';
 
 terminal TEXT:
 // we fake the generated parser so it never match it and we can handle it ourself
