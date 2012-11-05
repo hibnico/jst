@@ -36,16 +36,16 @@ class JstCompiler extends XbaseCompiler {
 //    @Inject
 //    private FeatureCallToJavaMapping featureCallToJavaMapping;
 
-	override protected doInternalToJavaStatement(XExpression expr, ITreeAppendable it, boolean isReferenced) {
-		switch expr {
-			RichString : {
-			    var i = 0;
-				for (nestedExpression : expr.expressions) {
-				    val printable = expr.printables.get(i) && isPrintable(nestedExpression)
-				    generatePrintExpr(nestedExpression, it, printable)
+    override protected doInternalToJavaStatement(XExpression expr, ITreeAppendable it, boolean isReferenced) {
+        switch expr {
+            RichString : {
+                var i = 0;
+                for (nestedExpression : expr.expressions) {
+                    val printable = expr.printables.get(i) && isPrintable(nestedExpression)
+                    generatePrintExpr(nestedExpression, it, printable)
                     i = i + 1
-				}
-			}
+                }
+            }
 
             RichStringIf : {
                 expr.getIf.internalToJavaStatement(it, true)
@@ -63,25 +63,25 @@ class JstCompiler extends XbaseCompiler {
                 }
             }
 
-			RichStringForLoop : {
-				expr.forExpression.internalToJavaStatement(it, true)
+            RichStringForLoop : {
+                expr.forExpression.internalToJavaStatement(it, true)
                 newLine
-				val paramType = typeProvider.getTypeForIdentifiable(expr.declaredParam)
-				append('''for (final ''')
-				serialize(paramType, expr, it);
-				val forParam = declareVariable(expr.declaredParam, makeJavaIdentifier(expr.declaredParam.name))
-				append(''' «forParam» : ''')
-				internalToJavaExpression(expr.forExpression, it)
-				append(") {").increaseIndentation
-			    generatePrintExpr(expr.eachExpression, it)
-				decreaseIndentation.newLine.append("}")
-			}
+                val paramType = typeProvider.getTypeForIdentifiable(expr.declaredParam)
+                append('''for (final ''')
+                serialize(paramType, expr, it);
+                val forParam = declareVariable(expr.declaredParam, makeJavaIdentifier(expr.declaredParam.name))
+                append(''' «forParam» : ''')
+                internalToJavaExpression(expr.forExpression, it)
+                append(") {").increaseIndentation
+                generatePrintExpr(expr.eachExpression, it)
+                decreaseIndentation.newLine.append("}")
+            }
 
             RichStringInlineExpr : {
                 expr.expr.internalToJavaStatement(it, true)
                 newLine
                 if (expr.elvis) {
-                    append('_jst_writeWithoutNull(out, ')                    
+                    append('_jst_writeWithoutNull(out, ')
                 } else {
                     append('_jst_write(out, ')
                 }
@@ -97,7 +97,7 @@ class JstCompiler extends XbaseCompiler {
                 val List<XExpression> arguments = expr.featureCallArguments;
                 if (!arguments.empty) {
                     append(", ")
-                    appendArguments(arguments, it, true);                    
+                    appendArguments(arguments, it, true);
                 }
                 append(");")
             }
@@ -121,18 +121,18 @@ class JstCompiler extends XbaseCompiler {
                 append("(out")
                 if (!arguments.empty) {
                     append(", ")
-                    appendArguments(arguments, it, true);                    
+                    appendArguments(arguments, it, true);
                 }
                 append(");")
             }
 
-			default :
-				super.doInternalToJavaStatement(expr, it, isReferenced)
-		}
-	}
+            default :
+                super.doInternalToJavaStatement(expr, it, isReferenced)
+        }
+    }
 
-	def private isPrintable(XExpression e) {
-	    switch e {
+    def private isPrintable(XExpression e) {
+        switch e {
             RichString : false
             RichStringIf : false
             RichStringForLoop : false
@@ -140,14 +140,14 @@ class JstCompiler extends XbaseCompiler {
             RichStringRender: false
             RichStringTemplateRender: false
             default: true
-	    }
-	}
+        }
+    }
 
     def private generatePrintExpr(XExpression e, ITreeAppendable it) {
         generatePrintExpr(e, it, isPrintable(e))
     }
 
-	def private generatePrintExpr(XExpression e, ITreeAppendable it, boolean printable) {
+    def private generatePrintExpr(XExpression e, ITreeAppendable it, boolean printable) {
         e.internalToJavaStatement(it, printable)
         newLine
         if (printable) {
@@ -156,13 +156,13 @@ class JstCompiler extends XbaseCompiler {
             append(');')
             newLine
         }
-	}
+    }
 
-	override protected internalToConvertedExpression(XExpression obj, ITreeAppendable it) {
-		if (hasName(obj))
-			append(getName(obj))
-		else 
-			super.internalToConvertedExpression(obj, it) 
-	}
-	
+    override protected internalToConvertedExpression(XExpression obj, ITreeAppendable it) {
+        if (hasName(obj))
+            append(getName(obj))
+        else 
+            super.internalToConvertedExpression(obj, it) 
+    }
+
 }
