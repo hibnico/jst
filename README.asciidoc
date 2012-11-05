@@ -53,7 +53,7 @@ The minimum: define a rendering method in your template
 Outputing expressions
 ~~~~~~~~~~~~~~~~~~~~~
 
-In the outputed content, juste use +$(aJavaExpression)+. And to output an empty string rather than 'null' on null values, use +$?(aMaybeNullExpression)+
+In the outputed content, juste use +$(aJavaExpression)+. And to output an empty string rather than +null+ on null values, use +$?(aMaybeNullExpression)+
 
 Exemple:
 --------------------------------------
@@ -264,7 +264,7 @@ Options are available to modify globally the rendering methods. They are defined
 
 The supported options are:
 
-- +escape+: defines how inline expressions should be escaped by default. Expected value: +'xml'+, +'html'+, +'js'+, +'java'+, +'csv'+, or +'sql'+.
+- +escape+: defines how inline expressions should be escaped by default. Expected value: +''xml''+, +''html''+, +''js''+, +''java''+, +''csv''+, or +''sql''+.
 - +servlet+: changes the signature of the rendering method to accept an HttpServletRequest and an HttpServletResponse as parameters. Expected value: +true+ or +false+.
 
 Exemple:
