@@ -14,8 +14,8 @@
     limitations under the License.
 -->
 <ivy-module version="2.0">
-    <info organisation="org.apache.ant" module="ant-dsl">
-        <extends organisation="bundle" module="org.hibnet.jst" revision="1.0.0" location="org.hibnet.jst/META-INF/MANIFEST.MF"/>
+    <info organisation="org.hibnet" module="jst">
+        <extends organisation="bundle" module="org.hibnet.jst" revision="1.0.0" location="META-INF/MANIFEST.MF"/>
     </info>
     <configurations>
         <conf name="runtime" extends="default" />
