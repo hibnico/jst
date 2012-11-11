@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature id="org.hibnet.xjava.sdk"
+	label="Xjava SDK Feature "
+	version="1.0.0.qualifier">
+	<plugin
+			id="org.hibnet.xjava"
+			download-size="0"
+			install-size="0"
+			version="0.0.0"
+			unpack="false"/>
+	<plugin
+			id="org.hibnet.xjava.ui"
+			download-size="0"
+			install-size="0"
+			version="0.0.0"
+			unpack="false"/>
+</feature>

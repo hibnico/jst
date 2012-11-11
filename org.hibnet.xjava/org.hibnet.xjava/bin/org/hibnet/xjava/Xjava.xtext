@@ -1,0 +1,56 @@
+grammar org.hibnet.xjava.Xjava hidden(WS, ML_COMMENT, SL_COMMENT)
+
+import "http://www.eclipse.org/xtext/xbase/Xtype"
+import "http://www.eclipse.org/xtext/common/JavaVMTypes"
+import "http://www.eclipse.org/emf/2002/Ecore" as ecore
+
+JvmTypeReference:
+    JvmParameterizedTypeReference =>({JvmGenericArrayTypeReference.componentType=current} '['']')* 
+  | XFunctionTypeRef;
+
+XFunctionTypeRef:
+  ('(' (paramTypes+=JvmTypeReference (',' paramTypes+=JvmTypeReference)*)? ')')? '=>' returnType=JvmTypeReference;
+
+JvmParameterizedTypeReference:
+  type=[JvmType|QualifiedName] (=>'<' arguments+=JvmArgumentTypeReference (',' arguments+=JvmArgumentTypeReference)* '>')?;
+
+JvmArgumentTypeReference returns JvmTypeReference:
+    JvmTypeReference | JvmWildcardTypeReference;
+
+JvmWildcardTypeReference:
+  {JvmWildcardTypeReference} '?' (constraints+=JvmUpperBound | constraints+=JvmLowerBound)?;
+  
+JvmUpperBound : 
+ 'extends' typeReference=JvmTypeReference;
+
+JvmUpperBoundAnded returns JvmUpperBound: 
+ '&' typeReference=JvmTypeReference;
+
+JvmLowerBound :
+ 'super' typeReference=JvmTypeReference;
+
+JvmTypeParameter :
+  name=ValidID 
+  ((constraints+=JvmUpperBound (constraints+=JvmUpperBoundAnded)*) |
+   (constraints+=JvmLowerBound))?;
+
+QualifiedName:
+  ValidID ('.' ValidID)*;
+  
+ValidID:
+    ID;
+
+terminal ID:
+    '^'? ('a'..'z'|'A'..'Z'|'$'|'_') ('a'..'z'|'A'..'Z'|'$'|'_'|'0'..'9')*;
+    
+terminal STRING: 
+            '"' ( '\\' ('b'|'t'|'n'|'f'|'r'|'u'|'"'|"'"|'\\') | !('\\'|'"') )* '"' |
+            "'" ( '\\' ('b'|'t'|'n'|'f'|'r'|'u'|'"'|"'"|'\\') | !('\\'|"'") )* "'";
+             
+terminal ML_COMMENT: '/*' -> '*/';
+
+terminal SL_COMMENT: '//' !('\n'|'\r')* ('\r'? '\n')?;
+
+terminal WS: (' '|'\t'|'\r'|'\n')+;
+
+terminal ANY_OTHER: .;
