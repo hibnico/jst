@@ -13,19 +13,21 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hibnet.jst.validation
+package org.hibnet.jst;
 
-import org.eclipse.xtext.xbase.XExpression
-import org.eclipse.xtext.xbase.annotations.validation.XbaseWithAnnotationsJavaValidator
+import org.eclipse.xtext.conversion.ValueConverterException;
+import org.eclipse.xtext.conversion.impl.AbstractValueConverter;
+import org.eclipse.xtext.nodemodel.INode;
 
-class JstValidator extends XbaseWithAnnotationsJavaValidator {
+public class EchoElvisEscapeValueConverter extends AbstractValueConverter<String> {
 
-	override protected isImplicitReturn(XExpression expr) {
-		// workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=382879
-		false
+	@Override
+	public String toString(final String value) throws ValueConverterException {
+		return "$?\\" + value + "(";
 	}
-	
-	override checkInnerExpressions(XExpression expr) {
-		// disabled
+
+	@Override
+	public String toValue(final String string, final INode node) throws ValueConverterException {
+		return string.substring(3, string.length() - 1);
 	}
 }
