@@ -18,14 +18,14 @@
     <import file="common-build.xml" />
 
     <target name="build-all">
-        <ant antfile="${jst-root.dir}/org.hibnet.jst/build.xml" target="install" />
+        <ant antfile="${jst-root.dir}/org.hibnet.jst/build.xml" target="install" dir="${jst-root.dir}/org.hibnet.jst" />
 
         <!-- needed because the snapshot repo changed, we need to do better and avoid that -->
-        <ant antfile="${jst-root.dir}/org.hibnet.jst.ui/build.xml" target="update-deps" />
+        <ant antfile="${jst-root.dir}/org.hibnet.jst.ui/build.xml" target="update-deps" dir="${jst-root.dir}/org.hibnet.jst.ui" />
 
-        <ant antfile="${jst-root.dir}/org.hibnet.jst.ui/build.xml" target="install" />
+        <ant antfile="${jst-root.dir}/org.hibnet.jst.ui/build.xml" target="install" dir="${jst-root.dir}/org.hibnet.jst.ui"  />
 
-        <ant antfile="${jst-root.dir}/p2repo/build.xml" target="generate-snapshots-repo" />
+        <ant antfile="${jst-root.dir}/p2repo/build.xml" target="generate-snapshots-repo" dir="${jst-root.dir}/p2repo" />
     </target>
 
 </project>
