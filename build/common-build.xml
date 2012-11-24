@@ -15,9 +15,10 @@
 -->
 <project name="jst-common-build" xmlns:ivy="antlib:org.apache.ivy.ant">
 
-    <dirname property="jst-common-build" file="${ant.file.jst-common-build}" />
-    <property name="jst-root.dir" location="${jst-common-build}/.." />
+    <dirname property="jst-common-build.dir" file="${ant.file.jst-common-build}" />
+    <property name="jst-root.dir" location="${jst-common-build.dir}/.." />
     <property name="build-deps.dir" location="${jst-root.dir}/build-deps" />
+    <property name="p2repo.dir" location="${jst-root.dir}/p2repo" />
 
     <property name="ivy.version" value="2.4.0-alpha" />
 
@@ -51,7 +52,7 @@
     </target>
 
     <target name="ivy:configure" depends="init">
-        <ivy:configure file="${jst-common-build}/ivysettings.xml" />
+        <ivy:configure file="${jst-common-build.dir}/ivysettings.xml" />
     </target>
 
 </project>

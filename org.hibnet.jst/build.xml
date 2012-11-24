@@ -15,9 +15,11 @@
 -->
 <project name="jst" xmlns:ivy="antlib:org.apache.ivy.ant">
 
+    <import file="../build/common-build.xml" />
 	<import file="../build/common-build-plugin.xml" />
 
     <target name="ivy:resolve" depends="jst-common-build-plugin.ivy:resolve">
+        <ivy:cachepath pathid="compile.classpath" conf="compile" type="jar" uncompress="true" osgi="true" />
         <ivy:cachepath pathid="runtime.classpath" conf="runtime" type="jar" uncompress="true" osgi="true" />
         <ivy:cachepath pathid="generate.classpath" conf="generate" type="jar" uncompress="true" osgi="true" />
     </target>
@@ -30,25 +32,6 @@
             </classpath>
             <arg line="src/org/hibnet/jst/GenerateJst.mwe2" />
         </java>
-    </target>
-
-    <target name="build" depends="ivy:resolve" description="Full build of a jst jar">
-        <mkdir dir="${target.dir}/classes" />
-        <javac srcdir="${basedir}/src/:${basedir}/src-gen/:${basedir}/xtend-gen" destdir="${target.dir}/classes" debug="on" includeantruntime="false" source="1.6" target="1.6" classpathref="generate.classpath" />
-        <copy todir="${target.dir}/classes">
-            <fileset dir="${basedir}/src">
-                <exclude name="**/*.java" />
-                <exclude name="**/*.xtend" />
-            </fileset>
-            <fileset dir="${basedir}/src-gen">
-                <exclude name="**/*.java" />
-            </fileset>
-            <fileset dir="${basedir}/xtend-gen">
-                <exclude name="**/*.java" />
-            </fileset>
-            <fileset dir="${basedir}" includes="META-INF/**/*" />
-        </copy>
-        <jar destfile="${target.dir}/org.hibnet.jst.jar" basedir="${target.dir}/classes" />
     </target>
 
 </project>

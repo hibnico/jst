@@ -37,4 +37,62 @@
         <ivy:fixdeps tofile="${basedir}/ivy.xml" resolveId="update-deps" />
     </target>
 
+    <target name="build" depends="ivy:resolve" description="Build the jar">
+        <loadresource property="jst.symbolicname">
+            <file file="META-INF/MANIFEST.MF" />
+            <filterchain>
+                <linecontainsregexp>
+                    <regexp pattern="Bundle-SymbolicName:"/>
+                </linecontainsregexp>
+                <striplinebreaks />
+                <tokenfilter>
+                    <replaceregex pattern="Bundle-SymbolicName: (.*);.*" replace="\1" flags="gi" />
+                </tokenfilter>
+            </filterchain>
+        </loadresource>
+        <loadresource property="jst.version">
+            <file file="META-INF/MANIFEST.MF" />
+            <filterchain>
+                <linecontainsregexp>
+                    <regexp pattern="Bundle-Version:"/>
+                </linecontainsregexp>
+                <striplinebreaks />
+                <tokenfilter>
+                    <replaceregex pattern="Bundle-Version: (.*)\.qualifier" replace="\1" flags="gi" />
+                </tokenfilter>
+            </filterchain>
+        </loadresource>
+        <mkdir dir="${target.dir}/classes/META-INF" />
+        <tstamp />
+        <property name="jst.version.qualifier" value="dev" />
+        <property name="jst.version.full" value="${jst.version}.${DSTAMP}${TSTAMP}-${jst.version.qualifier}" />
+        <copy todir="${target.dir}/classes/META-INF" file="META-INF/MANIFEST.MF" overwrite="true">
+            <filterchain>
+                <tokenfilter>
+                    <replaceregex pattern="Bundle-Version: (.*)" replace="Bundle-Version: ${jst.version.full}" flags="gi" />
+                </tokenfilter>
+            </filterchain>
+        </copy>
+        <javac srcdir="${basedir}/src/:${basedir}/src-gen/" destdir="${target.dir}/classes" debug="on" includeantruntime="false" source="1.6" target="1.6" classpathref="compile.classpath" />
+        <copy todir="${target.dir}/classes">
+            <fileset dir="${basedir}/src">
+                <exclude name="**/*.java" />
+            </fileset>
+            <fileset dir="${basedir}/src-gen">
+                <exclude name="**/*.java" />
+            </fileset>
+            <fileset dir="${basedir}" includes="META-INF/**/*" />
+        </copy>
+        <jar destfile="${target.dir}/${jst.symbolicname}_${jst.version.full}.jar" basedir="${target.dir}/classes" manifest="${target.dir}/classes/META-INF/MANIFEST.MF" />
+    </target>
+
+    <target name="install" depends="build">
+        <mkdir dir="${p2repo.dir}/dist/snapshots/plugins" />
+        <delete failonerror="false">
+            <fileset dir="${p2repo.dir}/dist/snapshots/plugins" includes="${jst.symbolicname}_*.jar" />
+        </delete>
+        <copy file="${target.dir}/${jst.symbolicname}_${jst.version.full}.jar" todir="${p2repo.dir}/dist/snapshots/plugins" />
+        <ivy:buildobr baseDir="${p2repo.dir}/dist/snapshots/" out="${p2repo.dir}/dist/snapshots/obr.xml" indent="true" />
+    </target>
+
 </project>

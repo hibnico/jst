@@ -17,19 +17,22 @@
 
     <settings defaultResolver="all" defaultLatestStrategy="latest-osgi" />
 
-    <property name="caches.basedir" value="${ivy.default.ivy.user.dir}/repo-caches" />
+    <property name="caches.basedir" value="${ivy.settings.dir}/repo-caches" />
 
     <caches resolutionCacheDir="${ivy.default.ivy.user.dir}/resolution-cache">
         <cache name="eclipse-juno" basedir="${caches.basedir}/eclipse-juno" />
         <cache name="xtext" basedir="${caches.basedir}/xtext" />
+        <cache name="snapshots" basedir="${caches.basedir}/snapshots" />
     </caches>
 
     <resolvers>
+        <obr name="snapshots" repoXmlFile="${ivy.settings.dir}/../p2repo/dist/snapshots/obr.xml" requirementStrategy="first" />
 
         <updatesite name="eclipse-juno" url="http://download.eclipse.org/releases/juno" cache="eclipse-juno" requirementStrategy="first" />
         <updatesite name="xtext" url="http://download.itemis.com/updates/releases" cache="xtext" requirementStrategy="first" />
 
         <chain name="all" returnFirst="true">
+            <resolver ref="snapshots" />
             <resolver ref="eclipse-juno" />
             <resolver ref="xtext" />
         </chain>
