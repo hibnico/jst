@@ -26,6 +26,13 @@ TODO
 - add a servlet option: the Writer would come from the HttpServletResponse and HttpServletRequest would be available in the template
 - try catch support ? #renderer cannot thow anything else than IOException for now.
 
+Continuous Integration Build
+----------------------------
+
+Build can be found there: https://travis-ci.org/nlalevee/jst
+
+Status: image:https://secure.travis-ci.org/nlalevee/jst.png?branch=master
+
 Dependencies
 ------------
 
