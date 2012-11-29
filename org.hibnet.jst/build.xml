@@ -16,22 +16,35 @@
 <project name="jst" xmlns:ivy="antlib:org.apache.ivy.ant">
 
     <import file="../build/common-build.xml" />
-	<import file="../build/common-build-plugin.xml" />
+    <import file="../build/common-build-plugin.xml" />
 
     <target name="ivy:resolve" depends="jst-common-build-plugin.ivy:resolve">
-        <ivy:cachepath pathid="compile.classpath" conf="compile" type="jar" uncompress="true" osgi="true" />
-        <ivy:cachepath pathid="runtime.classpath" conf="runtime" type="jar" uncompress="true" osgi="true" />
         <ivy:cachepath pathid="generate.classpath" conf="generate" type="jar" uncompress="true" osgi="true" />
     </target>
 
-    <target name="generate-xtext" depends="ivy:resolve" description="Generate XText and Ecore files for the full plugin">
+    <target name="-compile-xtext-generator" depends="ivy:resolve">
+        <mkdir dir="${target.dir}/classes" />
+        <javac srcdir="${basedir}/src/:${basedir}/src-gen/" includes="org/hibnet/jst/ExtendedGenerator.java" destdir="${target.dir}/classes" debug="on" includeantruntime="false" source="1.6" target="1.6" classpathref="compile.classpath" />
+    </target>
+
+    <target name="generate-xtext" depends="-compile-xtext-generator" description="Generate XText and Ecore files for the full plugin">
         <java classname="org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher" dir="${basedir}" fork="true" failonerror="true">
+            <jvmarg line="-Xmx256M" />
             <classpath>
                 <pathelement path="${basedir}/src/" />
+                <pathelement path="${target.dir}/classes" />
                 <path refid="generate.classpath" />
             </classpath>
             <arg line="src/org/hibnet/jst/GenerateJst.mwe2" />
         </java>
+        <loadfile property="JstFactoryImpl.java" srcFile="src-gen/org/hibnet/jst/jst/impl/JstFactoryImpl.java">
+            <filterchain>
+                <tokenfilter>
+                    <replaceregex pattern="new JstFileImpl\(\);" replace="new JstFileImplCustom();" flags="gi"/>
+                </tokenfilter>
+            </filterchain>
+        </loadfile>
+        <echo file="src-gen/org/hibnet/jst/jst/impl/JstFactoryImpl.java" message="${JstFactoryImpl.java}" />
     </target>
 
 </project>

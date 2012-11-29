@@ -29,8 +29,13 @@
         <dependency org="bundle" name="com.ibm.icu" rev="4.4.2.v20110823" conf="default->default" />
         <dependency org="bundle" name="org.eclipse.ui.forms" rev="3.5.200.v20120521-2329" conf="default->default" />
 
+        <!-- force use of this version over the OTDT one -->
+        <dependency org="bundle" name="org.eclipse.jdt.core" rev="3.8.2.v20120814-155456" conf="*->default" force="true" />
+        <dependency org="bundle" name="org.eclipse.jdt.compiler.apt" rev="1.0.500.v20120522-1651" conf="*->default" force="true" />
+        <dependency org="bundle" name="org.eclipse.jdt.compiler.tool" rev="1.0.101.v20120522-1651" conf="*->default" force="true" />
+
         <!-- some optional dependency we do need -->
-        <dependency org="bundle" name="org.eclipse.emf.mwe2.lib" rev="2.2.0+" conf="generate->default" />
+        <dependency org="bundle" name="org.eclipse.emf.mwe2.lib" rev="2.3.0+" conf="generate->default" />
 
         <!-- provided -->
         <exclude org="package" module="javax.xml.parsers" />
@@ -41,6 +46,7 @@
         <exclude org="package" module="org.xml.sax.helpers" />
         <exclude org="package" module="org.xml.sax.ext" />
         <exclude org="package" module="org.w3c.dom" />
+        <exclude org="package" module="org.w3c.dom.css" />
         <exclude org="package" module="org.w3c.dom.events" />
         <exclude org="package" module="javax.annotation" />
     </dependencies>

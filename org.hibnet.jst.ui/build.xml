@@ -18,8 +18,4 @@
     <import file="../build/common-build.xml" />
     <import file="../build/common-build-plugin.xml" />
 
-    <target name="ivy:resolve" depends="jst-common-build-plugin.ivy:resolve">
-        <ivy:cachepath pathid="compile.classpath" conf="runtime" type="jar" uncompress="true" osgi="true" />
-    </target>
-
 </project>

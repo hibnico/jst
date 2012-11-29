@@ -29,7 +29,10 @@
     </target>
 
     <target name="ivy:resolve" depends="init,ivy:configure">
-        <ivy:resolve file="${basedir}/ivy.xml" conf="*" uncompress="true" />
+        <property name="ivy.resolve.confs" value="compile,runtime" />
+        <ivy:resolve file="${basedir}/ivy.xml" conf="${ivy.resolve.confs}" uncompress="true" />
+        <ivy:cachepath pathid="compile.classpath" conf="compile" type="jar" uncompress="true" osgi="true" />
+        <ivy:cachepath pathid="runtime.classpath" conf="runtime" type="jar" uncompress="true" osgi="true" />
     </target>
 
     <target name="update-deps" depends="init,ivy:configure" description="Update dependencies (to be called on ivy-manifest.xml or MANIFEST.MF change)">

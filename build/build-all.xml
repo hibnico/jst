@@ -13,11 +13,14 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<project name="jst-build-all">
+<project name="jst-build-all" default="build-all">
 
     <import file="common-build.xml" />
 
     <target name="build-all">
+        <!-- first, let's generate the code -->
+        <ant antfile="${jst-root.dir}/org.hibnet.jst/build.xml" target="generate-xtext" dir="${jst-root.dir}/org.hibnet.jst" />
+
         <ant antfile="${jst-root.dir}/org.hibnet.jst/build.xml" target="install" dir="${jst-root.dir}/org.hibnet.jst" />
 
         <!-- needed because the snapshot repo changed, we need to do better and avoid that -->
