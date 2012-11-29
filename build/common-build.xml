@@ -41,8 +41,7 @@
         <get src="https://builds.apache.org/pview/job/Ivy/lastSuccessfulBuild/artifact/trunk/build/artifact/jars/ivy.jar" dest="${build-deps.dir}/ivy-${ivy.version}.jar" usetimestamp="true" />
         <get src="http://antlr.org/download/antlr-3.4-complete.jar" dest="${build-deps.dir}/antlr-3.4-complete.jar" usetimestamp="true" />
         <get src="http://download.itemis.com/antlr-generator-3.2.0.jar" dest="${build-deps.dir}/antlr-generator-3.2.0.jar" usetimestamp="true" />
-        <get src="http://www.hibnet.org/download/jst/antlr3-task.zip" dest="${build-deps.dir}/antlr3-task.zip" usetimestamp="true" />
-        <!--get src="http://www.antlr.org/share/1169924912745/antlr3-task.zip" dest="${build-deps.dir}/antlr3-task.zip" usetimestamp="true" /-->
+        <get src="http://www.antlr.org/share/1169924912745/antlr3-task.zip" dest="${build-deps.dir}/antlr3-task.zip" usetimestamp="true" />
         <unzip src="${build-deps.dir}/antlr3-task.zip" dest="${build-deps.dir}" />
         <copy file="${build-deps.dir}/antlr-generator-3.2.0.jar" tofile="${jst-root.dir}/org.hibnet.jst/.antlr-generator-3.2.0.jar" />
     </target>
