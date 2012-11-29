@@ -30,7 +30,7 @@
 
     <target name="ivy:resolve" depends="init,ivy:configure">
         <property name="ivy.resolve.confs" value="compile,runtime" />
-        <ivy:resolve file="${basedir}/ivy.xml" conf="${ivy.resolve.confs}" uncompress="true" />
+        <ivy:resolve file="${basedir}/ivy.xml" conf="${ivy.resolve.confs}" type="jar" uncompress="true" />
         <ivy:cachepath pathid="compile.classpath" conf="compile" type="jar" uncompress="true" osgi="true" />
         <ivy:cachepath pathid="runtime.classpath" conf="runtime" type="jar" uncompress="true" osgi="true" />
     </target>
