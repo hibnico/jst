@@ -24,7 +24,7 @@
 
     <target name="-compile-xtext-generator" depends="ivy:resolve">
         <mkdir dir="${target.dir}/classes" />
-        <javac srcdir="${basedir}/src/:${basedir}/src-gen/" includes="org/hibnet/jst/ExtendedGenerator.java" destdir="${target.dir}/classes" debug="on" includeantruntime="false" source="1.6" target="1.6" classpathref="compile.classpath" />
+        <javac srcdir="${basedir}/src/" includes="org/hibnet/jst/ExtendedGenerator.java" destdir="${target.dir}/classes" debug="on" includeantruntime="false" source="1.6" target="1.6" classpathref="compile.classpath" />
     </target>
 
     <target name="generate-xtext" depends="-compile-xtext-generator" description="Generate XText and Ecore files for the full plugin">
