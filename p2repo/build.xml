@@ -13,7 +13,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<project name="jst-p2repo" xmlns:ivy="antlib:org.apache.ivy.ant">
+<project name="jst-p2repo" xmlns:ivy="antlib:org.apache.ivy.ant" xmlns:json="antlib:com.fasterxml.jackson.jsonpath.ant" xmlns:ac="antlib:net.sf.antcontrib" xmlns:http="antlib:org.apache.httpcomponents.ant">
 
     <import file="../build/common-build.xml" />
     <import file="../build/common-build-eclipse.xml" />
@@ -22,4 +22,81 @@
         <generate-p2-category p2repo="${basedir}/dist/snapshots/" category="${basedir}/category.xml" />
         <generate-p2-repo p2repo="${basedir}/dist/snapshots/" name="JST Plugins Repository" />
     </target>
+
+    <target name="upload-snapshots-repo" depends="init">
+        <github-get-download-list repo="nlalevee/jst" property="github.download.files" />
+        <github-delete-if-exists repo="nlalevee/jst" download-list="${github.download.files}" file="p2repo/snapshots/artifacts.xml" />
+        <github-delete-if-exists repo="nlalevee/jst" download-list="${github.download.files}" file="p2repo/snapshots/content.xml" />
+        <github-upload repo="nlalevee/jst" basedir="${basedir}/dist/" remotedir="p2repo/" file="snapshots/artifacts.xml" mimetype="application/xml" />
+        <github-upload repo="nlalevee/jst" basedir="${basedir}/dist/" remotedir="p2repo/" file="snapshots/content.xml" mimetype="application/xml" />
+    </target>
+
+    <!-- Upload a file to the github download API -->
+    <!-- http://developer.github.com/v3/repos/downloads/ -->
+    <macrodef name="github-get-download-list">
+        <attribute name="repo" />
+        <attribute name="property" />
+        <sequential>
+            <fail unless="github.oauth-token" message="GitHub OAuth Token required. Use the property 'github.oauth-token'" />
+            <echo message="Listing files in the github download area" />
+            <http:get uri="https://api.github.com/repos/@{repo}/downloads" expectedStatus="200" responseProperty="@{property}">
+                <header name="Authorization" value="token ${github.oauth-token}" />
+            </http:get>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="github-delete-if-exists">
+        <attribute name="repo" />
+        <attribute name="download-list" />
+        <attribute name="file" />
+        <sequential>
+            <fail unless="github.oauth-token" message="GitHub OAuth Token required. Use the property 'github.oauth-token'" />
+            <json:jsonpath json="@{download-list}" path="$.[?(@.name=='@{file}')].id" property="fileid.@{file}" />
+            <ac:if>
+                <isset property="fileid.@{file}" />
+                <then>
+                    <echo message="Deleting @{file}" />
+                    <http:delete uri="https://api.github.com/repos/@{repo}/downloads/${fileid.@{file}}" expectedStatus="204">
+                        <header name="Authorization" value="token ${github.oauth-token}" />
+                    </http:delete>
+                </then>
+            </ac:if>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="github-upload">
+        <attribute name="repo" />
+        <attribute name="basedir" />
+        <attribute name="remotedir" default="" />
+        <attribute name="file" />
+        <attribute name="mimetype" />
+        <sequential>
+            <fail unless="github.oauth-token" message="GitHub OAuth Token required. Use the property 'github.oauth-token'" />
+            <echo message="Creating @{file}" />
+            <length file="@{basedir}/@{file}" property="length.@{file}" />
+            <http:post uri="https://api.github.com/repos/@{repo}/downloads" expectedStatus="201" responseProperty="fileproperties.@{file}">
+                <header name="Authorization" value="token ${github.oauth-token}" />
+                <entity value="{ &quot;name&quot;: &quot;@{remotedir}@{file}&quot;, &quot;size&quot;: ${length.@{file}}, &quot;content_type&quot;: &quot;@{mimetype}&quot; }" />
+            </http:post>
+            <json:jsonpath json="${fileproperties.@{file}}" path="$.accesskeyid" property="fileproperties.accesskeyid.@{file}" />
+            <json:jsonpath json="${fileproperties.@{file}}" path="$.policy" property="fileproperties.policy.@{file}" />
+            <json:jsonpath json="${fileproperties.@{file}}" path="$.signature" property="fileproperties.signature.@{file}" />
+            <json:jsonpath json="${fileproperties.@{file}}" path="$.mime_type" property="fileproperties.mime_type.@{file}" />
+            <echo message="Uploading @{file}" />
+            <http:post uri="https://github.s3.amazonaws.com/" expectedStatus="201">
+                <multipartentity>
+                    <fieldpart name="key" value="downloads/@{repo}/@{remotedir}@{file}" />
+                    <fieldpart name="acl" value="public-read" />
+                    <fieldpart name="success_action_status" value="201" />
+                    <fieldpart name="Filename" value="@{remotedir}@{file}" />
+                    <fieldpart name="AWSAccessKeyId" value="${fileproperties.accesskeyid.@{file}}" />
+                    <fieldpart name="Policy" value="${fileproperties.policy.@{file}}" />
+                    <fieldpart name="Signature" value="${fileproperties.signature.@{file}}" />
+                    <fieldpart name="Content-Type" value="${fileproperties.mime_type.@{file}}" />
+                    <filepart name="file" filename="@{file}" file="@{basedir}/@{file}" mimetype="${fileproperties.mime_type.@{file}}" />
+                </multipartentity>
+            </http:post>
+        </sequential>
+    </macrodef>
+
 </project>

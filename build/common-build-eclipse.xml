@@ -113,11 +113,6 @@
                 <arg line="-categoryQualifier" />
                 <sysproperty key="eclipse.consoleLog" value="${eclipse.consoleLog}" />
             </java>
-            <loadfile property="ASL2-header" srcFile="${jst-common-build.dir}/ASL2-header.xml"/>
-            <!-- as we're at it, let's put the ASL header -->
-            <replaceregexp match="&lt;repository name='" replace="${ASL2-header}&lt;repository name='" flags="g">
-                <fileset dir="@{p2repo}" includes="*.xml" />
-            </replaceregexp>
         </sequential>
     </macrodef>
 
@@ -131,8 +126,10 @@
                 <arg line="-application org.eclipse.equinox.p2.publisher.FeaturesAndBundlesPublisher" />
                 <arg line="-metadataRepository ${@{p2repo}.url}" />
                 <arg line="-artifactRepository ${@{p2repo}.url}" />
-                <arg line="-metadataRepositoryName '@{name}'" />
-                <arg line="-artifactRepositoryName '@{name}'" />
+                <arg line="-metadataRepositoryName" />
+                <arg value="@{name}" />
+                <arg line="-metadataRepositoryName" />
+                <arg value="@{name}" />
                 <arg line="-source @{p2repo}" />
                 <sysproperty key="eclipse.consoleLog" value="${eclipse.consoleLog}" />
             </java>

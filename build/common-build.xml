@@ -28,9 +28,25 @@
         <condition property="build-deps.exist">
             <and>
                 <available file="${build-deps.dir}/antlr-3.4-complete.jar" />
+
                 <available file="${build-deps.dir}/antlr3-task/ant-antlr3.jar" />
+
                 <available file="${build-deps.dir}/ivy-${ivy.version}.jar" />
+
                 <available file="${build-deps.dir}/antlr-generator-3.2.0.jar" />
+
+                <available file="${build-deps.dir}/httpcore-4.2.3.jar" />
+                <available file="${build-deps.dir}/httpclient-4.2.2.jar" />
+                <available file="${build-deps.dir}/httpmime-4.2.2.jar" />
+                <available file="${build-deps.dir}/commons-logging-1.1.1.jar" />
+                <available file="${build-deps.dir}/httpant-4.0-SNAPSHOT.jar" />
+
+                <available file="${build-deps.dir}/ant-contrib-20020829.jar" />
+
+                <available file="${build-deps.dir}/jackson-jsonpath-2.1.0-SNAPSHOT.jar" />
+                <available file="${build-deps.dir}/jackson-core-2.1.1.jar" />
+                <available file="${build-deps.dir}/jackson-databind-2.1.1.jar" />
+                <available file="${build-deps.dir}/jackson-annotations-2.1.1.jar" />
             </and>
         </condition>
         <mkdir dir="${user.home}/.ivy2/lib/" />
@@ -38,12 +54,29 @@
 
     <target name="-download-build-deps" depends="-check-build-deps" unless="build-deps.exist">
         <mkdir dir="${build-deps.dir}" />
+
         <get src="https://builds.apache.org/pview/job/Ivy/lastSuccessfulBuild/artifact/trunk/build/artifact/jars/ivy.jar" dest="${build-deps.dir}/ivy-${ivy.version}.jar" usetimestamp="true" />
+
         <get src="http://antlr.org/download/antlr-3.4-complete.jar" dest="${build-deps.dir}/antlr-3.4-complete.jar" usetimestamp="true" />
+
         <get src="http://download.itemis.com/antlr-generator-3.2.0.jar" dest="${build-deps.dir}/antlr-generator-3.2.0.jar" usetimestamp="true" />
+        <copy file="${build-deps.dir}/antlr-generator-3.2.0.jar" tofile="${jst-root.dir}/org.hibnet.jst/.antlr-generator-3.2.0.jar" />
+
         <get src="http://www.antlr.org/share/1169924912745/antlr3-task.zip" dest="${build-deps.dir}/antlr3-task.zip" usetimestamp="true" />
         <unzip src="${build-deps.dir}/antlr3-task.zip" dest="${build-deps.dir}" />
-        <copy file="${build-deps.dir}/antlr-generator-3.2.0.jar" tofile="${jst-root.dir}/org.hibnet.jst/.antlr-generator-3.2.0.jar" />
+
+        <get src="http://repo1.maven.org/maven2/org/apache/httpcomponents/httpcore/4.2.3/httpcore-4.2.3.jar" dest="${build-deps.dir}/httpcore-4.2.3.jar" usetimestamp="true" />
+        <get src="http://repo1.maven.org/maven2/org/apache/httpcomponents/httpclient/4.2.2/httpclient-4.2.2.jar" dest="${build-deps.dir}/httpclient-4.2.2.jar" usetimestamp="true" />
+        <get src="http://repo1.maven.org/maven2/org/apache/httpcomponents/httpmime/4.2.2/httpmime-4.2.2.jar" dest="${build-deps.dir}/httpmime-4.2.2.jar" usetimestamp="true" />
+        <get src="http://repo1.maven.org/maven2/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar" dest="${build-deps.dir}/commons-logging-1.1.1.jar" usetimestamp="true" />
+        <get src="http://cloud.github.com/downloads/nlalevee/httpant/httpant-4.0-SNAPSHOT.jar" dest="${build-deps.dir}/httpant-4.0-SNAPSHOT.jar" usetimestamp="true" />
+
+        <get src="http://repo1.maven.org/maven2/ant-contrib/ant-contrib/20020829/ant-contrib-20020829.jar" dest="${build-deps.dir}/ant-contrib-20020829.jar" usetimestamp="true" />
+
+        <get src="http://cloud.github.com/downloads/nlalevee/jackson-jsonpath/jackson-jsonpath-2.1.0-SNAPSHOT.jar" dest="${build-deps.dir}/jackson-jsonpath-2.1.0-SNAPSHOT.jar" usetimestamp="true" />
+        <get src="http://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-core/2.1.1/jackson-core-2.1.1.jar" dest="${build-deps.dir}/jackson-core-2.1.1.jar" usetimestamp="true" />
+        <get src="http://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-databind/2.1.1/jackson-databind-2.1.1.jar" dest="${build-deps.dir}/jackson-databind-2.1.1.jar" usetimestamp="true" />
+        <get src="http://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-annotations/2.1.1/jackson-annotations-2.1.1.jar" dest="${build-deps.dir}/jackson-annotations-2.1.1.jar" usetimestamp="true" />
     </target>
 
     <target name="init" depends="-download-build-deps">
@@ -54,6 +87,24 @@
             </classpath>
         </taskdef>
         <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpath="${build-deps.dir}/ivy-${ivy.version}.jar" />
+        <taskdef resource="org/apache/httpcomponents/ant/antlib.xml" uri="antlib:org.apache.httpcomponents.ant">
+            <classpath>
+                <pathelement location="${build-deps.dir}/httpcore-4.2.3.jar" />
+                <pathelement location="${build-deps.dir}/httpclient-4.2.2.jar" />
+                <pathelement location="${build-deps.dir}/httpmime-4.2.2.jar" />
+                <pathelement location="${build-deps.dir}/commons-logging-1.1.1.jar" />
+                <pathelement location="${build-deps.dir}/httpant-4.0-SNAPSHOT.jar" />
+            </classpath>
+        </taskdef>
+        <taskdef resource="net/sf/antcontrib/antcontrib.properties" uri="antlib:net.sf.antcontrib" classpath="${build-deps.dir}/ant-contrib-20020829.jar" />
+        <taskdef resource="com/fasterxml/jackson/jsonpath/ant/antlib.xml" uri="antlib:com.fasterxml.jackson.jsonpath.ant">
+            <classpath>
+                <pathelement location="${build-deps.dir}/jackson-core-2.1.1.jar" />
+                <pathelement location="${build-deps.dir}/jackson-databind-2.1.1.jar" />
+                <pathelement location="${build-deps.dir}/jackson-annotations-2.1.1.jar" />
+                <pathelement location="${build-deps.dir}/jackson-jsonpath-2.1.0-SNAPSHOT.jar" />
+            </classpath>
+        </taskdef>
     </target>
 
     <target name="ivy:configure" depends="init">
