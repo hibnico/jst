@@ -121,6 +121,7 @@ public class JstLexerImpl extends InternalJstLexer {
 						directiveParameters = true;
 						break;
 					case RULE_DIRECTIVE_FOR:
+					case RULE_DIRECTIVE_WHILE:
 					case RULE_DIRECTIVE_IF:
 						parenthesisStackSize++;
 						directiveStackSize++;

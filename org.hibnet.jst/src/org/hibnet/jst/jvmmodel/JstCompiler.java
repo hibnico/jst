@@ -23,6 +23,7 @@ import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.xbase.XExpression;
 import org.eclipse.xtext.xbase.compiler.XbaseCompiler;
 import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable;
+import org.eclipse.xtext.xbase.controlflow.IEarlyExitComputer;
 import org.eclipse.xtext.xbase.featurecalls.IdentifiableSimpleNameProvider;
 import org.hibnet.jst.jst.RichString;
 import org.hibnet.jst.jst.RichStringForLoop;
@@ -31,11 +32,15 @@ import org.hibnet.jst.jst.RichStringInlineExpr;
 import org.hibnet.jst.jst.RichStringLiteral;
 import org.hibnet.jst.jst.RichStringRender;
 import org.hibnet.jst.jst.RichStringTemplateRender;
+import org.hibnet.jst.jst.RichStringWhileLoop;
 
 public class JstCompiler extends XbaseCompiler {
 
 	@Inject
 	private IdentifiableSimpleNameProvider featureNameProvider;
+
+	@Inject
+	private IEarlyExitComputer earlyExitComputer;
 
 	@Override
 	protected void doInternalToJavaStatement(final XExpression expr, final ITreeAppendable it,
@@ -77,6 +82,27 @@ public class JstCompiler extends XbaseCompiler {
 			internalToJavaExpression(richStringForLoop.getForExpression(), it);
 			it.append(") {").increaseIndentation();
 			generatePrintExpr(richStringForLoop.getEachExpression(), it);
+			it.decreaseIndentation().newLine().append("}");
+		} else if (expr instanceof RichStringWhileLoop) {
+			RichStringWhileLoop richStringWhileLoop = (RichStringWhileLoop) expr;
+			internalToJavaStatement(richStringWhileLoop.getPredicate(), it, true);
+			String varName = it.declareSyntheticVariable(expr, "_while");
+			it.newLine().append("boolean ").append(varName).append(" = ");
+			internalToJavaExpression(richStringWhileLoop.getPredicate(), it);
+			it.append(";");
+			it.newLine().append("while (");
+			it.append(varName);
+			it.append(") {").increaseIndentation();
+			it.openPseudoScope();
+			generatePrintExpr(richStringWhileLoop.getBody(), it);
+			internalToJavaStatement(richStringWhileLoop.getPredicate(), it, true);
+			it.newLine();
+			if (!earlyExitComputer.isEarlyExit(richStringWhileLoop.getBody())) {
+				it.append(varName).append(" = ");
+				internalToJavaExpression(richStringWhileLoop.getPredicate(), it);
+				it.append(";");
+			}
+			it.closeScope();
 			it.decreaseIndentation().newLine().append("}");
 		} else if (expr instanceof RichStringInlineExpr) {
 			RichStringInlineExpr richStringInlineExpr = (RichStringInlineExpr) expr;
@@ -136,8 +162,8 @@ public class JstCompiler extends XbaseCompiler {
 
 	private boolean isPrintable(XExpression e) {
 		if (e instanceof RichString || e instanceof RichStringIf || e instanceof RichStringForLoop
-				|| e instanceof RichStringInlineExpr || e instanceof RichStringRender
-				|| e instanceof RichStringTemplateRender) {
+				|| e instanceof RichStringWhileLoop || e instanceof RichStringInlineExpr
+				|| e instanceof RichStringRender || e instanceof RichStringTemplateRender) {
 			return false;
 		}
 		return true;
