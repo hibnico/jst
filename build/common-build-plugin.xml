@@ -70,7 +70,7 @@
             <fileset dir="${basedir}/src-gen">
                 <exclude name="**/*.java" />
             </fileset>
-            <fileset dir="${basedir}" includes="META-INF/**/*" />
+            <fileset dir="${basedir}" includes="META-INF/**/*,plugin.xml" />
         </copy>
         <jar destfile="${target.dir}/${jst.symbolicname}_${jst.version.full}.jar" basedir="${target.dir}/classes" manifest="${target.dir}/classes/META-INF/MANIFEST.MF" />
     </target>
