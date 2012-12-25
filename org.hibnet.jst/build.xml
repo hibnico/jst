@@ -45,6 +45,7 @@
             </filterchain>
         </loadfile>
         <echo file="src-gen/org/hibnet/jst/jst/impl/JstFactoryImpl.java" message="${JstFactoryImpl.java}" />
+        <delete file="src/org/hibnet/jst/jvmmodel/JstJvmModelInferrer.xtend" />
     </target>
 
 </project>
