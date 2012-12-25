@@ -99,40 +99,4 @@
         <property name="eclipse.classpath" refid="newest.equinox.launcher.path.id" />
     </target>
 
-    <macrodef name="generate-p2-category">
-        <attribute name="p2repo" />
-        <attribute name="category" />
-        <sequential>
-            <makeurl file="@{p2repo}" property="@{p2repo}.url"/>
-            <makeurl file="@{category}" property="@{category}.url"/>
-            <java classpath="${eclipse.classpath}" classname="org.eclipse.core.launcher.Main" fork="true" failonerror="true">
-                <arg line="-clean" />
-                <arg line="-application org.eclipse.equinox.p2.publisher.CategoryPublisher" />
-                <arg line="-metadataRepository ${@{p2repo}.url}" />
-                <arg line="-categoryDefinition ${@{category}.url}" />
-                <arg line="-categoryQualifier" />
-                <sysproperty key="eclipse.consoleLog" value="${eclipse.consoleLog}" />
-            </java>
-        </sequential>
-    </macrodef>
-
-    <macrodef name="generate-p2-repo">
-        <attribute name="p2repo" />
-        <attribute name="name" />
-        <sequential>
-            <makeurl file="@{p2repo}" property="@{p2repo}.url"/>
-            <java classpath="${eclipse.classpath}" classname="org.eclipse.core.launcher.Main" fork="true" failonerror="true">
-                <arg line="-clean" />
-                <arg line="-application org.eclipse.equinox.p2.publisher.FeaturesAndBundlesPublisher" />
-                <arg line="-metadataRepository ${@{p2repo}.url}" />
-                <arg line="-artifactRepository ${@{p2repo}.url}" />
-                <arg line="-metadataRepositoryName" />
-                <arg value="@{name}" />
-                <arg line="-metadataRepositoryName" />
-                <arg value="@{name}" />
-                <arg line="-source @{p2repo}" />
-                <sysproperty key="eclipse.consoleLog" value="${eclipse.consoleLog}" />
-            </java>
-        </sequential>
-    </macrodef>
 </project>

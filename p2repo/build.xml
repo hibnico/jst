@@ -18,9 +18,60 @@
     <import file="../build/common-build.xml" />
     <import file="../build/common-build-eclipse.xml" />
 
-    <target name="generate-snapshots-repo" depends="eclipse-launcher-classpath">
-        <generate-p2-category p2repo="${basedir}/dist/snapshots/" category="${basedir}/category.xml" />
-        <generate-p2-repo p2repo="${basedir}/dist/snapshots/" name="JST Plugins Repository" />
+    <target name="clean">
+        <delete dir="${basedir}/target"/>
     </target>
+
+    <target name="generate-snapshots-repo" depends="eclipse-launcher-classpath">
+        <delete dir="${basedir}/dist/snapshots" includes="*.xml" />
+        <generate-p2-repo p2repo="${basedir}/dist/snapshots/" name="JST Plugins Repository" />
+        <mkdir dir="${basedir}/target" />
+        <echo file="${basedir}/target/category.xml"><![CDATA[<?xml version='1.0' encoding='UTF-8'?>
+<site>
+    <category-def name="org.hibnet.jst.category" label="JST Plugins" />
+    <feature url="features/org.hibnet.jst.feature_${jst.version.full}.jar" id="org.hibnet.jst.feature" version="${jst.version.full}">
+        <category name="org.hibnet.jst.category"/>
+    </feature>
+</site>
+]]></echo>
+        <generate-p2-category p2repo="${basedir}/dist/snapshots/" category="${basedir}/target/category.xml" />
+    </target>
+
+    <macrodef name="generate-p2-category">
+        <attribute name="p2repo" />
+        <attribute name="category" />
+        <sequential>
+            <makeurl file="@{p2repo}" property="@{p2repo}.url"/>
+            <makeurl file="@{category}" property="@{category}.url"/>
+            <java classpath="${eclipse.classpath}" classname="org.eclipse.core.launcher.Main" fork="true" failonerror="true">
+                <arg line="-clean" />
+                <arg line="-application org.eclipse.equinox.p2.publisher.CategoryPublisher" />
+                <arg line="-metadataRepository ${@{p2repo}.url}" />
+                <arg line="-categoryDefinition ${@{category}.url}" />
+                <arg line="-categoryQualifier" />
+                <sysproperty key="eclipse.consoleLog" value="${eclipse.consoleLog}" />
+            </java>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="generate-p2-repo">
+        <attribute name="p2repo" />
+        <attribute name="name" />
+        <sequential>
+            <makeurl file="@{p2repo}" property="@{p2repo}.url"/>
+            <java classpath="${eclipse.classpath}" classname="org.eclipse.core.launcher.Main" fork="true" failonerror="true">
+                <arg line="-clean" />
+                <arg line="-application org.eclipse.equinox.p2.publisher.FeaturesAndBundlesPublisher" />
+                <arg line="-metadataRepository ${@{p2repo}.url}" />
+                <arg line="-artifactRepository ${@{p2repo}.url}" />
+                <arg line="-metadataRepositoryName" />
+                <arg value="@{name}" />
+                <arg line="-metadataRepositoryName" />
+                <arg value="@{name}" />
+                <arg line="-source @{p2repo}" />
+                <sysproperty key="eclipse.consoleLog" value="${eclipse.consoleLog}" />
+            </java>
+        </sequential>
+    </macrodef>
 
 </project>

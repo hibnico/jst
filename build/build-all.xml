@@ -17,18 +17,35 @@
 
     <import file="common-build.xml" />
 
+    <target name="clean">
+        <ant antfile="${jst-root.dir}/org.hibnet.jst/build.xml" target="clean" dir="${jst-root.dir}/org.hibnet.jst" />
+        <ant antfile="${jst-root.dir}/org.hibnet.jst.ui/build.xml" target="clean" dir="${jst-root.dir}/org.hibnet.jst.ui" />
+        <ant antfile="${jst-root.dir}/org.hibnet.jst.feature/build.xml" target="clean" dir="${jst-root.dir}/org.hibnet.jst.feature" />
+        <ant antfile="${jst-root.dir}/p2repo/build.xml" target="clean" dir="${jst-root.dir}/p2repo" />
+    </target>
+
     <target name="build-all">
         <!-- first, let's generate the code -->
         <ant antfile="${jst-root.dir}/org.hibnet.jst/build.xml" target="generate-xtext" dir="${jst-root.dir}/org.hibnet.jst" />
 
-        <ant antfile="${jst-root.dir}/org.hibnet.jst/build.xml" target="install" dir="${jst-root.dir}/org.hibnet.jst" />
+        <ant antfile="${jst-root.dir}/org.hibnet.jst/build.xml" target="install" dir="${jst-root.dir}/org.hibnet.jst">
+            <property name="jst.version.full" value="${jst.version.full}" />
+        </ant>
 
         <!-- needed because the snapshot repo changed, we need to do better and avoid that -->
         <ant antfile="${jst-root.dir}/org.hibnet.jst.ui/build.xml" target="update-deps" dir="${jst-root.dir}/org.hibnet.jst.ui" />
 
-        <ant antfile="${jst-root.dir}/org.hibnet.jst.ui/build.xml" target="install" dir="${jst-root.dir}/org.hibnet.jst.ui"  />
+        <ant antfile="${jst-root.dir}/org.hibnet.jst.ui/build.xml" target="install" dir="${jst-root.dir}/org.hibnet.jst.ui">
+            <property name="jst.version.full" value="${jst.version.full}" />
+        </ant>
 
-        <ant antfile="${jst-root.dir}/p2repo/build.xml" target="generate-snapshots-repo" dir="${jst-root.dir}/p2repo" />
+        <ant antfile="${jst-root.dir}/org.hibnet.jst.feature/build.xml" target="install" dir="${jst-root.dir}/org.hibnet.jst.feature">
+            <property name="jst.version.full" value="${jst.version.full}" />
+        </ant>
+
+        <ant antfile="${jst-root.dir}/p2repo/build.xml" target="generate-snapshots-repo" dir="${jst-root.dir}/p2repo">
+            <property name="jst.version.full" value="${jst.version.full}" />
+        </ant>
     </target>
 
 </project>

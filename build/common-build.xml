@@ -24,6 +24,22 @@
 
     <property file="${basedir}/build.properties" />
 
+    <loadresource property="jst.version">
+        <file file="${jst-root.dir}/org.hibnet.jst/META-INF/MANIFEST.MF" />
+        <filterchain>
+            <linecontainsregexp>
+                <regexp pattern="Bundle-Version:"/>
+            </linecontainsregexp>
+            <striplinebreaks />
+            <tokenfilter>
+                <replaceregex pattern="Bundle-Version: (.*)\.qualifier" replace="\1" flags="gi" />
+            </tokenfilter>
+        </filterchain>
+    </loadresource>
+    <tstamp />
+    <property name="jst.version.qualifier" value="dev" />
+    <property name="jst.version.full" value="${jst.version}.${DSTAMP}${TSTAMP}-${jst.version.qualifier}" />
+
     <target name="-check-build-deps">
         <condition property="build-deps.exist">
             <and>

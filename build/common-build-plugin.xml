@@ -54,22 +54,7 @@
                 </tokenfilter>
             </filterchain>
         </loadresource>
-        <loadresource property="jst.version">
-            <file file="META-INF/MANIFEST.MF" />
-            <filterchain>
-                <linecontainsregexp>
-                    <regexp pattern="Bundle-Version:"/>
-                </linecontainsregexp>
-                <striplinebreaks />
-                <tokenfilter>
-                    <replaceregex pattern="Bundle-Version: (.*)\.qualifier" replace="\1" flags="gi" />
-                </tokenfilter>
-            </filterchain>
-        </loadresource>
         <mkdir dir="${target.dir}/classes/META-INF" />
-        <tstamp />
-        <property name="jst.version.qualifier" value="dev" />
-        <property name="jst.version.full" value="${jst.version}.${DSTAMP}${TSTAMP}-${jst.version.qualifier}" />
         <copy todir="${target.dir}/classes/META-INF" file="META-INF/MANIFEST.MF" overwrite="true">
             <filterchain>
                 <tokenfilter>

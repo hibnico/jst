@@ -1,0 +1,58 @@
+<!--
+    Copyright 2012 JST contributors
+    
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+    
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<project name="jst-common-build-feature" xmlns:ivy="antlib:org.apache.ivy.ant">
+
+    <property name="target.dir" location="${basedir}/target" />
+
+    <target name="clean" description="Clean build artifacts">
+        <delete dir="${target.dir}" />
+    </target>
+
+    <target name="build" description="Build the jar">
+        <loadresource property="jst.symbolicname">
+            <file file="feature.xml" />
+            <filterchain>
+                <linecontainsregexp>
+                    <regexp pattern="&lt;feature"/>
+                </linecontainsregexp>
+                <striplinebreaks />
+                <tokenfilter>
+                    <replaceregex pattern=".*id=&quot;([^&quot;]*)&quot;.*" replace="\1" flags="gi" />
+                </tokenfilter>
+            </filterchain>
+        </loadresource>
+        <copy file="feature.properties" todir="${target.dir}/classes" />
+        <copy file="feature.xml" todir="${target.dir}/classes" overwrite="true">
+            <filterchain>
+                <tokenfilter>
+                    <replaceregex pattern="(.*&lt;feature.*version=&quot;)[^&quot;]*(&quot;.*)" replace="\1${jst.version.full}\2" flags="gi" />
+                    <replaceregex pattern="(.*&lt;plugin id=&quot;org.hibnet.jst.*version=&quot;)[^&quot;]*(&quot;.*)" replace="\1${jst.version.full}\2" flags="gi" />
+                </tokenfilter>
+            </filterchain>
+        </copy>
+        <jar destfile="${target.dir}/${jst.symbolicname}_${jst.version.full}.jar" basedir="${target.dir}/classes" />
+    </target>
+
+    <target name="install" depends="init,build">
+        <mkdir dir="${p2repo.dir}/dist/snapshots/features" />
+        <delete failonerror="false">
+            <fileset dir="${p2repo.dir}/dist/snapshots/features" includes="${jst.symbolicname}_*.jar" />
+        </delete>
+        <copy file="${target.dir}/${jst.symbolicname}_${jst.version.full}.jar" todir="${p2repo.dir}/dist/snapshots/features" />
+        <ivy:buildobr baseDir="${p2repo.dir}/dist/snapshots/" out="${p2repo.dir}/dist/snapshots/obr.xml" indent="true" />
+    </target>
+
+</project>
