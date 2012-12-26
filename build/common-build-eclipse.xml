@@ -51,12 +51,44 @@
         <eclipse-download name="${eclipse.download.sdk.name}" dropdir="${eclipse.download.sdk.dropdir}" />
     </target>
 
+    <target name="-check-download-emf">
+        <check-eclipse-download name="${eclipse.download.emf.name}" property="eclipse.emf.downloaded" md5="${eclipse.download.emf.md5}" />
+    </target>
+
+    <target name="-get-emf" depends="-check-download-emf" unless="eclipse.emf.downloaded">
+        <eclipse-download name="${eclipse.download.emf.name}" dropdir="${eclipse.download.emf.dropdir}" />
+    </target>
+
     <target name="-check-download-xtext">
         <check-eclipse-download name="${eclipse.download.xtext.name}" property="eclipse.xtext.downloaded" md5="${eclipse.download.xtext.md5}" />
     </target>
 
     <target name="-get-xtext" depends="-check-download-xtext" unless="eclipse.xtext.downloaded">
         <eclipse-download name="${eclipse.download.xtext.name}" dropdir="${eclipse.download.xtext.dropdir}" />
+    </target>
+
+    <target name="-check-download-mwe2">
+        <check-eclipse-download name="${eclipse.download.mwe2.name}" property="eclipse.mwe2.downloaded" md5="${eclipse.download.mwe2.md5}" />
+    </target>
+
+    <target name="-get-mwe2" depends="-check-download-mwe2" unless="eclipse.mwe2.downloaded">
+        <eclipse-download name="${eclipse.download.mwe2.name}" dropdir="${eclipse.download.mwe2.dropdir}" />
+    </target>
+
+    <target name="-check-download-mwe2-lang">
+        <check-eclipse-download name="${eclipse.download.mwe2-lang.name}" property="eclipse.mwe2-lang.downloaded" md5="${eclipse.download.mwe2-lang.md5}" />
+    </target>
+
+    <target name="-get-mwe2-lang" depends="-check-download-mwe2-lang" unless="eclipse.mwe2-lang.downloaded">
+        <eclipse-download name="${eclipse.download.mwe2-lang.name}" dropdir="${eclipse.download.mwe2-lang.dropdir}" />
+    </target>
+
+    <target name="-check-download-xpand">
+        <check-eclipse-download name="${eclipse.download.xpand.name}" property="eclipse.xpand.downloaded" md5="${eclipse.download.xpand.md5}" />
+    </target>
+
+    <target name="-get-xpand" depends="-check-download-xpand" unless="eclipse.xpand.downloaded">
+        <eclipse-download name="${eclipse.download.xpand.name}" dropdir="${eclipse.download.xpand.dropdir}" />
     </target>
 
     <target name="-check-unzip-eclipse">
@@ -69,11 +101,15 @@
         <delete dir="${build-deps.dir}/eclipse" failonerror="false" />
         <delete dir="${build-deps.dir}/${eclipse.download.sdk.name}" failonerror="false" />
         <unzip src="${build-deps.dir}/${eclipse.download.sdk.name}.zip" dest="${build-deps.dir}" />
+        <unzip src="${build-deps.dir}/${eclipse.download.emf.name}.zip" dest="${build-deps.dir}" />
         <unzip src="${build-deps.dir}/${eclipse.download.xtext.name}.zip" dest="${build-deps.dir}" />
+        <unzip src="${build-deps.dir}/${eclipse.download.mwe2.name}.zip" dest="${build-deps.dir}" />
+        <unzip src="${build-deps.dir}/${eclipse.download.mwe2-lang.name}.zip" dest="${build-deps.dir}" />
+        <unzip src="${build-deps.dir}/${eclipse.download.xpand.name}.zip" dest="${build-deps.dir}" />
         <move file="${build-deps.dir}/eclipse" tofile="${build-deps.dir}/${eclipse.download.sdk.name}" />
     </target>
 
-    <target name="get-eclipse" depends="-get-sdk,-get-xtext,-unzip-eclipse" description="Download an Eclipse SDK with Xtext for the build">
+    <target name="get-eclipse" depends="-get-sdk,-get-emf,-get-xtext,-get-mwe2,-get-mwe2-lang,-get-xpand,-unzip-eclipse" description="Download an Eclipse SDK with Xtext for the build">
         <property name="eclipse.home" location="${build-deps.dir}/${eclipse.download.sdk.name}" />
     </target>
 
