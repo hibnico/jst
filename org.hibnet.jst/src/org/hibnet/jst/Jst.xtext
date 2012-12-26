@@ -102,6 +102,7 @@ RichStringPart returns xbase::XExpression:
     | RichStringInlineExpr
     | RichStringForLoop
     | RichStringWhileLoop
+    | RichStringDoWhileLoop
     | RichStringIf
     | RichStringRender
     | RichStringTemplateRender
@@ -135,6 +136,13 @@ RichStringWhileLoop returns xbase::XWhileExpression:
     DIRECTIVE_WHILE predicate=XExpression PARENTHESE_CLOSE
         body=RichString
     DIRECTIVE_END
+;
+
+RichStringDoWhileLoop returns xbase::XDoWhileExpression:
+    {RichStringDoWhileLoop}
+    DIRECTIVE_DO
+        body=RichString
+    DIRECTIVE_END DIRECTIVE_WHILE predicate=XExpression PARENTHESE_CLOSE
 ;
 
 RichStringIf returns xbase::XIfExpression:
@@ -187,6 +195,7 @@ terminal DIRECTIVE_ELSEIF: '#elseif(';
 terminal DIRECTIVE_END: '#end';
 terminal DIRECTIVE_FOR: '#for(';
 terminal DIRECTIVE_WHILE: '#while(';
+terminal DIRECTIVE_DO: '#do';
 terminal DIRECTIVE_RENDER: '#render';
 terminal DIRECTIVE_SCRIPT: '#{';
 terminal DIRECTIVE_ECHO: '$(';

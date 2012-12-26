@@ -15,6 +15,8 @@
  */
 package org.hibnet.jst.parser.antlr.internal;
 
+import java.util.Stack;
+
 import org.antlr.runtime.CharStream;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.RecognizerSharedState;
@@ -25,7 +27,7 @@ public class JstLexerImpl extends InternalJstLexer {
 
 	private boolean rendererDef = false;
 
-	private boolean abstractRenderer = false;
+	private boolean rawTextAfterParams = true;
 
 	private boolean directiveParameters = false;
 
@@ -35,7 +37,11 @@ public class JstLexerImpl extends InternalJstLexer {
 
 	private int curlyBracketStackSize = 0;
 
+	private Stack<Integer> doWhileStack = new Stack<Integer>();
+
 	private boolean inScript = false;
+
+	private boolean inDoWhile;
 
 	public JstLexerImpl() {
 		super();
@@ -66,7 +72,7 @@ public class JstLexerImpl extends InternalJstLexer {
 				switch (state.type) {
 					case RULE_ABSTRACT:
 						if (rendererDef) {
-							abstractRenderer = true;
+							rawTextAfterParams = false;
 						}
 						break;
 					case RULE_PARENTHESE_OPEN:
@@ -79,11 +85,8 @@ public class JstLexerImpl extends InternalJstLexer {
 						parenthesisStackSize--;
 						if (parenthesisStackSize == 0) {
 							directiveParameters = false;
-							if (abstractRenderer) {
-								rawText = false;
-							} else {
-								rawText = true;
-							}
+							rawText = rawTextAfterParams;
+							rawTextAfterParams = true;
 						}
 						break;
 				}
@@ -100,7 +103,7 @@ public class JstLexerImpl extends InternalJstLexer {
 						}
 						break;
 				}
-				
+
 			} else {
 				switch (state.type) {
 					case RULE_DOLLAR:
@@ -109,7 +112,7 @@ public class JstLexerImpl extends InternalJstLexer {
 						break;
 					case RULE_ABSTRACT:
 						if (rendererDef) {
-							abstractRenderer = true;
+							rawTextAfterParams = false;
 						}
 						break;
 					case RULE_DIRECTIVE_ELSE:
@@ -120,12 +123,26 @@ public class JstLexerImpl extends InternalJstLexer {
 						directiveStackSize++;
 						directiveParameters = true;
 						break;
-					case RULE_DIRECTIVE_FOR:
 					case RULE_DIRECTIVE_WHILE:
+						parenthesisStackSize++;
+						directiveParameters = true;
+						if (inDoWhile) {
+							rawTextAfterParams = true;
+							inDoWhile = false;
+						} else {
+							directiveStackSize++;
+						}
+						break;
+					case RULE_DIRECTIVE_FOR:
 					case RULE_DIRECTIVE_IF:
 						parenthesisStackSize++;
 						directiveStackSize++;
 						directiveParameters = true;
+						break;
+					case RULE_DIRECTIVE_DO:
+						doWhileStack.add(directiveStackSize);
+						directiveStackSize++;
+						rawText = true;
 						break;
 					case RULE_DIRECTIVE_ELSEIF:
 					case RULE_DIRECTIVE_ECHO:
@@ -142,13 +159,16 @@ public class JstLexerImpl extends InternalJstLexer {
 						break;
 					case RULE_DIRECTIVE_END:
 						directiveStackSize--;
-						if (directiveStackSize > 0) {
+						if (!doWhileStack.isEmpty() && doWhileStack.peek() == directiveStackSize) {
+							doWhileStack.pop();
+							inDoWhile = true;
+						} else if (directiveStackSize > 0) {
 							rawText = true;
 						}
 						break;
 					case RULE_DIRECTIVE_SCRIPT:
 						curlyBracketStackSize++;
-						inScript  = true;
+						inScript = true;
 						break;
 				}
 			}

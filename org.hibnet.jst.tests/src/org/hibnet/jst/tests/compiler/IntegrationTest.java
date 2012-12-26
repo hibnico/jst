@@ -478,6 +478,44 @@ public class IntegrationTest {
 	}
 
 	@Test
+	public void testParseAndCompile_DoWhile() throws Exception {
+		StringConcatenation template = new StringConcatenation();
+		template.append("#renderer main()");
+		template.newLine();
+		template.append("#{ var count = 0; }");
+		template.newLine();
+		template.append("<html>");
+		template.newLine();
+		template.append("#do");
+		template.newLine();
+		template.append("<p>$(count)</p>");
+		template.newLine();
+		template.append("#{ count = count + 1; }");
+		template.newLine();
+		template.append("#end #while(count < 3)");
+		template.newLine();
+		template.append("</html>");
+		template.newLine();
+		template.append("#end");
+		template.newLine();
+
+		String out = callTemplate(template, "renderMain");
+
+		StringConcatenation expected = new StringConcatenation();
+		expected.append("<html>");
+		expected.newLine();
+		expected.append("<p>0</p>");
+		expected.newLine();
+		expected.append("<p>1</p>");
+		expected.newLine();
+		expected.append("<p>2</p>");
+		expected.newLine();
+		expected.append("</html>");
+
+		assertSameOuput(expected, out);
+	}
+
+	@Test
 	public void testParseAndCompile_Complex() throws Exception {
 		StringConcatenation template = new StringConcatenation();
 		template.append("#renderer main()");

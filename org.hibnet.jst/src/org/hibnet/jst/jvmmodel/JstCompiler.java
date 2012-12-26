@@ -26,6 +26,7 @@ import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable;
 import org.eclipse.xtext.xbase.controlflow.IEarlyExitComputer;
 import org.eclipse.xtext.xbase.featurecalls.IdentifiableSimpleNameProvider;
 import org.hibnet.jst.jst.RichString;
+import org.hibnet.jst.jst.RichStringDoWhileLoop;
 import org.hibnet.jst.jst.RichStringForLoop;
 import org.hibnet.jst.jst.RichStringIf;
 import org.hibnet.jst.jst.RichStringInlineExpr;
@@ -104,6 +105,22 @@ public class JstCompiler extends XbaseCompiler {
 			}
 			it.closeScope();
 			it.decreaseIndentation().newLine().append("}");
+		} else if (expr instanceof RichStringDoWhileLoop) {
+			RichStringDoWhileLoop richStringDoWhileLoop = (RichStringDoWhileLoop) expr;
+			String variable = it.declareSyntheticVariable(expr, "_dowhile");
+			it.newLine().append("boolean ").append(variable).append(" = false;");
+			it.newLine().append("do {").increaseIndentation();
+			generatePrintExpr(richStringDoWhileLoop.getBody(), it);
+			internalToJavaStatement(richStringDoWhileLoop.getPredicate(), it, true);
+			it.newLine();
+			if (!earlyExitComputer.isEarlyExit(richStringDoWhileLoop.getBody())) {
+				it.append(variable).append(" = ");
+				internalToJavaExpression(richStringDoWhileLoop.getPredicate(), it);
+				it.append(";");
+			}
+			it.decreaseIndentation().newLine().append("} while(");
+			it.append(variable);
+			it.append(");");
 		} else if (expr instanceof RichStringInlineExpr) {
 			RichStringInlineExpr richStringInlineExpr = (RichStringInlineExpr) expr;
 			internalToJavaStatement(richStringInlineExpr.getExpr(), it, true);
@@ -162,8 +179,9 @@ public class JstCompiler extends XbaseCompiler {
 
 	private boolean isPrintable(XExpression e) {
 		if (e instanceof RichString || e instanceof RichStringIf || e instanceof RichStringForLoop
-				|| e instanceof RichStringWhileLoop || e instanceof RichStringInlineExpr
-				|| e instanceof RichStringRender || e instanceof RichStringTemplateRender) {
+				|| e instanceof RichStringWhileLoop || e instanceof RichStringDoWhileLoop
+				|| e instanceof RichStringInlineExpr || e instanceof RichStringRender
+				|| e instanceof RichStringTemplateRender) {
 			return false;
 		}
 		return true;

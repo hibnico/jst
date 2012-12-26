@@ -21,7 +21,6 @@ Last but not least, JST is based on Xtext. Which means an Eclipse editor is alre
 TODO
 ----
 
-- do-while: this loops is not yet implemented
 - for(inst; condition; increm): currently for loops can only iterate on +Iterable+ (+for(item : list)+)
 - add a servlet option: the Writer would come from the HttpServletResponse and HttpServletRequest would be available in the template
 - try catch support ? #renderer cannot thow anything else than IOException for now.
@@ -139,7 +138,7 @@ import java.util.List;
 Loops
 ~~~~~
 
-Loops are like in Java but with the keywords +#for+ or +#while+, together with +#end+
+Loops are like in Java but with the keywords +#for+, +#while+ or #do, together with +#end+
 
 Exemple:
 --------------------------------------
@@ -157,6 +156,13 @@ import java.util.List
     #{ count = count + 1; }
   #end
   </ol>
+  <pre>
+  #{ var count2 = 0; }
+  #do
+    -- $(count2) : $(list.get(count2))</li>
+    #{ count2 = count2 + 1; }
+  #end #while(count2 < list.size())
+  </pre>
 #end
 --------------------------------------
 

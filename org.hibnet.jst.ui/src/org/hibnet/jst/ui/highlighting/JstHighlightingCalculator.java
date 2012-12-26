@@ -56,7 +56,7 @@ public class JstHighlightingCalculator extends XbaseHighlightingCalculator {
 					grammarAccess.getDIRECTIVE_ECHO_ELVIS_UNESCAPERule(), grammarAccess.getDIRECTIVE_ECHO_ESCAPERule(),
 					grammarAccess.getDIRECTIVE_ECHO_ELVIS_ESCAPERule(), grammarAccess.getDIRECTIVE_ELSEIFRule(),
 					grammarAccess.getDIRECTIVE_FORRule(), grammarAccess.getDIRECTIVE_WHILERule(),
-					grammarAccess.getDIRECTIVE_IFRule())) {
+					grammarAccess.getDIRECTIVE_DORule(), grammarAccess.getDIRECTIVE_IFRule())) {
 				acceptor.addPosition(leafNode.getOffset(), leafNode.getLength() - 1,
 						JstHighlightingConfiguration.DIRECTIVE);
 				acceptor.addPosition(leafNode.getOffset() + leafNode.getLength() - 1, 1,
