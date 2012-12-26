@@ -27,10 +27,12 @@ import org.eclipse.xtext.common.types.JvmOperation;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.common.types.JvmVisibility;
 import org.eclipse.xtext.common.types.TypesFactory;
+import org.eclipse.xtext.xbase.XBlockExpression;
 import org.eclipse.xtext.xbase.XExpression;
 import org.eclipse.xtext.xbase.XFeatureCall;
 import org.eclipse.xtext.xbase.XMemberFeatureCall;
 import org.eclipse.xtext.xbase.XStringLiteral;
+import org.eclipse.xtext.xbase.XWhileExpression;
 import org.eclipse.xtext.xbase.XbaseFactory;
 import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable;
 import org.eclipse.xtext.xbase.jvmmodel.AbstractModelInferrer;
@@ -45,6 +47,7 @@ import org.hibnet.jst.jst.JstOption;
 import org.hibnet.jst.jst.Method;
 import org.hibnet.jst.jst.Renderer;
 import org.hibnet.jst.jst.RendererParameter;
+import org.hibnet.jst.jst.RichStringForBasicLoop;
 import org.hibnet.jst.jst.RichStringRender;
 import org.hibnet.jst.jst.RichStringTemplateRender;
 
@@ -211,6 +214,17 @@ public class JstJvmModelInferrer extends AbstractModelInferrer {
 		return null;
 	}
 
+	protected void _infer(RichStringForBasicLoop forLoop, IJvmDeclaredTypeAcceptor acceptor, boolean isPreIndexingPhase) {
+		XBlockExpression block = XbaseFactory.eINSTANCE.createXBlockExpression();
+		block.getExpressions().add(forLoop.getInitExpression());
+		XWhileExpression loop = XbaseFactory.eINSTANCE.createXWhileExpression();
+		loop.setPredicate(forLoop.getPredicate());
+		XBlockExpression loopBlock = XbaseFactory.eINSTANCE.createXBlockExpression();
+		loopBlock.getExpressions().add(forLoop.getBody());
+		loopBlock.getExpressions().add(forLoop.getIncrementExpression());
+		loop.setBody(loopBlock);
+	}
+
 	protected void _infer(RichStringRender render, IJvmDeclaredTypeAcceptor acceptor, boolean isPreIndexingPhase) {
 		XFeatureCall call = XbaseFactory.eINSTANCE.createXFeatureCall();
 		call.setFeature(render.getFeature());
@@ -239,6 +253,9 @@ public class JstJvmModelInferrer extends AbstractModelInferrer {
 	public void infer(EObject element, IJvmDeclaredTypeAcceptor acceptor, boolean isPreIndexingPhase) {
 		if (element instanceof JstFile) {
 			_infer((JstFile) element, acceptor, isPreIndexingPhase);
+			return;
+		} else if (element instanceof RichStringForBasicLoop) {
+			_infer((RichStringForBasicLoop) element, acceptor, isPreIndexingPhase);
 			return;
 		} else if (element instanceof RichStringRender) {
 			_infer((RichStringRender) element, acceptor, isPreIndexingPhase);

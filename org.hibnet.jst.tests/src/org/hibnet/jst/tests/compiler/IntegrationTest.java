@@ -440,6 +440,40 @@ public class IntegrationTest {
 	}
 
 	@Test
+	public void testParseAndCompile_ForBasic() throws Exception {
+		StringConcatenation template = new StringConcatenation();
+		template.append("#renderer main()");
+		template.newLine();
+		template.append("<html>");
+		template.newLine();
+		template.append("#for(var i = 0; i < 3; i = i + 1)");
+		template.newLine();
+		template.append("<p>$(list.get(i))</p>");
+		template.newLine();
+		template.append("#end");
+		template.newLine();
+		template.append("</html>");
+		template.newLine();
+		template.append("#end");
+		template.newLine();
+
+		String out = callTemplate(template, "renderMain");
+
+		StringConcatenation expected = new StringConcatenation();
+		expected.append("<html>");
+		expected.newLine();
+		expected.append("<p>0</p>");
+		expected.newLine();
+		expected.append("<p>1</p>");
+		expected.newLine();
+		expected.append("<p>2</p>");
+		expected.newLine();
+		expected.append("</html>");
+
+		assertSameOuput(expected, out);
+	}
+
+	@Test
 	public void testParseAndCompile_While() throws Exception {
 		StringConcatenation template = new StringConcatenation();
 		template.append("#renderer main()");

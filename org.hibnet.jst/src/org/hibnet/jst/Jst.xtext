@@ -101,6 +101,7 @@ RichStringPart returns xbase::XExpression:
       RichStringLiteral
     | RichStringInlineExpr
     | RichStringForLoop
+    | RichStringForBasicLoop
     | RichStringWhileLoop
     | RichStringDoWhileLoop
     | RichStringIf
@@ -128,6 +129,13 @@ RichStringForLoop returns xbase::XForLoopExpression:
     {RichStringForLoop}
     DIRECTIVE_FOR declaredParam=JvmFormalParameter ':' forExpression=XExpression PARENTHESE_CLOSE
         eachExpression=RichString
+    DIRECTIVE_END
+;
+
+RichStringForBasicLoop returns xbase::XExpression:
+    {RichStringForBasicLoop}
+    DIRECTIVE_FOR initExpression=XExpressionInsideBlock ';' predicate=XExpression ';' incrementExpression=XExpression PARENTHESE_CLOSE
+        body=RichString
     DIRECTIVE_END
 ;
 

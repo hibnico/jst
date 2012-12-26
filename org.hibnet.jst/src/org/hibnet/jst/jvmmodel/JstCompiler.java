@@ -27,6 +27,7 @@ import org.eclipse.xtext.xbase.controlflow.IEarlyExitComputer;
 import org.eclipse.xtext.xbase.featurecalls.IdentifiableSimpleNameProvider;
 import org.hibnet.jst.jst.RichString;
 import org.hibnet.jst.jst.RichStringDoWhileLoop;
+import org.hibnet.jst.jst.RichStringForBasicLoop;
 import org.hibnet.jst.jst.RichStringForLoop;
 import org.hibnet.jst.jst.RichStringIf;
 import org.hibnet.jst.jst.RichStringInlineExpr;
@@ -83,6 +84,29 @@ public class JstCompiler extends XbaseCompiler {
 			internalToJavaExpression(richStringForLoop.getForExpression(), it);
 			it.append(") {").increaseIndentation();
 			generatePrintExpr(richStringForLoop.getEachExpression(), it);
+			it.decreaseIndentation().newLine().append("}");
+		} else if (expr instanceof RichStringForBasicLoop) {
+			RichStringForBasicLoop richStringForBasicLoop = (RichStringForBasicLoop) expr;
+			internalToJavaStatement(richStringForBasicLoop.getInitExpression(), it, false);
+			it.newLine();
+			String varName = it.declareSyntheticVariable(expr, "_while");
+			it.newLine().append("boolean ").append(varName).append(" = ");
+			internalToJavaExpression(richStringForBasicLoop.getPredicate(), it);
+			it.append(";");
+			it.newLine().append("while (");
+			it.append(varName);
+			it.append(") {").increaseIndentation();
+			it.openPseudoScope();
+			generatePrintExpr(richStringForBasicLoop.getBody(), it);
+			internalToJavaStatement(richStringForBasicLoop.getPredicate(), it, true);
+			it.newLine();
+			if (!earlyExitComputer.isEarlyExit(richStringForBasicLoop.getBody())) {
+				it.append(varName).append(" = ");
+				internalToJavaExpression(richStringForBasicLoop.getPredicate(), it);
+				it.append(";");
+			}
+			it.closeScope();
+			internalToJavaStatement(richStringForBasicLoop.getIncrementExpression(), it, false);
 			it.decreaseIndentation().newLine().append("}");
 		} else if (expr instanceof RichStringWhileLoop) {
 			RichStringWhileLoop richStringWhileLoop = (RichStringWhileLoop) expr;
@@ -179,9 +203,9 @@ public class JstCompiler extends XbaseCompiler {
 
 	private boolean isPrintable(XExpression e) {
 		if (e instanceof RichString || e instanceof RichStringIf || e instanceof RichStringForLoop
-				|| e instanceof RichStringWhileLoop || e instanceof RichStringDoWhileLoop
-				|| e instanceof RichStringInlineExpr || e instanceof RichStringRender
-				|| e instanceof RichStringTemplateRender) {
+				|| e instanceof RichStringForBasicLoop || e instanceof RichStringWhileLoop
+				|| e instanceof RichStringDoWhileLoop || e instanceof RichStringInlineExpr
+				|| e instanceof RichStringRender || e instanceof RichStringTemplateRender) {
 			return false;
 		}
 		return true;
