@@ -16,15 +16,35 @@
 <project name="jst-p2repo" xmlns:ivy="antlib:org.apache.ivy.ant" xmlns:ac="antlib:net.sf.antcontrib">
 
     <import file="../build/common-build.xml" />
-    <import file="../build/common-build-eclipse.xml" />
 
     <target name="clean">
         <delete dir="${basedir}/target"/>
     </target>
 
-    <target name="generate-snapshots-repo" depends="eclipse-launcher-classpath">
+    <target name="retrieve-eclipse" depends="init,ivy:configure">
+        <ivy:resolve type="jar" uncompress="true" resolveId="eclipse.resolve">
+            <dependency org="bundle" name="org.eclipse.equinox.launcher" rev="1.3+" />
+            <dependency org="bundle" name="org.eclipse.core.runtime" rev="3.8+" />
+            <dependency org="bundle" name="org.eclipse.equinox.ds" rev="1.4+" />
+            <dependency org="bundle" name="org.eclipse.equinox.p2.publisher.eclipse" rev="1.1+" />
+            <dependency org="bundle" name="org.eclipse.equinox.p2.updatesite" rev="1.0+" />
+            <!-- provided by the jvm -->
+            <exclude org="package" module="org.xml.sax" />
+            <exclude org="package" module="org.xml.sax.ext" />
+            <exclude org="package" module="org.xml.sax.helpers" />
+            <exclude org="package" module="javax.xml.parsers" />
+        </ivy:resolve>
+        <ivy:retrieve resolveid="eclipse.resolve" conf="*" type="jar" pattern="target/eclipse/plugins/[artifact]_[revision].[ext]" uncompress="true" sync="true" />
+    </target>
+
+    <target name="generate-snapshots-repo" depends="retrieve-eclipse">
+        <fileset id="plugins.fileset" dir="${basedir}/target/eclipse/plugins" includes="*" />
+        <path id="launcher.path">
+            <fileset dir="target/eclipse/plugins/" includes="org.eclipse.equinox.launcher_*.jar" />
+        </path>
+        <compute-osgi.bundles property="osgi.bundles" fileset="plugins.fileset" />
         <delete dir="${basedir}/dist/snapshots" includes="*.xml" />
-        <generate-p2-repo p2repo="${basedir}/dist/snapshots/" name="JST Plugins Repository" />
+        <generate-p2-repo p2repo="${basedir}/dist/snapshots/" name="JST Plugins Repository" launcherclasspath="launcher.path" osgibundles="${osgi.bundles}" />
         <mkdir dir="${basedir}/target" />
         <echo file="${basedir}/target/category.xml"><![CDATA[<?xml version='1.0' encoding='UTF-8'?>
 <site>
@@ -34,22 +54,45 @@
     </feature>
 </site>
 ]]></echo>
-        <generate-p2-category p2repo="${basedir}/dist/snapshots/" category="${basedir}/target/category.xml" />
+        <generate-p2-category p2repo="${basedir}/dist/snapshots/" category="${basedir}/target/category.xml" launcherclasspath="launcher.path" osgibundles="${osgi.bundles}" />
     </target>
+
+    <macrodef name="compute-osgi.bundles">
+        <attribute name="property" />
+        <attribute name="fileset" />
+        <sequential>
+            <loadresource property="@{property}">
+                <string value="${toString:@{fileset}}" />
+                <filterchain>
+                    <tokenfilter>
+                        <stringtokenizer delims=";" />
+                        <replaceregex pattern="org.eclipse.osgi_.*" replace="" flags="gi" />
+                        <replaceregex pattern="([^_]*)_.*" replace="\1\@start" flags="gi" />
+                    </tokenfilter>
+                    <tokenfilter>
+                        <replacestring from=";" to="," />
+                    </tokenfilter>
+                </filterchain>
+            </loadresource>
+        </sequential>
+    </macrodef>
 
     <macrodef name="generate-p2-category">
         <attribute name="p2repo" />
         <attribute name="category" />
+        <attribute name="launcherclasspath" />
+        <attribute name="osgibundles" />
         <sequential>
             <makeurl file="@{p2repo}" property="@{p2repo}.url"/>
             <makeurl file="@{category}" property="@{category}.url"/>
-            <java classpath="${eclipse.classpath}" classname="org.eclipse.core.launcher.Main" fork="true" failonerror="true">
+            <java classpathref="@{launcherclasspath}" classname="org.eclipse.core.launcher.Main" fork="true" failonerror="true">
+                <arg line="-consoleLog" />
                 <arg line="-clean" />
                 <arg line="-application org.eclipse.equinox.p2.publisher.CategoryPublisher" />
                 <arg line="-metadataRepository ${@{p2repo}.url}" />
                 <arg line="-categoryDefinition ${@{category}.url}" />
                 <arg line="-categoryQualifier" />
-                <sysproperty key="eclipse.consoleLog" value="${eclipse.consoleLog}" />
+                <sysproperty key="osgi.bundles" value="@{osgibundles}" />
             </java>
         </sequential>
     </macrodef>
@@ -57,9 +100,12 @@
     <macrodef name="generate-p2-repo">
         <attribute name="p2repo" />
         <attribute name="name" />
+        <attribute name="launcherclasspath" />
+        <attribute name="osgibundles" />
         <sequential>
             <makeurl file="@{p2repo}" property="@{p2repo}.url"/>
-            <java classpath="${eclipse.classpath}" classname="org.eclipse.core.launcher.Main" fork="true" failonerror="true">
+            <java classpathref="@{launcherclasspath}" classname="org.eclipse.core.launcher.Main" fork="true" failonerror="true">
+                <arg line="-consoleLog" />
                 <arg line="-clean" />
                 <arg line="-application org.eclipse.equinox.p2.publisher.FeaturesAndBundlesPublisher" />
                 <arg line="-metadataRepository ${@{p2repo}.url}" />
@@ -69,7 +115,7 @@
                 <arg line="-metadataRepositoryName" />
                 <arg value="@{name}" />
                 <arg line="-source @{p2repo}" />
-                <sysproperty key="eclipse.consoleLog" value="${eclipse.consoleLog}" />
+                <sysproperty key="osgi.bundles" value="@{osgibundles}" />
             </java>
         </sequential>
     </macrodef>
