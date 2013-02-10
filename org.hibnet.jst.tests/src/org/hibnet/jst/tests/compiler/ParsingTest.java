@@ -596,6 +596,22 @@ public class ParsingTest extends AbstractTest {
 	}
 
 	@Test
+	public void testParseAndCompile_AbstractMethod() throws Exception {
+		StringConcatenation template = new StringConcatenation();
+		template.append(" ");
+		template.append("abstract template;");
+		template.newLine();
+		template.append("abstract String getString();");
+		template.newLine();
+
+		Class<?> templateClass = compileTemplate(template);
+
+		Assert.assertNotNull(templateClass);
+		Assert.assertTrue(Modifier.isAbstract(templateClass.getModifiers()));
+		Assert.assertTrue(Modifier.isAbstract(templateClass.getDeclaredMethod("getString").getModifiers()));
+	}
+
+	@Test
 	public void testParseAndCompile_FieldAnnotation() throws Exception {
 		StringConcatenation template = new StringConcatenation();
 		template.append(" ");

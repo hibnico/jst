@@ -66,7 +66,7 @@ Method returns types::JvmOperation:
     returnType=JvmTypeReference simpleName=ID
     PARENTHESE_OPEN (parameters+=JvmFormalParameter (',' parameters+=JvmFormalParameter)*)? PARENTHESE_CLOSE
     ('throws' exceptions+=JvmTypeReference (',' exceptions+=JvmTypeReference)*)?
-    expression=XBlockExpression
+    (expression=XBlockExpression | ';')
 ;
 
 enum Visibility returns types::JvmVisibility:
