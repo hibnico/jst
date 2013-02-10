@@ -35,7 +35,10 @@ Status: image:https://secure.travis-ci.org/nlalevee/jst.png?branch=master
 Dependencies
 ------------
 
-Once generated, the templates need commons-lang at runtime.
+Once generated, the templates need at runtime:
+- commons-lang
+- guava
+- org.eclipse.xtext.xbase.lib
 
 Template Language
 -----------------
