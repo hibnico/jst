@@ -79,7 +79,7 @@ public class JstHighlightingConfiguration extends XbaseHighlightingConfiguration
 	}
 
 	public TextStyle staticKeyword() {
-		TextStyle style = defaultTextStyle().copy();
+		TextStyle style = keywordTextStyle().copy();
 		style.setBackgroundColor(new RGB(240, 240, 240));
 		return style;
 	}
