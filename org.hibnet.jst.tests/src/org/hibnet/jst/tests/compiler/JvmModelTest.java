@@ -84,4 +84,20 @@ public class JvmModelTest extends AbstractTest {
 		assertSameOuput("true", out);
 	}
 
+	@Test
+	public void testDefaultRender() throws Exception {
+		StringConcatenation template = new StringConcatenation();
+		template.append("#renderer _()");
+		template.newLine();
+		template.append("#{ var bool = (1 == 1); }");
+		template.newLine();
+		template.append("$(bool)");
+		template.newLine();
+		template.append("#end");
+
+		String out = callTemplate(template, "render");
+
+		assertSameOuput("true", out);
+	}
+
 }

@@ -59,6 +59,8 @@ The minimum: define a rendering method in your template
 - +()+ is then the list or arguments of your rendering method, here empty.
 - +#end+ defines when the rendering of the current method ends.
 
+Note: if the name of the renderer is +_+, then the generated Java method will simply be +render+.
+
 Outputing expressions
 ~~~~~~~~~~~~~~~~~~~~~
 
