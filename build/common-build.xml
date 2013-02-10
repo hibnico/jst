@@ -43,7 +43,7 @@
     <target name="-check-build-deps">
         <condition property="build-deps.exist">
             <and>
-                <available file="${build-deps.dir}/antlr-3.4-complete.jar" />
+                <available file="${build-deps.dir}/antlr-4.0-complete.jar" />
 
                 <available file="${build-deps.dir}/antlr3-task/ant-antlr3.jar" />
 
@@ -62,7 +62,7 @@
 
         <get src="https://builds.apache.org/pview/job/Ivy/lastSuccessfulBuild/artifact/trunk/build/artifact/jars/ivy.jar" dest="${build-deps.dir}/ivy-${ivy.version}.jar" usetimestamp="true" />
 
-        <get src="http://antlr.org/download/antlr-3.4-complete.jar" dest="${build-deps.dir}/antlr-3.4-complete.jar" usetimestamp="true" />
+        <get src="http://antlr.org/download/antlr-4.0-complete.jar" dest="${build-deps.dir}/antlr-4.0-complete.jar" usetimestamp="true" />
 
         <get src="http://download.itemis.com/antlr-generator-3.2.0.jar" dest="${build-deps.dir}/antlr-generator-3.2.0.jar" usetimestamp="true" />
         <copy file="${build-deps.dir}/antlr-generator-3.2.0.jar" tofile="${jst-root.dir}/org.hibnet.jst/.antlr-generator-3.2.0.jar" />
@@ -76,7 +76,7 @@
     <target name="init" depends="-download-build-deps">
         <taskdef name="antlr3" classname="org.apache.tools.ant.antlr.ANTLR3">
             <classpath>
-                <pathelement path="${build-deps.dir}/antlr-3.4-complete.jar" />
+                <pathelement path="${build-deps.dir}/antlr-4.0-complete.jar" />
                 <pathelement path="${build-deps.dir}/antlr3-task/ant-antlr3.jar" />
             </classpath>
         </taskdef>
