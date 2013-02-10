@@ -43,13 +43,13 @@ public class ParsingTest extends AbstractTest {
 		StringConcatenation template = new StringConcatenation();
 		template.append("#renderer main()");
 		template.newLine();
-		template.append("$$ ##");
+		template.append("$$ ## $$a ##z");
 		template.newLine();
 		template.append("#end");
 
 		String out = callTemplate(template, "renderMain");
 
-		Assert.assertEquals("$ #", out.trim());
+		Assert.assertEquals("$ # $a #z", out.trim());
 	}
 
 	@Test

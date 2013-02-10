@@ -182,12 +182,18 @@ RendererValidID:
     ValidID
 ;
 
+ValidID:
+    ID;
+
 terminal PARENTHESE_OPEN: '(';
 terminal PARENTHESE_CLOSE: ')';
 terminal CURLY_BRACKET_OPEN: '{';
 terminal CURLY_BRACKET_CLOSE: '}';
 
 terminal ABSTRACT: 'abstract';
+
+terminal DOLLAR: '$$';
+terminal SHARP: '##';
 
 terminal DIRECTIVE_RENDERER: '#renderer';
 terminal DIRECTIVE_IF: '#if(';
@@ -206,8 +212,9 @@ terminal DIRECTIVE_ECHO_ELVIS_UNESCAPE: '$?\\\\(';
 terminal DIRECTIVE_ECHO_ESCAPE: '$\\' ('a'..'z')+ '(';
 terminal DIRECTIVE_ECHO_ELVIS_ESCAPE: '$?\\' ('a'..'z')+ '(';
 
-terminal DOLLAR: '$$';
-terminal SHARP: '##';
+// redefinition of ID, the default conflicts with $$
+terminal ID:
+    ('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'$'|'_'|'0'..'9')*;
 
 terminal TEXT:
 // we fake the generated parser so it never match it and we can handle it ourself
