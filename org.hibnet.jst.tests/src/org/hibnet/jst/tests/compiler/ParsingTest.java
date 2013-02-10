@@ -15,62 +15,14 @@
  */
 package org.hibnet.jst.tests.compiler;
 
-import java.io.StringWriter;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
 import org.eclipse.xtend2.lib.StringConcatenation;
-import org.eclipse.xtext.junit4.InjectWith;
-import org.eclipse.xtext.junit4.XtextRunner;
-import org.eclipse.xtext.util.IAcceptor;
-import org.eclipse.xtext.xbase.compiler.CompilationTestHelper;
-import org.eclipse.xtext.xbase.compiler.CompilationTestHelper.Result;
-import org.eclipse.xtext.xbase.lib.util.ReflectExtensions;
-import org.hibnet.jst.JstInjectorProvider;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
-import com.google.inject.Inject;
-
-@RunWith(value = XtextRunner.class)
-@InjectWith(value = JstInjectorProvider.class)
-public class IntegrationTest {
-
-	@Inject
-	private CompilationTestHelper compilationTestHelper;
-
-	@Inject
-	private ReflectExtensions reflectExtensions;
-
-	private Class<?> compileTemplate(CharSequence template) throws Exception {
-		final Result[] result = new Result[1];
-		compilationTestHelper.compile(template, new IAcceptor<Result>() {
-			@Override
-			public void accept(Result t) {
-				result[0] = t;
-			}
-		});
-		return result[0].getCompiledClass();
-	}
-
-	private String callTemplate(CharSequence template, String renderFunction, Object... params) throws Exception {
-		StringWriter out = new StringWriter();
-		Class<?> cl = compileTemplate(template);
-		if (params != null && params.length != 0) {
-			Object[] params2 = new Object[params.length + 1];
-			params2[0] = out;
-			System.arraycopy(params, 0, params2, 1, params.length);
-			reflectExtensions.invoke(cl.newInstance(), renderFunction, params2);
-		} else {
-			reflectExtensions.invoke(cl.newInstance(), renderFunction, out);
-		}
-		return out.toString();
-	}
-
-	private void assertSameOuput(CharSequence expected, CharSequence output) {
-		Assert.assertEquals(expected.toString().replaceAll("( |\n)", ""), output.toString().replaceAll("( |\n)", ""));
-	}
+public class ParsingTest extends AbstractTest {
 
 	@Test
 	public void testParseAndCompile_Simple() throws Exception {
