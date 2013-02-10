@@ -81,11 +81,11 @@ public class JstJvmModelInferrer extends AbstractModelInferrer {
 						if (field.getInitialValue() != null) {
 							jvmTypesBuilder.setInitializer(field, field.getInitialValue());
 						}
-					} else {
-						if (member instanceof Method) {
-							Method method = (Method) member;
-							jvmTypesBuilder.setBody(method, method.getExpression());
-						}
+						jvmTypesBuilder.translateAnnotationsTo(field.getFieldAnnotations(), field);
+					} else if (member instanceof Method) {
+						Method method = (Method) member;
+						jvmTypesBuilder.setBody(method, method.getExpression());
+						jvmTypesBuilder.translateAnnotationsTo(method.getMethodAnnotations(), method);
 					}
 				}
 				for (final Renderer renderer : element.getRenderers()) {

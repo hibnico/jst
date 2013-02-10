@@ -55,11 +55,12 @@ Import:
 
 Field returns types::JvmField:
     {Field}
-    (visibility=Visibility? & static?='static'? & final?='final'?) type=JvmTypeReference simpleName=ID ('=' initialValue=XExpression)? ';'
+    (fieldAnnotations+=XAnnotation)* (visibility=Visibility? & static?='static'? & final?='final'?) type=JvmTypeReference simpleName=ID ('=' initialValue=XExpression)? ';'
 ;
 
 Method returns types::JvmOperation:
     {Method}
+    (methodAnnotations+=XAnnotation)*
     (visibility=Visibility? & (static?='static' | abstract?=ABSTRACT)? )
     ('<' typeParameters+=JvmTypeParameter (',' typeParameters+=JvmTypeParameter)* '>')?
     returnType=JvmTypeReference simpleName=ID

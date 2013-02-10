@@ -596,6 +596,48 @@ public class ParsingTest extends AbstractTest {
 	}
 
 	@Test
+	public void testParseAndCompile_FieldAnnotation() throws Exception {
+		StringConcatenation template = new StringConcatenation();
+		template.append(" ");
+		template.append("@javax.inject.Inject");
+		template.newLine();
+		template.append("String field = \"testfield\";");
+		template.newLine();
+		template.append("#renderer main()");
+		template.newLine();
+		template.append("$(field)");
+		template.newLine();
+		template.append("#end");
+		template.newLine();
+
+		String out = callTemplate(template, "renderMain");
+
+		Assert.assertEquals("testfield", out.trim());
+	}
+
+	@Test
+	public void testParseAndCompile_MethodAnnotation() throws Exception {
+		StringConcatenation template = new StringConcatenation();
+		template.append(" ");
+		template.append("@javax.inject.Inject");
+		template.newLine();
+		template.append("String getString() { return \"testmethod\"; }");
+		template.newLine();
+		template.append("#renderer main()");
+		template.newLine();
+		template.append("#{ var v = getString(); }");
+		template.newLine();
+		template.append("$(v)");
+		template.newLine();
+		template.append("#end");
+		template.newLine();
+
+		String out = callTemplate(template, "renderMain");
+
+		Assert.assertEquals("testmethod", out.trim());
+	}
+
+	@Test
 	public void testParseAndCompile_Implements() throws Exception {
 		StringConcatenation template = new StringConcatenation();
 		template.append(" ");
