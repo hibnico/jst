@@ -104,7 +104,7 @@ public class JstJvmModelInferrer extends AbstractModelInferrer {
 												parameter.getParameterType());
 										op.getParameters().add(param);
 									}
-									op.getExceptions().add(jvmTypesBuilder.newTypeRef(element, IOException.class));
+									op.getExceptions().add(jvmTypesBuilder.newTypeRef(element, Exception.class));
 									if (renderer instanceof AbstractRenderer) {
 										op.setAbstract(true);
 									} else {
