@@ -320,27 +320,62 @@ template with escape = 'html', servlet = true;
 Layout pattern
 ~~~~~~~~~~~~~~
 
-When working with templates, some are designed to be layouts of some other templates. With JST, no special keyword or contruction is required, just use the Java class hierarchy. The template layout will be an abstract template, and the layouted template will extend it.
+When working with templates, some are designed to be layouts of some other contents. With JST, no special keyword or contruction is required, just use the Object Oriented patterns: composition and inheritance.
+
+If you want to be able to change easily of layout, the recomended relation is composition. The "content" layout will be the one called, which will then itself call the "layout" template. Then, if you have several "content" templates sharing the same layout, the recommended way of sharing it is to use inheritance.
 
 Exemple:
 
 - layout.jst
 --------------------------------------
-import java.util.List;
-abstract template;
-#renderer body(List<String> list)
-  <ul>
-  #for(i : list)
-    <li>#render item(i)</li>
-  #end
-  </ul>
+template with escape = 'html';
+#renderer header()
+<html>
+  <body>
+    <h1>My website</h1>
 #end
-#renderer abstract item(String i)
---------------------------------------
-- item.jst
---------------------------------------
-template extends LayoutJstTemplate;
-#renderer item(String i)
-  <i>$(i)</i>
+#renderer footer()
+  </body>
+</html>
 #end
+--------------------------------------
+- abstractContent.jst
+--------------------------------------
+abstract template with escape = 'html';
+public LayoutJstTemplate layout;
+#renderer _()
+  #{ layout.renderHeader(out); }
+  #render content()
+  #{ layout.renderFooter(out); }
+#end
+#renderer abstract content()
+--------------------------------------
+- content.jst
+--------------------------------------
+template extends AbstractContentJstTemplate with escape = 'html';
+#renderer content()
+  <p>Hello World !</p>
+#end
+--------------------------------------
+- content2.jst
+--------------------------------------
+template with escape = 'html';
+#renderer content(String name)
+  <p>Hello $(name) !</p>
+#end
+--------------------------------------
+- Main.java
+--------------------------------------
+public class Main {
+  public static void main(String[] args) {
+    LayoutJstTemplate layout = new LayoutJstTemplate();
+    ContentJstTemplate content = new ContentJstTemplate();
+    content.layout = layout;
+    content.render(new OutputStreamWriter(System.out));
+
+    Content2JstTemplate content2 = new Content2JstTemplate();
+    content2.layout = layout;
+    content2.render(new OutputStreamWriter(System.out), "John Malkovich");
+  }
+}
 --------------------------------------
