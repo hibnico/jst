@@ -22,6 +22,9 @@ TODO
 ----
 
 - for(inst; condition; increm): currently for loops can only iterate on +Iterable+ (+for(item : list)+)
+
+IDEAS
+-----
 - add a servlet option: the Writer would come from the HttpServletResponse and HttpServletRequest would be available in the template
 - try catch support ? #renderer cannot thow anything else than IOException for now.
 
@@ -114,6 +117,14 @@ Exemple:
 </body></html>
 #end
 --------------------------------------
+
+Default escaping
+^^^^^^^^^^^^^^^^
+
+Rather than escaping each output, every output can be escaped with a default escaping method. This can be set in two ways:
+
+- the escape method wil be inferred from the JST file name. For instance, +mytemplate.html.jst+ will be default escpaped as +html+, or +mytemplate.js.jst+ will be default encoded as +js+.
+- use the template options: at the begining of the template file, declare +template with escape = 'js'+
 
 Scripting
 ~~~~~~~~~
@@ -326,9 +337,8 @@ If you want to be able to change easily of layout, the recomended relation is co
 
 Exemple:
 
-- layout.jst
+- layout.html.jst
 --------------------------------------
-template with escape = 'html';
 #renderer header()
 <html>
   <body>
@@ -339,9 +349,9 @@ template with escape = 'html';
 </html>
 #end
 --------------------------------------
-- abstractContent.jst
+- abstractContent.html.jst
 --------------------------------------
-abstract template with escape = 'html';
+abstract template;
 public LayoutJstTemplate layout;
 #renderer _()
   #{ layout.renderHeader(out); }
@@ -350,16 +360,16 @@ public LayoutJstTemplate layout;
 #end
 #renderer abstract content()
 --------------------------------------
-- content.jst
+- content.html.jst
 --------------------------------------
-template extends AbstractContentJstTemplate with escape = 'html';
+template extends AbstractContentJstTemplate;
 #renderer content()
   <p>Hello World !</p>
 #end
 --------------------------------------
-- content2.jst
+- content2.html.jst
 --------------------------------------
-template with escape = 'html';
+template;
 #renderer content(String name)
   <p>Hello $(name) !</p>
 #end

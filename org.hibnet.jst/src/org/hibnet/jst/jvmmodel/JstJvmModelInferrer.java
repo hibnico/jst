@@ -59,9 +59,16 @@ public class JstJvmModelInferrer extends AbstractModelInferrer {
 
 	protected void _infer(final JstFile element, final IJvmDeclaredTypeAcceptor acceptor,
 			final boolean isPreIndexingPhase) {
-		String simpleName = StringExtensions.toFirstUpper(element.eResource().getURI().trimFileExtension()
-				.lastSegment())
-				+ "JstTemplate";
+		String fileName = element.eResource().getURI().trimFileExtension().lastSegment();
+		final String defaultEscape;
+		int i = fileName.lastIndexOf('.');
+		if (i != -1) {
+			defaultEscape = fileName.substring(i + 1, fileName.length());
+			fileName = fileName.substring(0, i);
+		} else {
+			defaultEscape = null;
+		}
+		String simpleName = StringExtensions.toFirstUpper(fileName) + "JstTemplate";
 		element.setSimpleName(simpleName);
 
 		acceptor.<JstFile> accept(element).initializeLater(new Procedure1<JstFile>() {
@@ -142,7 +149,7 @@ public class JstJvmModelInferrer extends AbstractModelInferrer {
 								jvmTypesBuilder.setBody(op, new Procedure1<ITreeAppendable>() {
 									@Override
 									public void apply(ITreeAppendable it) {
-										String escape = getEscapeOption(element);
+										String escape = getEscapeOption(element, defaultEscape);
 										if (escape == null) {
 											it.append("_jst_write_unescape");
 										} else {
@@ -196,7 +203,10 @@ public class JstJvmModelInferrer extends AbstractModelInferrer {
 				});
 	}
 
-	private String getEscapeOption(JstFile element) {
+	private String getEscapeOption(JstFile element, String defaultEscape) {
+		if (defaultEscape != null) {
+			return defaultEscape;
+		}
 		for (JstOption option : element.getOptions()) {
 			if (option.getKey().equals("escape") && option.getValue() instanceof XStringLiteral) {
 				return ((XStringLiteral) option.getValue()).getValue();
