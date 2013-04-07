@@ -21,9 +21,12 @@ import java.util.Arrays;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.xtext.common.types.JvmFeature;
+import org.eclipse.xtext.common.types.JvmField;
 import org.eclipse.xtext.common.types.JvmFormalParameter;
-import org.eclipse.xtext.common.types.JvmMember;
+import org.eclipse.xtext.common.types.JvmGenericType;
 import org.eclipse.xtext.common.types.JvmOperation;
+import org.eclipse.xtext.common.types.JvmParameterizedTypeReference;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.common.types.JvmVisibility;
 import org.eclipse.xtext.common.types.TypesFactory;
@@ -34,6 +37,7 @@ import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor;
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder;
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
 import org.eclipse.xtext.xbase.lib.StringExtensions;
+import org.eclipse.xtext.xbase.typesystem.IBatchTypeResolver;
 import org.hibnet.jst.jst.AbstractRenderer;
 import org.hibnet.jst.jst.Field;
 import org.hibnet.jst.jst.JstFile;
@@ -55,11 +59,14 @@ public class JstJvmModelInferrer extends AbstractModelInferrer {
 	private JvmTypesBuilder jvmTypesBuilder;
 
 	@Inject
+	private IBatchTypeResolver typeResolver;
+
+	@Inject
 	private TypesFactory typesFactory;
 
-	protected void _infer(final JstFile element, final IJvmDeclaredTypeAcceptor acceptor,
+	protected void _infer(final JstFile jstFile, final IJvmDeclaredTypeAcceptor acceptor,
 			final boolean isPreIndexingPhase) {
-		String fileName = element.eResource().getURI().trimFileExtension().lastSegment();
+		String fileName = jstFile.eResource().getURI().trimFileExtension().lastSegment();
 		final String defaultEscape;
 		int i = fileName.lastIndexOf('.');
 		if (i != -1) {
@@ -69,43 +76,82 @@ public class JstJvmModelInferrer extends AbstractModelInferrer {
 			defaultEscape = null;
 		}
 		String simpleName = StringExtensions.toFirstUpper(fileName) + "JstTemplate";
-		element.setSimpleName(simpleName);
 
-		acceptor.<JstFile> accept(element).initializeLater(new Procedure1<JstFile>() {
+		String qualifiedName;
+		String packageName = jstFile.getPackageName();
+		if (packageName != null) {
+			qualifiedName = simpleName;
+		} else {
+			qualifiedName = packageName + "." + simpleName;
+		}
+		JvmGenericType templateClass = jvmTypesBuilder.toClass(jstFile, qualifiedName);
+		templateClass.setPackageName(packageName);
+
+		acceptor.<JvmGenericType> accept(templateClass).initializeLater(new Procedure1<JvmGenericType>() {
 			@Override
-			public void apply(final JstFile it) {
-				element.setVisibility(JvmVisibility.PUBLIC);
-				EList<JvmMember> members = element.getMembers();
-				for (JvmMember member : members) {
+			public void apply(final JvmGenericType it) {
+				it.setVisibility(JvmVisibility.PUBLIC);
+				it.setAbstract(jstFile.isAbstract());
+
+				for (JvmParameterizedTypeReference superType : jstFile.getSuperTypes()) {
+					it.getSuperTypes().add(jvmTypesBuilder.cloneWithProxies(superType));
+				}
+
+				// copy fields and methods
+				EList<JvmFeature> members = jstFile.getMembers();
+				for (JvmFeature member : members) {
 					if (member instanceof Field) {
 						final Field field = (Field) member;
-						if (field.getInitialValue() != null) {
-							jvmTypesBuilder.setInitializer(field, field.getInitialValue());
-						}
-						jvmTypesBuilder.translateAnnotationsTo(field.getFieldAnnotations(), field);
+						JvmField f = jvmTypesBuilder.toField(member, field.getIdentifier(), field.getType(),
+								new Procedure1<JvmField>() {
+									@Override
+									public void apply(JvmField f) {
+										jvmTypesBuilder.translateAnnotationsTo(field.getFieldAnnotations(), f);
+										f.setStatic(field.isStatic());
+										f.setVisibility(field.getVisibility());
+										if (field.getInitialValue() != null) {
+											jvmTypesBuilder.setInitializer(f, field.getInitialValue());
+										}
+									}
+								});
+						it.getMembers().add(f);
 					} else if (member instanceof Method) {
-						Method method = (Method) member;
-						jvmTypesBuilder.setBody(method, method.getExpression());
-						jvmTypesBuilder.translateAnnotationsTo(method.getMethodAnnotations(), method);
+						final Method method = (Method) member;
+						JvmOperation m = jvmTypesBuilder.toMethod(member, method.getSimpleName(),
+								method.getReturnType(), new Procedure1<JvmOperation>() {
+									@Override
+									public void apply(JvmOperation p) {
+										p.setStatic(method.isStatic());
+										p.setAbstract(method.isAbstract());
+										p.setVisibility(method.getVisibility());
+										jvmTypesBuilder.setBody(p, method.getExpression());
+										jvmTypesBuilder.translateAnnotationsTo(method.getMethodAnnotations(), p);
+										p.getExceptions().addAll(method.getExceptions());
+									}
+								});
+						it.getMembers().add(m);
 					}
 				}
-				for (final Renderer renderer : element.getRenderers()) {
-					JvmTypeReference voidTypeRef = jvmTypesBuilder.newTypeRef(element, Void.TYPE);
-					JvmOperation method = jvmTypesBuilder.toMethod(element, renderer.getSimpleName(), voidTypeRef,
+
+				// create renderer methods
+				for (final Renderer renderer : jstFile.getRenderers()) {
+					JvmTypeReference voidTypeRef = jvmTypesBuilder.newTypeRef(jstFile, Void.TYPE);
+					JvmOperation method = jvmTypesBuilder.toMethod(jstFile, renderer.getSimpleName(), voidTypeRef,
 							new Procedure1<JvmOperation>() {
 								@Override
 								public void apply(JvmOperation op) {
 									op.setVisibility(JvmVisibility.PUBLIC);
 									JvmTypeReference writerTypeRef = jvmTypesBuilder.newTypeRef(renderer, Writer.class);
-									JvmFormalParameter param = jvmTypesBuilder.toParameter(element, "out",
+									JvmFormalParameter param = jvmTypesBuilder.toParameter(renderer, "out",
 											writerTypeRef);
 									op.getParameters().add(param);
 									for (RendererParameter parameter : renderer.getParameters()) {
-										param = jvmTypesBuilder.toParameter(element, parameter.getName(),
-												parameter.getParameterType());
+										JvmTypeReference paramType = parameter.getParameterType();
+										param = jvmTypesBuilder.toParameter(renderer, parameter.getParameterName(),
+												paramType);
 										op.getParameters().add(param);
 									}
-									op.getExceptions().add(jvmTypesBuilder.newTypeRef(element, Exception.class));
+									op.getExceptions().add(jvmTypesBuilder.newTypeRef(renderer, Exception.class));
 									if (renderer instanceof AbstractRenderer) {
 										op.setAbstract(true);
 									} else {
@@ -113,54 +159,62 @@ public class JstJvmModelInferrer extends AbstractModelInferrer {
 									}
 								}
 							});
-					members.add(method);
+					it.getMembers().add(method);
 				}
 
-				members.add(buildWriteMethod(element, "unescape", null));
-				members.add(buildWriteMethod(element, "escape_xml",
-						"org.apache.commons.lang.StringEscapeUtils.escapeXml("));
-				members.add(buildWriteMethod(element, "escape_html",
-						"org.apache.commons.lang.StringEscapeUtils.escapeHtml("));
-				members.add(buildWriteMethod(element, "escape_js",
-						"org.apache.commons.lang.StringEscapeUtils.escapeJavaScript("));
-				members.add(buildWriteMethod(element, "escape_java",
-						"org.apache.commons.lang.StringEscapeUtils.escapeJava("));
-				members.add(buildWriteMethod(element, "escape_csv",
-						"org.apache.commons.lang.StringEscapeUtils.escapeCsv("));
-				members.add(buildWriteMethod(element, "escape_sql",
-						"org.apache.commons.lang.StringEscapeUtils.escapeSql("));
+				// create escape methods
+				it.getMembers().add(buildWriteMethod(jstFile, "unescape", null));
+				it.getMembers()
+						.add(buildWriteMethod(jstFile, "escape_xml",
+								"org.apache.commons.lang.StringEscapeUtils.escapeXml("));
+				it.getMembers().add(
+						buildWriteMethod(jstFile, "escape_html",
+								"org.apache.commons.lang.StringEscapeUtils.escapeHtml("));
+				it.getMembers().add(
+						buildWriteMethod(jstFile, "escape_js",
+								"org.apache.commons.lang.StringEscapeUtils.escapeJavaScript("));
+				it.getMembers().add(
+						buildWriteMethod(jstFile, "escape_java",
+								"org.apache.commons.lang.StringEscapeUtils.escapeJava("));
+				it.getMembers()
+						.add(buildWriteMethod(jstFile, "escape_csv",
+								"org.apache.commons.lang.StringEscapeUtils.escapeCsv("));
+				it.getMembers()
+						.add(buildWriteMethod(jstFile, "escape_sql",
+								"org.apache.commons.lang.StringEscapeUtils.escapeSql("));
 
-				members.add(jvmTypesBuilder.toMethod(element, "_jst_write_escape",
-						jvmTypesBuilder.newTypeRef(element, Void.TYPE), new Procedure1<JvmOperation>() {
-							@Override
-							public void apply(final JvmOperation op) {
-								op.setVisibility(JvmVisibility.PRIVATE);
-								op.getParameters().add(
-										jvmTypesBuilder.toParameter(element, "out",
-												jvmTypesBuilder.newTypeRef(element, Writer.class)));
-								op.getParameters().add(
-										jvmTypesBuilder.toParameter(element, "object",
-												jvmTypesBuilder.newTypeRef(element, Object.class)));
-								op.getParameters().add(
-										jvmTypesBuilder.toParameter(element, "elvis",
-												jvmTypesBuilder.newTypeRef(element, Boolean.TYPE)));
-								op.getExceptions().add(jvmTypesBuilder.newTypeRef(element, IOException.class));
-
-								jvmTypesBuilder.setBody(op, new Procedure1<ITreeAppendable>() {
+				it.getMembers().add(
+						jvmTypesBuilder.toMethod(jstFile, "_jst_write_escape",
+								jvmTypesBuilder.newTypeRef(jstFile, Void.TYPE), new Procedure1<JvmOperation>() {
 									@Override
-									public void apply(ITreeAppendable it) {
-										String escape = getEscapeOption(element, defaultEscape);
-										if (escape == null) {
-											it.append("_jst_write_unescape");
-										} else {
-											it.append("_jst_write_escape_");
-											it.append(escape);
-										}
-										it.append("(out, object, elvis);");
+									public void apply(final JvmOperation op) {
+										op.setVisibility(JvmVisibility.PRIVATE);
+										op.getParameters().add(
+												jvmTypesBuilder.toParameter(jstFile, "out",
+														jvmTypesBuilder.newTypeRef(jstFile, Writer.class)));
+										op.getParameters().add(
+												jvmTypesBuilder.toParameter(jstFile, "object",
+														jvmTypesBuilder.newTypeRef(jstFile, Object.class)));
+										op.getParameters().add(
+												jvmTypesBuilder.toParameter(jstFile, "elvis",
+														jvmTypesBuilder.newTypeRef(jstFile, Boolean.TYPE)));
+										op.getExceptions().add(jvmTypesBuilder.newTypeRef(jstFile, IOException.class));
+
+										jvmTypesBuilder.setBody(op, new Procedure1<ITreeAppendable>() {
+											@Override
+											public void apply(ITreeAppendable it) {
+												String escape = getEscapeOption(jstFile, defaultEscape);
+												if (escape == null) {
+													it.append("_jst_write_unescape");
+												} else {
+													it.append("_jst_write_escape_");
+													it.append(escape);
+												}
+												it.append("(out, object, elvis);");
+											}
+										});
 									}
-								});
-							}
-						}));
+								}));
 			}
 		});
 	}

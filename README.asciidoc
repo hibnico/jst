@@ -40,9 +40,9 @@ Dependencies
 
 Once generated, the templates need at runtime:
 
-- commons-lang
-- guava
-- org.eclipse.xtext.xbase.lib
+- commons-lang 2.4
+- guava 10
+- org.eclipse.xtext.xbase.lib 2.4
 
 Template Language
 -----------------

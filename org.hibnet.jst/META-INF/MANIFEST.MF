@@ -21,7 +21,8 @@ Require-Bundle: org.eclipse.xtext;visibility:=reexport,
  org.apache.ant;bundle-version="1.8.0";resolution:=optional,
  org.eclipse.jdt.core;bundle-version="3.8.0";resolution:=optional,
  org.apache.commons.lang;bundle-version="2.6.0"
-Import-Package: org.apache.log4j
+Import-Package: org.apache.log4j,
+ org.eclipse.xtext.xbase.lib
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.hibnet.jst,
  org.hibnet.jst.jvmmodel,
@@ -32,8 +33,4 @@ Export-Package: org.hibnet.jst,
  org.hibnet.jst.jst,
  org.hibnet.jst.jst.impl,
  org.hibnet.jst.jst.util,
- org.hibnet.jst.validation,
- org.hibnet.jst.jst,
- org.hibnet.jst.jst.impl,
- org.hibnet.jst.jst.util
-
+ org.hibnet.jst.validation

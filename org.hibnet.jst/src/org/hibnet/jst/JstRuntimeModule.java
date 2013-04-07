@@ -19,10 +19,10 @@ import org.eclipse.xtext.conversion.IValueConverterService;
 import org.eclipse.xtext.parser.antlr.LexerProvider;
 import org.eclipse.xtext.service.SingletonBinding;
 import org.eclipse.xtext.xbase.compiler.XbaseCompiler;
-import org.eclipse.xtext.xbase.typing.ITypeProvider;
+import org.eclipse.xtext.xbase.typesystem.computation.ITypeComputer;
 import org.eclipse.xtext.xtext.ecoreInference.IXtext2EcorePostProcessor;
 import org.hibnet.jst.jvmmodel.JstCompiler;
-import org.hibnet.jst.jvmmodel.JstTypeProvider;
+import org.hibnet.jst.jvmmodel.JstTypeComputer;
 import org.hibnet.jst.parser.antlr.internal.InternalJstLexer;
 import org.hibnet.jst.parser.antlr.internal.JstLexerImpl;
 import org.hibnet.jst.parser.antlr.internal.JstParserImpl;
@@ -38,14 +38,15 @@ public class JstRuntimeModule extends AbstractJstRuntimeModule {
 		return JstValueConverterService.class;
 	}
 
+	@Override
 	@SingletonBinding(eager = true)
 	public Class<? extends JstValidator> bindJstValidator() {
 		return JstValidator.class;
 	}
 
 	@Override
-	public Class<? extends ITypeProvider> bindITypeProvider() {
-		return JstTypeProvider.class;
+	public Class<? extends ITypeComputer> bindITypeComputer() {
+		return JstTypeComputer.class;
 	}
 
 	public Class<? extends XbaseCompiler> bindXbaseCompiler() {

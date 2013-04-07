@@ -30,7 +30,7 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.common.util.WrappedException;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.xtext.common.types.JvmGenericType;
+import org.eclipse.xtext.common.types.JvmDeclaredType;
 import org.eclipse.xtext.generator.JavaIoFileSystemAccess;
 import org.eclipse.xtext.naming.IQualifiedNameProvider;
 import org.eclipse.xtext.naming.QualifiedName;
@@ -44,6 +44,8 @@ import org.eclipse.xtext.util.Strings;
 import org.eclipse.xtext.validation.CheckMode;
 import org.eclipse.xtext.validation.IResourceValidator;
 import org.eclipse.xtext.validation.Issue;
+import org.eclipse.xtext.xbase.compiler.GeneratorConfig;
+import org.eclipse.xtext.xbase.compiler.IGeneratorConfigProvider;
 import org.eclipse.xtext.xbase.compiler.JvmModelGenerator;
 import org.hibnet.jst.jst.JstFile;
 import org.hibnet.jst.jst.JstPackage;
@@ -127,6 +129,9 @@ public class JstJavaFileGenerator {
 	private JvmModelGenerator generator;
 
 	@Inject
+	private IGeneratorConfigProvider generatorConfigProvider;
+
+	@Inject
 	private Provider<ResourceSetBasedResourceDescriptions> resourceSetDescriptionsProvider;
 
 	public boolean generate(Iterable<File> jstFiles, String encoding, File outputDir, Logger logger) {
@@ -200,9 +205,9 @@ public class JstJavaFileGenerator {
 			}
 		}
 		for (IEObjectDescription eObjectDescription : exportedObjectsByType) {
-			JstFile jstFile = (JstFile) eObjectDescription.getEObjectOrProxy();
-			JvmGenericType jvmGenericType = jstFile;
-			CharSequence generatedType = generator.generateType(jvmGenericType);
+			JvmDeclaredType jstFile = (JvmDeclaredType) eObjectDescription.getEObjectOrProxy();
+			GeneratorConfig config = generatorConfigProvider.get(jstFile);
+			CharSequence generatedType = generator.generateType(jstFile, config);
 			String javaFileName = getJavaFileName(jstFile);
 			if (logger.isDebugEnabled()) {
 				logger.debug("write '" + outputDir + File.separator + javaFileName + "'");
@@ -219,11 +224,11 @@ public class JstJavaFileGenerator {
 		return resourceDescriptions;
 	}
 
-	private String getJavaFileName(JstFile jstFile) {
+	private String getJavaFileName(JvmDeclaredType jstFile) {
 		return Strings.concat("/", getFullyQualifiedName(jstFile).getSegments()) + ".java";
 	}
 
-	private QualifiedName getFullyQualifiedName(JstFile jstFile) {
+	private QualifiedName getFullyQualifiedName(JvmDeclaredType jstFile) {
 		return qualifiedNameProvider.getFullyQualifiedName(jstFile);
 	}
 
