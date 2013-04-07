@@ -29,12 +29,12 @@
         <obr name="snapshots" repoXmlFile="${ivy.settings.dir}/../p2repo/dist/snapshots/obr.xml" requirementStrategy="first" />
 
         <updatesite name="eclipse-juno" url="http://download.eclipse.org/releases/juno" cache="eclipse-juno" requirementStrategy="first" />
-        <updatesite name="xtext" url="http://download.itemis.com/updates/releases" cache="xtext" requirementStrategy="first" />
+        <updatesite name="xtext" url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/" cache="xtext" requirementStrategy="first" />
 
         <chain name="all" returnFirst="true">
             <resolver ref="snapshots" />
-            <resolver ref="eclipse-juno" />
             <resolver ref="xtext" />
+            <resolver ref="eclipse-juno" />
         </chain>
 
     </resolvers>

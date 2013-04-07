@@ -27,15 +27,14 @@
         <dependency org="bundle" name="org.apache.log4j" rev="1.2.15.v201012070815" conf="default->default" />
         <dependency org="bundle" name="org.apache.commons.logging" rev="1.1.1.v201101211721" conf="default->default" />
         <dependency org="bundle" name="com.ibm.icu" rev="4.4.2.v20110823" conf="default->default" />
-        <dependency org="bundle" name="org.eclipse.ui.forms" rev="3.5.200.v20120521-2329" conf="default->default" />
 
         <!-- force use of this version over the OTDT one -->
-        <dependency org="bundle" name="org.eclipse.jdt.core" rev="3.8.2.v20120814-155456" conf="*->default" force="true" />
-        <dependency org="bundle" name="org.eclipse.jdt.compiler.apt" rev="1.0.500.v20120522-1651" conf="*->default" force="true" />
-        <dependency org="bundle" name="org.eclipse.jdt.compiler.tool" rev="1.0.101.v20120522-1651" conf="*->default" force="true" />
+        <dependency org="bundle" name="org.eclipse.jdt.core" rev="3.8.3.v20130121-145325" conf="*->default" force="true" />
+        <dependency org="bundle" name="org.eclipse.jdt.compiler.apt" rev="1.0.600.v20130116-050536" conf="*->default" force="true" />
+        <dependency org="bundle" name="org.eclipse.jdt.compiler.tool" rev="1.0.200.v20130116-050536" conf="*->default" force="true" />
 
         <!-- some optional dependency we do need -->
-        <dependency org="bundle" name="org.eclipse.emf.mwe2.lib" rev="2.3.0+" conf="generate->default" />
+        <dependency org="bundle" name="org.eclipse.emf.mwe2.lib" rev="2.4.0+" conf="generate->default" />
 
         <!-- provided -->
         <exclude org="package" module="javax.xml.parsers" />

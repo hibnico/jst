@@ -37,15 +37,8 @@
             </classpath>
             <arg line="src/org/hibnet/jst/GenerateJst.mwe2" />
         </java>
-        <loadfile property="JstFactoryImpl.java" srcFile="src-gen/org/hibnet/jst/jst/impl/JstFactoryImpl.java">
-            <filterchain>
-                <tokenfilter>
-                    <replaceregex pattern="new JstFileImpl\(\);" replace="new JstFileImplCustom();" flags="gi"/>
-                </tokenfilter>
-            </filterchain>
-        </loadfile>
-        <echo file="src-gen/org/hibnet/jst/jst/impl/JstFactoryImpl.java" message="${JstFactoryImpl.java}" />
         <delete file="src/org/hibnet/jst/jvmmodel/JstJvmModelInferrer.xtend" />
+        <delete file="src/org/hibnet/jst/validation/JstValidator.xtend" />
     </target>
 
 </project>
