@@ -23,7 +23,7 @@ import "http://www.eclipse.org/xtext/common/JavaVMTypes" as types
 JstFile:
     {JstFile}
     ('package' packageName=QualifiedName ';')?
-    imports+=Import*
+    imports=XImportSection?
     ( abstract?=ABSTRACT? 'template'
          ('extends' superTypes+=JvmParameterizedTypeReference)?
          ('implements' superTypes+=JvmParameterizedTypeReference (',' superTypes+=JvmParameterizedTypeReference)* )?
@@ -47,10 +47,6 @@ JstOptionValue returns xbase::XExpression:
     XNumberLiteral |
     XNullLiteral |
     XStringLiteral
-;
-
-Import:
-    'import' static?='static'? (importedNamespace=QualifiedName | importedNamespace=QualifiedNameWithWildCard2) ';'
 ;
 
 Field returns types::JvmField:
@@ -170,9 +166,6 @@ RichStringTemplateRender:
     DIRECTIVE_RENDER memberCallTarget=XPrimaryExpression '.' feature=[types::JvmIdentifiableElement|RendererValidID]
          PARENTHESE_OPEN (memberCallArguments+=XExpression (',' memberCallArguments+=XExpression)*)? PARENTHESE_CLOSE
 ;
-
-QualifiedNameWithWildCard2 :
-    QualifiedName  '.' '*';
 
 RendererID:
     ID
