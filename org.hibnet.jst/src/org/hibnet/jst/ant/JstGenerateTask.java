@@ -19,12 +19,17 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.Resource;
 import org.apache.tools.ant.types.ResourceCollection;
 import org.apache.tools.ant.types.resources.FileProvider;
+import org.eclipse.xtext.diagnostics.Severity;
 import org.eclipse.xtext.validation.Issue;
 import org.hibnet.jst.JstStandaloneSetup;
 import org.hibnet.jst.generator.JstJavaFileGenerator;
@@ -63,9 +68,52 @@ public class JstGenerateTask extends Task {
         JstJavaFileGenerator generator = injector.getInstance(JstJavaFileGenerator.class);
 
         List<Issue> issues = generator.generate(jstFiles, output);
+        boolean hasError = false;
         if (issues != null) {
+            Map<String, List<Issue>> issuesByFile = new TreeMap<String, List<Issue>>();
+            Map<String, Severity> worstSeverityByFile = new TreeMap<String, Severity>();
+            for (Issue issue : issues) {
+                if (issue.getSeverity() == Severity.ERROR) {
+                    hasError = true;
+                }
+                String file = issue.getUriToProblem().trimFragment().toFileString();
+                List<Issue> fileIssues = issuesByFile.get(file);
+                Severity severity = worstSeverityByFile.get(file);
+                if (fileIssues == null) {
+                    fileIssues = new ArrayList<Issue>();
+                    issuesByFile.put(file, fileIssues);
+                }
+                if (severity == null || issue.getSeverity().ordinal() < severity.ordinal()) {
+                    worstSeverityByFile.put(file, issue.getSeverity());
+                }
+                fileIssues.add(issue);
+            }
+
+            for (Entry<String, List<Issue>> entry : issuesByFile.entrySet()) {
+                log("In file " + entry.getKey(), getLogLevel(worstSeverityByFile.get(entry.getKey())));
+                for (Issue issue : entry.getValue()) {
+                    int level = getLogLevel(issue.getSeverity());
+                    log("    line " + issue.getLineNumber() + ": [" + issue.getSeverity() + "] " + issue.getMessage(),
+                            level);
+                }
+            }
+        }
+
+        if (hasError) {
             throw new BuildException("Error compiling jst templates");
         }
     }
 
+    private int getLogLevel(Severity severity) {
+        switch (severity) {
+            case ERROR:
+                return Project.MSG_ERR;
+            case WARNING:
+                return Project.MSG_WARN;
+            case INFO:
+                return Project.MSG_INFO;
+            default:
+                return Project.MSG_INFO;
+        }
+    }
 }
