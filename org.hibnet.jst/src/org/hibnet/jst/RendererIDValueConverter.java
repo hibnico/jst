@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012 JST contributors
+ *  Copyright 2013 JST contributors
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,17 +22,17 @@ import org.eclipse.xtext.xbase.lib.StringExtensions;
 
 public class RendererIDValueConverter extends KeywordAlternativeConverter {
 
-	@Override
-	public String toString(final String value) throws ValueConverterException {
-		return StringExtensions.toFirstLower(super.toString(value).substring(6));
-	}
+    @Override
+    public String toString(final String value) throws ValueConverterException {
+        return StringExtensions.toFirstLower(super.toString(value).substring(6));
+    }
 
-	@Override
-	public String toValue(final String string, final INode node) throws ValueConverterException {
-		String value = super.toValue(string, node);
-		if ("_".equals(value)) {
-			return "render";
-		}
-		return "render" + StringExtensions.toFirstUpper(value);
-	}
+    @Override
+    public String toValue(final String string, final INode node) throws ValueConverterException {
+        String value = super.toValue(string, node);
+        if ("_".equals(value)) {
+            return "render";
+        }
+        return "render" + StringExtensions.toFirstUpper(value);
+    }
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012 JST contributors
+ *  Copyright 2013 JST contributors
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,17 +24,17 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 public class ExtendedGenerator extends Generator {
-	public ExtendedGenerator() {
-		new XtextStandaloneSetup() {
-			@Override
-			public Injector createInjector() {
-				return Guice.createInjector(new XtextRuntimeModule() {
-					@Override
-					public Class<? extends IXtext2EcorePostProcessor> bindIXtext2EcorePostProcessor() {
-						return RichStringEclassPostProcessor.class;
-					}
-				});
-			}
-		}.createInjectorAndDoEMFRegistration();
-	}
+    public ExtendedGenerator() {
+        new XtextStandaloneSetup() {
+            @Override
+            public Injector createInjector() {
+                return Guice.createInjector(new XtextRuntimeModule() {
+                    @Override
+                    public Class<? extends IXtext2EcorePostProcessor> bindIXtext2EcorePostProcessor() {
+                        return RichStringEclassPostProcessor.class;
+                    }
+                });
+            }
+        }.createInjectorAndDoEMFRegistration();
+    }
 }

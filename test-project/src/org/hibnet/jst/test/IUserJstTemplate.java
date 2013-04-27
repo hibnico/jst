@@ -4,5 +4,5 @@ import java.io.Writer;
 
 public interface IUserJstTemplate {
 
-	public void render(Writer out, User user) throws Exception;
+    public void render(Writer out, User user) throws Exception;
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012 JST contributors
+ *  Copyright 2013 JST contributors
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ package org.hibnet.jst;
  */
 public class JstStandaloneSetup extends JstStandaloneSetupGenerated {
 
-	public static void doSetup() {
-		new JstStandaloneSetup().createInjectorAndDoEMFRegistration();
-	}
+    public static void doSetup() {
+        new JstStandaloneSetup().createInjectorAndDoEMFRegistration();
+    }
 }

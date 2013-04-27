@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012 JST contributors
+ *  Copyright 2013 JST contributors
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -34,47 +34,47 @@ import org.hibnet.jst.validation.JstValidator;
  */
 public class JstRuntimeModule extends AbstractJstRuntimeModule {
 
-	@Override
-	public Class<? extends IValueConverterService> bindIValueConverterService() {
-		return JstValueConverterService.class;
-	}
+    @Override
+    public Class<? extends IValueConverterService> bindIValueConverterService() {
+        return JstValueConverterService.class;
+    }
 
-	@Override
-	@SingletonBinding(eager = true)
-	public Class<? extends JstValidator> bindJstValidator() {
-		return JstValidator.class;
-	}
+    @Override
+    @SingletonBinding(eager = true)
+    public Class<? extends JstValidator> bindJstValidator() {
+        return JstValidator.class;
+    }
 
-	@Override
-	public Class<? extends ITypeComputer> bindITypeComputer() {
-		return JstTypeComputer.class;
-	}
+    @Override
+    public Class<? extends ITypeComputer> bindITypeComputer() {
+        return JstTypeComputer.class;
+    }
 
-	public Class<? extends XbaseCompiler> bindXbaseCompiler() {
-		return JstCompiler.class;
-	}
+    public Class<? extends XbaseCompiler> bindXbaseCompiler() {
+        return JstCompiler.class;
+    }
 
-	@Override
-	public Class<? extends org.eclipse.xtext.parser.antlr.Lexer> bindLexer() {
-		return JstLexerImpl.class;
-	}
+    @Override
+    public Class<? extends org.eclipse.xtext.parser.antlr.Lexer> bindLexer() {
+        return JstLexerImpl.class;
+    }
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	@Override
-	public com.google.inject.Provider<InternalJstLexer> provideInternalJstLexer() {
-		return (LexerProvider) org.eclipse.xtext.parser.antlr.LexerProvider.create(JstLexerImpl.class);
-	}
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @Override
+    public com.google.inject.Provider<InternalJstLexer> provideInternalJstLexer() {
+        return (LexerProvider) org.eclipse.xtext.parser.antlr.LexerProvider.create(JstLexerImpl.class);
+    }
 
-	@Override
-	public Class<? extends org.eclipse.xtext.parser.IParser> bindIParser() {
-		return JstParserImpl.class;
-	}
+    @Override
+    public Class<? extends org.eclipse.xtext.parser.IParser> bindIParser() {
+        return JstParserImpl.class;
+    }
 
-	public Class<? extends IXtext2EcorePostProcessor> bindIXtext2EcorePostProcessor() {
-		return RichStringEclassPostProcessor.class;
-	}
+    public Class<? extends IXtext2EcorePostProcessor> bindIXtext2EcorePostProcessor() {
+        return RichStringEclassPostProcessor.class;
+    }
 
-	public Class<? extends JstJavaFileGenerator> bindJstJavaFileGenerator() {
-		return JstJavaFileGenerator.class;
-	}
+    public Class<? extends JstJavaFileGenerator> bindJstJavaFileGenerator() {
+        return JstJavaFileGenerator.class;
+    }
 }

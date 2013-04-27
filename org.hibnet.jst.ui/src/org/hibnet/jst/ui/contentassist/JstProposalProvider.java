@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012 JST contributors
+ *  Copyright 2013 JST contributors
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -36,47 +36,53 @@ import com.google.inject.Inject;
  */
 public class JstProposalProvider extends AbstractJstProposalProvider {
 
-	@Inject
-	public JstGrammarAccess jstGrammarAccess;
+    @Inject
+    public JstGrammarAccess jstGrammarAccess;
 
-	private List<TerminalRule> directiveRules = new ArrayList<>();
+    private List<TerminalRule> directiveRules = new ArrayList<>();
 
-	@Inject
-	public void computeDirectiveRules() {
-		List<AbstractRule> allRules = GrammarUtil.allRules(jstGrammarAccess.getGrammar());
-		for (AbstractRule rule : allRules) {
-			if (rule instanceof TerminalRule && rule.getName().startsWith("DIRECTIVE")) {
-				directiveRules.add((TerminalRule) rule.getAlternatives());
-			}
-		}
-	}
+    @Inject
+    public void computeDirectiveRules() {
+        List<AbstractRule> allRules = GrammarUtil.allRules(jstGrammarAccess.getGrammar());
+        for (AbstractRule rule : allRules) {
+            if (rule instanceof TerminalRule && rule.getName().startsWith("DIRECTIVE")) {
+                directiveRules.add((TerminalRule) rule.getAlternatives());
+            }
+        }
+    }
 
-	@Override
-	public void complete_TEXT(EObject model, RuleCall ruleCall, ContentAssistContext context,
-			ICompletionProposalAcceptor acceptor) {
-		acceptor.accept(new CompletionProposal("#{  }", context.getOffset(), 0, 3));
-		acceptor.accept(new CompletionProposal("#render ()", context.getOffset(), 0, 8));
-		acceptor.accept(new CompletionProposal("#if()\n    \n#end", context.getOffset(), 0, 4, null, "#if() #end", null, null));
-		acceptor.accept(new CompletionProposal("#if()\n    \n#else\n    \n#end", context.getOffset(), 0, 4, null, "#if() #else #end", null, null));
-		acceptor.accept(new CompletionProposal("#if()\n    \n#elseif()\n    \n#else\n    \n#end", context.getOffset(), 0, 4, null, "#if() #elseif() #else #end", null, null));
-		acceptor.accept(new CompletionProposal("#for()\n    \n#end", context.getOffset(), 0, 5, null, "#for() #end", null, null));
-		acceptor.accept(new CompletionProposal("#while()\n    \n#end", context.getOffset(), 0, 7, null, "#while() #end", null, null));
-		acceptor.accept(new CompletionProposal("#do\n    \n#end #while()", context.getOffset(), 0, 21, null, "#do #end #while()", null, null));
-		acceptor.accept(new CompletionProposal("$()", context.getOffset(), 0, 2));
-		acceptor.accept(new CompletionProposal("$?()", context.getOffset(), 0, 3));
-		acceptor.accept(new CompletionProposal("$\\html()", context.getOffset(), 0, 7));
-		acceptor.accept(new CompletionProposal("$?\\html()", context.getOffset(), 0, 8));
-		acceptor.accept(new CompletionProposal("$\\js()", context.getOffset(), 0, 5));
-		acceptor.accept(new CompletionProposal("$?\\js()", context.getOffset(), 0, 6));
-		acceptor.accept(new CompletionProposal("$\\xml()", context.getOffset(), 0, 6));
-		acceptor.accept(new CompletionProposal("$?\\xml()", context.getOffset(), 0, 7));
-		acceptor.accept(new CompletionProposal("$\\java()", context.getOffset(), 0, 7));
-		acceptor.accept(new CompletionProposal("$?\\java()", context.getOffset(), 0, 8));
-		acceptor.accept(new CompletionProposal("$\\csv()", context.getOffset(), 0, 6));
-		acceptor.accept(new CompletionProposal("$?\\csv()", context.getOffset(), 0, 7));
-		acceptor.accept(new CompletionProposal("$\\sql()", context.getOffset(), 0, 6));
-		acceptor.accept(new CompletionProposal("$?\\sql()", context.getOffset(), 0, 7));
-		acceptor.accept(new CompletionProposal("$\\\\()", context.getOffset(), 0, 4));
-		acceptor.accept(new CompletionProposal("$?\\\\()", context.getOffset(), 0, 5));
-	}
+    @Override
+    public void complete_TEXT(EObject model, RuleCall ruleCall, ContentAssistContext context,
+            ICompletionProposalAcceptor acceptor) {
+        acceptor.accept(new CompletionProposal("#{  }", context.getOffset(), 0, 3));
+        acceptor.accept(new CompletionProposal("#render ()", context.getOffset(), 0, 8));
+        acceptor.accept(new CompletionProposal("#if()\n    \n#end", context.getOffset(), 0, 4, null, "#if() #end",
+                null, null));
+        acceptor.accept(new CompletionProposal("#if()\n    \n#else\n    \n#end", context.getOffset(), 0, 4, null,
+                "#if() #else #end", null, null));
+        acceptor.accept(new CompletionProposal("#if()\n    \n#elseif()\n    \n#else\n    \n#end", context.getOffset(),
+                0, 4, null, "#if() #elseif() #else #end", null, null));
+        acceptor.accept(new CompletionProposal("#for()\n    \n#end", context.getOffset(), 0, 5, null, "#for() #end",
+                null, null));
+        acceptor.accept(new CompletionProposal("#while()\n    \n#end", context.getOffset(), 0, 7, null,
+                "#while() #end", null, null));
+        acceptor.accept(new CompletionProposal("#do\n    \n#end #while()", context.getOffset(), 0, 21, null,
+                "#do #end #while()", null, null));
+        acceptor.accept(new CompletionProposal("$()", context.getOffset(), 0, 2));
+        acceptor.accept(new CompletionProposal("$?()", context.getOffset(), 0, 3));
+        acceptor.accept(new CompletionProposal("$\\html()", context.getOffset(), 0, 7));
+        acceptor.accept(new CompletionProposal("$?\\html()", context.getOffset(), 0, 8));
+        acceptor.accept(new CompletionProposal("$\\js()", context.getOffset(), 0, 5));
+        acceptor.accept(new CompletionProposal("$?\\js()", context.getOffset(), 0, 6));
+        acceptor.accept(new CompletionProposal("$\\xml()", context.getOffset(), 0, 6));
+        acceptor.accept(new CompletionProposal("$?\\xml()", context.getOffset(), 0, 7));
+        acceptor.accept(new CompletionProposal("$\\java()", context.getOffset(), 0, 7));
+        acceptor.accept(new CompletionProposal("$?\\java()", context.getOffset(), 0, 8));
+        acceptor.accept(new CompletionProposal("$\\csv()", context.getOffset(), 0, 6));
+        acceptor.accept(new CompletionProposal("$?\\csv()", context.getOffset(), 0, 7));
+        acceptor.accept(new CompletionProposal("$\\sql()", context.getOffset(), 0, 6));
+        acceptor.accept(new CompletionProposal("$?\\sql()", context.getOffset(), 0, 7));
+        acceptor.accept(new CompletionProposal("$\\\\()", context.getOffset(), 0, 4));
+        acceptor.accept(new CompletionProposal("$?\\\\()", context.getOffset(), 0, 5));
+    }
 }

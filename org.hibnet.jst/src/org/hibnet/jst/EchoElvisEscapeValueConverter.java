@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012 JST contributors
+ *  Copyright 2013 JST contributors
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,13 +21,13 @@ import org.eclipse.xtext.nodemodel.INode;
 
 public class EchoElvisEscapeValueConverter extends AbstractValueConverter<String> {
 
-	@Override
-	public String toString(final String value) throws ValueConverterException {
-		return "$?\\" + value + "(";
-	}
+    @Override
+    public String toString(final String value) throws ValueConverterException {
+        return "$?\\" + value + "(";
+    }
 
-	@Override
-	public String toValue(final String string, final INode node) throws ValueConverterException {
-		return string.substring(3, string.length() - 1);
-	}
+    @Override
+    public String toValue(final String string, final INode node) throws ValueConverterException {
+        return string.substring(3, string.length() - 1);
+    }
 }

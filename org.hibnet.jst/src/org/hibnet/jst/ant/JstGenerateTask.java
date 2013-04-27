@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012 JST contributors
+ *  Copyright 2013 JST contributors
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -34,83 +34,83 @@ import com.google.inject.Injector;
 
 public class JstGenerateTask extends Task {
 
-	private String encoding;
+    private String encoding;
 
-	private ResourceCollection sources;
+    private ResourceCollection sources;
 
-	private File output;
+    private File output;
 
-	public void setEncoding(String encoding) {
-		this.encoding = encoding;
-	}
+    public void setEncoding(String encoding) {
+        this.encoding = encoding;
+    }
 
-	public void add(ResourceCollection sources) {
-		this.sources = sources;
-	}
+    public void add(ResourceCollection sources) {
+        this.sources = sources;
+    }
 
-	public void setOutput(File output) {
-		this.output = output;
-	}
+    public void setOutput(File output) {
+        this.output = output;
+    }
 
-	private Logger antLogger = new Logger() {
+    private Logger antLogger = new Logger() {
 
-		@Override
-		public boolean isDebugEnabled() {
-			return true;
-		}
+        @Override
+        public boolean isDebugEnabled() {
+            return true;
+        }
 
-		@Override
-		public boolean isInfoEnabled() {
-			return true;
-		}
+        @Override
+        public boolean isInfoEnabled() {
+            return true;
+        }
 
-		@Override
-		public boolean isWarnEnabled() {
-			return true;
-		}
+        @Override
+        public boolean isWarnEnabled() {
+            return true;
+        }
 
-		@Override
-		public void debug(String message) {
-			log(message, Project.MSG_DEBUG);
-		}
+        @Override
+        public void debug(String message) {
+            log(message, Project.MSG_DEBUG);
+        }
 
-		@Override
-		public void info(String message) {
-			log(message, Project.MSG_INFO);
-		}
+        @Override
+        public void info(String message) {
+            log(message, Project.MSG_INFO);
+        }
 
-		@Override
-		public void warn(String message) {
-			log(message, Project.MSG_WARN);
-		}
+        @Override
+        public void warn(String message) {
+            log(message, Project.MSG_WARN);
+        }
 
-		@Override
-		public void error(String message) {
-			log(message, Project.MSG_ERR);
-		}
+        @Override
+        public void error(String message) {
+            log(message, Project.MSG_ERR);
+        }
 
-	};
+    };
 
-	@Override
-	public void execute() throws BuildException {
-		if (!sources.isFilesystemOnly()) {
-			throw new BuildException("Only local files are supported for the sources");
-		}
+    @Override
+    public void execute() throws BuildException {
+        if (!sources.isFilesystemOnly()) {
+            throw new BuildException("Only local files are supported for the sources");
+        }
 
-		List<File> jstFiles = new ArrayList<File>();
-		@SuppressWarnings("unchecked")
-		Iterator<Resource> itResource = sources.iterator();
-		while (itResource.hasNext()) {
-			FileProvider fp = (FileProvider) itResource.next().as(FileProvider.class);
-			jstFiles.add(fp.getFile());
-		}
+        List<File> jstFiles = new ArrayList<File>();
+        @SuppressWarnings("unchecked")
+        Iterator<Resource> itResource = sources.iterator();
+        while (itResource.hasNext()) {
+            FileProvider fp = (FileProvider) itResource.next().as(FileProvider.class);
+            jstFiles.add(fp.getFile());
+        }
 
-		Injector injector = new JstStandaloneSetup().createInjectorAndDoEMFRegistration();
-		JstJavaFileGenerator generator = injector.getInstance(JstJavaFileGenerator.class);
+        Injector injector = new JstStandaloneSetup().createInjectorAndDoEMFRegistration();
+        JstJavaFileGenerator generator = injector.getInstance(JstJavaFileGenerator.class);
 
-		if (!generator.generate(jstFiles, encoding, output, antLogger)) {
-			throw new BuildException("Error compiling jst templates");
-		}
-	}
+        if (!generator.generate(jstFiles, encoding, output, antLogger)) {
+            throw new BuildException("Error compiling jst templates");
+        }
+    }
 
 }

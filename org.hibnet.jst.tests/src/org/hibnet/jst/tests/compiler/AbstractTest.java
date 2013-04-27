@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012 JST contributors
+ *  Copyright 2013 JST contributors
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,39 +33,39 @@ import com.google.inject.Inject;
 @InjectWith(value = JstInjectorProvider.class)
 public abstract class AbstractTest {
 
-	@Inject
-	private CompilationTestHelper compilationTestHelper;
+    @Inject
+    private CompilationTestHelper compilationTestHelper;
 
-	@Inject
-	private ReflectExtensions reflectExtensions;
+    @Inject
+    private ReflectExtensions reflectExtensions;
 
-	protected Class<?> compileTemplate(CharSequence template) throws Exception {
-		final Result[] result = new Result[1];
-		compilationTestHelper.compile(template, new IAcceptor<Result>() {
-			@Override
-			public void accept(Result t) {
-				result[0] = t;
-			}
-		});
-		return result[0].getCompiledClass();
-	}
+    protected Class<?> compileTemplate(CharSequence template) throws Exception {
+        final Result[] result = new Result[1];
+        compilationTestHelper.compile(template, new IAcceptor<Result>() {
+            @Override
+            public void accept(Result t) {
+                result[0] = t;
+            }
+        });
+        return result[0].getCompiledClass();
+    }
 
-	protected String callTemplate(CharSequence template, String renderFunction, Object... params) throws Exception {
-		StringWriter out = new StringWriter();
-		Class<?> cl = compileTemplate(template);
-		if (params != null && params.length != 0) {
-			Object[] params2 = new Object[params.length + 1];
-			params2[0] = out;
-			System.arraycopy(params, 0, params2, 1, params.length);
-			reflectExtensions.invoke(cl.newInstance(), renderFunction, params2);
-		} else {
-			reflectExtensions.invoke(cl.newInstance(), renderFunction, out);
-		}
-		return out.toString();
-	}
+    protected String callTemplate(CharSequence template, String renderFunction, Object... params) throws Exception {
+        StringWriter out = new StringWriter();
+        Class<?> cl = compileTemplate(template);
+        if (params != null && params.length != 0) {
+            Object[] params2 = new Object[params.length + 1];
+            params2[0] = out;
+            System.arraycopy(params, 0, params2, 1, params.length);
+            reflectExtensions.invoke(cl.newInstance(), renderFunction, params2);
+        } else {
+            reflectExtensions.invoke(cl.newInstance(), renderFunction, out);
+        }
+        return out.toString();
+    }
 
-	protected void assertSameOuput(CharSequence expected, CharSequence output) {
-		Assert.assertEquals(expected.toString().replaceAll("( |\n)", ""), output.toString().replaceAll("( |\n)", ""));
-	}
+    protected void assertSameOuput(CharSequence expected, CharSequence output) {
+        Assert.assertEquals(expected.toString().replaceAll("( |\n)", ""), output.toString().replaceAll("( |\n)", ""));
+    }
 
 }

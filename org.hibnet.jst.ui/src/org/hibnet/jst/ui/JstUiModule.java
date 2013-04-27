@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012 JST contributors
+ *  Copyright 2013 JST contributors
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,35 +28,35 @@ import org.hibnet.jst.ui.highlighting.JstHighlightingConfiguration;
  */
 public class JstUiModule extends org.hibnet.jst.ui.AbstractJstUiModule {
 
-	public JstUiModule(AbstractUIPlugin plugin) {
-		super(plugin);
-	}
+    public JstUiModule(AbstractUIPlugin plugin) {
+        super(plugin);
+    }
 
-	@Override
-	public Class<? extends ISemanticHighlightingCalculator> bindISemanticHighlightingCalculator() {
-		return JstHighlightingCalculator.class;
-	}
+    @Override
+    public Class<? extends ISemanticHighlightingCalculator> bindISemanticHighlightingCalculator() {
+        return JstHighlightingCalculator.class;
+    }
 
-	@Override
-	public Class<? extends IHighlightingConfiguration> bindIHighlightingConfiguration() {
-		return JstHighlightingConfiguration.class;
-	}
+    @Override
+    public Class<? extends IHighlightingConfiguration> bindIHighlightingConfiguration() {
+        return JstHighlightingConfiguration.class;
+    }
 
-	@Override
-	public Class<? extends IContentOutlinePage> bindIContentOutlinePage() {
-		return null;
-	}
+    @Override
+    public Class<? extends IContentOutlinePage> bindIContentOutlinePage() {
+        return null;
+    }
 
-	@Override
-	public void configureContentAssistLexerProvider(com.google.inject.Binder binder) {
-		binder.bind(org.hibnet.jst.ui.contentassist.antlr.internal.InternalJstLexer.class).toProvider(
-				org.eclipse.xtext.parser.antlr.LexerProvider.create(JstLexerImpl.class));
-	}
+    @Override
+    public void configureContentAssistLexerProvider(com.google.inject.Binder binder) {
+        binder.bind(org.hibnet.jst.ui.contentassist.antlr.internal.InternalJstLexer.class).toProvider(
+                org.eclipse.xtext.parser.antlr.LexerProvider.create(JstLexerImpl.class));
+    }
 
-	@Override
-	public void configureContentAssistLexer(com.google.inject.Binder binder) {
-		binder.bind(org.eclipse.xtext.ui.editor.contentassist.antlr.internal.Lexer.class)
-				.annotatedWith(com.google.inject.name.Names.named(org.eclipse.xtext.ui.LexerUIBindings.CONTENT_ASSIST))
-				.to(JstLexerImpl.class);
-	}
+    @Override
+    public void configureContentAssistLexer(com.google.inject.Binder binder) {
+        binder.bind(org.eclipse.xtext.ui.editor.contentassist.antlr.internal.Lexer.class)
+                .annotatedWith(com.google.inject.name.Names.named(org.eclipse.xtext.ui.LexerUIBindings.CONTENT_ASSIST))
+                .to(JstLexerImpl.class);
+    }
 }

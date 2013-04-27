@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012 JST contributors
+ *  Copyright 2013 JST contributors
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,45 +23,45 @@ import org.eclipse.xtext.xbase.conversion.XbaseValueConverterService;
 
 public class JstValueConverterService extends XbaseValueConverterService {
 
-	@Inject
-	private RendererIDValueConverter rendererIDValueConverter;
+    @Inject
+    private RendererIDValueConverter rendererIDValueConverter;
 
-	@Inject
-	private DoubleTokenValueConverter doubleTokenValueConverter;
+    @Inject
+    private DoubleTokenValueConverter doubleTokenValueConverter;
 
-	@Inject
-	private EchoEscapeValueConverter echoEscapeValueConverter;
+    @Inject
+    private EchoEscapeValueConverter echoEscapeValueConverter;
 
-	@Inject
-	private EchoElvisEscapeValueConverter echoElvisEscapeValueConverter;
+    @Inject
+    private EchoElvisEscapeValueConverter echoElvisEscapeValueConverter;
 
-	@ValueConverter(rule = "RendererID")
-	public IValueConverter<String> RenderID() {
-		return this.rendererIDValueConverter;
-	}
+    @ValueConverter(rule = "RendererID")
+    public IValueConverter<String> RenderID() {
+        return this.rendererIDValueConverter;
+    }
 
-	@ValueConverter(rule = "RendererValidID")
-	public IValueConverter<String> RenderValidID() {
-		return this.rendererIDValueConverter;
-	}
+    @ValueConverter(rule = "RendererValidID")
+    public IValueConverter<String> RenderValidID() {
+        return this.rendererIDValueConverter;
+    }
 
-	@ValueConverter(rule = "DOLLAR")
-	public IValueConverter<String> DOLLAR() {
-		return this.doubleTokenValueConverter;
-	}
+    @ValueConverter(rule = "DOLLAR")
+    public IValueConverter<String> DOLLAR() {
+        return this.doubleTokenValueConverter;
+    }
 
-	@ValueConverter(rule = "SHARP")
-	public IValueConverter<String> SHARP() {
-		return this.doubleTokenValueConverter;
-	}
+    @ValueConverter(rule = "SHARP")
+    public IValueConverter<String> SHARP() {
+        return this.doubleTokenValueConverter;
+    }
 
-	@ValueConverter(rule = "DIRECTIVE_ECHO_ESCAPE")
-	public IValueConverter<String> DIRECTIVE_ECHO_ESCAPE() {
-		return this.echoEscapeValueConverter;
-	}
+    @ValueConverter(rule = "DIRECTIVE_ECHO_ESCAPE")
+    public IValueConverter<String> DIRECTIVE_ECHO_ESCAPE() {
+        return this.echoEscapeValueConverter;
+    }
 
-	@ValueConverter(rule = "DIRECTIVE_ECHO_ELVIS_ESCAPE")
-	public IValueConverter<String> DIRECTIVE_ECHO_ELVIS_ESCAPE() {
-		return this.echoElvisEscapeValueConverter;
-	}
+    @ValueConverter(rule = "DIRECTIVE_ECHO_ELVIS_ESCAPE")
+    public IValueConverter<String> DIRECTIVE_ECHO_ELVIS_ESCAPE() {
+        return this.echoElvisEscapeValueConverter;
+    }
 }

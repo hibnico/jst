@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012 JST contributors
+ *  Copyright 2013 JST contributors
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,8 +20,8 @@ import org.hibnet.jst.parser.antlr.JstParser;
 
 public class JstParserImpl extends JstParser {
 
-	@Override
-	protected InternalJstParser createParser(XtextTokenStream stream) {
-		return new InternalJstParserImpl(stream, getGrammarAccess());
-	}
+    @Override
+    protected InternalJstParser createParser(XtextTokenStream stream) {
+        return new InternalJstParserImpl(stream, getGrammarAccess());
+    }
 }

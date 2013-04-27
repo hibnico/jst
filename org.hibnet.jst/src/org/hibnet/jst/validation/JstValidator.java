@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012 JST contributors
+ *  Copyright 2013 JST contributors
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,14 +20,14 @@ import org.eclipse.xtext.xbase.annotations.validation.XbaseWithAnnotationsJavaVa
 
 public class JstValidator extends XbaseWithAnnotationsJavaValidator {
 
-	@Override
-	protected boolean isImplicitReturn(final XExpression expr) {
-		// workaround for https://bugs.eclipse.org/bugs/show_bugs.cgi?id=382879
-		return false;
-	}
+    @Override
+    protected boolean isImplicitReturn(final XExpression expr) {
+        // workaround for https://bugs.eclipse.org/bugs/show_bugs.cgi?id=382879
+        return false;
+    }
 
-	@Override
-	public void checkInnerExpressions(final XExpression expr) {
-		// disabled
-	}
+    @Override
+    public void checkInnerExpressions(final XExpression expr) {
+        // disabled
+    }
 }
