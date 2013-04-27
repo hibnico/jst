@@ -26,8 +26,7 @@
     </caches>
 
     <resolvers>
-        <obr name="snapshots" repoXmlFile="${ivy.settings.dir}/../p2repo/dist/snapshots/obr.xml" requirementStrategy="first" />
-
+        <updatesite name="snapshots" url="file://${ivy.settings.dir}/../p2repo/dist/snapshots/" cache="snapshots" requirementStrategy="first" />
         <updatesite name="eclipse-juno" url="http://download.eclipse.org/releases/juno" cache="eclipse-juno" requirementStrategy="first" />
         <updatesite name="xtext" url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/" cache="xtext" requirementStrategy="first" />
 
