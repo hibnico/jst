@@ -4,7 +4,7 @@
 		module="jst-ui"
 		revision="0.1.0.qualifier"
 		status="integration"
-		publication="20130407230314"
+		publication="20130427234848"
 	/>
 	<configurations>
 		<conf name="compile" visibility="public"/>
@@ -13,36 +13,36 @@
 	<publications>
 	</publications>
 	<dependencies>
-		<dependency org="bundle" name="org.hibnet.jst" rev="0.1.0.201304072301-dev" force="true" transitive="false" conf="compile->default"/>
-		<dependency org="bundle" name="org.hibnet.jst" rev="0.1.0.201304072301-dev" force="true" transitive="false" conf="runtime->default"/>
-		<dependency org="bundle" name="org.eclipse.xtext.ui" rev="2.4.0.v201303201134" force="true" transitive="false" conf="compile->default"/>
-		<dependency org="bundle" name="org.eclipse.xtext.ui" rev="2.4.0.v201303201134" force="true" transitive="false" conf="runtime->default"/>
+		<dependency org="bundle" name="org.hibnet.jst" rev="0.1.0.201304092114-dev" force="true" transitive="false" conf="compile->default"/>
+		<dependency org="bundle" name="org.hibnet.jst" rev="0.1.0.201304092114-dev" force="true" transitive="false" conf="runtime->default"/>
+		<dependency org="bundle" name="org.eclipse.xtext.ui" rev="2.4.1.v201304180855" force="true" transitive="false" conf="compile->default"/>
+		<dependency org="bundle" name="org.eclipse.xtext.ui" rev="2.4.1.v201304180855" force="true" transitive="false" conf="runtime->default"/>
 		<dependency org="bundle" name="org.eclipse.ui.editors" rev="3.8.0.v20120523-1540" force="true" transitive="false" conf="compile->default"/>
 		<dependency org="bundle" name="org.eclipse.ui.editors" rev="3.8.0.v20120523-1540" force="true" transitive="false" conf="runtime->default"/>
 		<dependency org="bundle" name="org.eclipse.ui.ide" rev="3.8.2.v20121106-165923" force="true" transitive="false" conf="compile->default"/>
 		<dependency org="bundle" name="org.eclipse.ui.ide" rev="3.8.2.v20121106-165923" force="true" transitive="false" conf="runtime->default"/>
-		<dependency org="bundle" name="org.eclipse.xtext.ui.shared" rev="2.4.0.v201303201134" force="true" transitive="false" conf="compile->default"/>
-		<dependency org="bundle" name="org.eclipse.xtext.ui.shared" rev="2.4.0.v201303201134" force="true" transitive="false" conf="runtime->default"/>
-		<dependency org="bundle" name="org.eclipse.xtext.xbase.ui" rev="2.4.0.v201303201134" force="true" transitive="false" conf="compile->default"/>
-		<dependency org="bundle" name="org.eclipse.xtext.xbase.ui" rev="2.4.0.v201303201134" force="true" transitive="false" conf="runtime->default"/>
+		<dependency org="bundle" name="org.eclipse.xtext.ui.shared" rev="2.4.1.v201304180855" force="true" transitive="false" conf="compile->default"/>
+		<dependency org="bundle" name="org.eclipse.xtext.ui.shared" rev="2.4.1.v201304180855" force="true" transitive="false" conf="runtime->default"/>
+		<dependency org="bundle" name="org.eclipse.xtext.xbase.ui" rev="2.4.1.v201304180855" force="true" transitive="false" conf="compile->default"/>
+		<dependency org="bundle" name="org.eclipse.xtext.xbase.ui" rev="2.4.1.v201304180855" force="true" transitive="false" conf="runtime->default"/>
 		<dependency org="bundle" name="org.eclipse.ui" rev="3.104.0.v20121024-145224" force="true" transitive="false" conf="compile->default"/>
 		<dependency org="bundle" name="org.eclipse.ui" rev="3.104.0.v20121024-145224" force="true" transitive="false" conf="runtime->default"/>
-		<dependency org="bundle" name="org.eclipse.xtext.builder" rev="2.4.0.v201303201134" force="true" transitive="false" conf="compile->default"/>
-		<dependency org="bundle" name="org.eclipse.xtext.builder" rev="2.4.0.v201303201134" force="true" transitive="false" conf="runtime->default"/>
+		<dependency org="bundle" name="org.eclipse.xtext.builder" rev="2.4.1.v201304180855" force="true" transitive="false" conf="compile->default"/>
+		<dependency org="bundle" name="org.eclipse.xtext.builder" rev="2.4.1.v201304180855" force="true" transitive="false" conf="runtime->default"/>
 		<dependency org="bundle" name="org.antlr.runtime" rev="3.2.0.v201101311130" force="true" transitive="false" conf="compile->default"/>
 		<dependency org="bundle" name="org.antlr.runtime" rev="3.2.0.v201101311130" force="true" transitive="false" conf="runtime->default"/>
-		<dependency org="bundle" name="org.eclipse.xtext.common.types.ui" rev="2.4.0.v201303201134" force="true" transitive="false" conf="compile->default"/>
-		<dependency org="bundle" name="org.eclipse.xtext.common.types.ui" rev="2.4.0.v201303201134" force="true" transitive="false" conf="runtime->default"/>
-		<dependency org="bundle" name="org.eclipse.xtext.ui.codetemplates.ui" rev="2.4.0.v201303201134" force="true" transitive="false" conf="compile->default"/>
-		<dependency org="bundle" name="org.eclipse.xtext.ui.codetemplates.ui" rev="2.4.0.v201303201134" force="true" transitive="false" conf="runtime->default"/>
+		<dependency org="bundle" name="org.eclipse.xtext.common.types.ui" rev="2.4.1.v201304180855" force="true" transitive="false" conf="compile->default"/>
+		<dependency org="bundle" name="org.eclipse.xtext.common.types.ui" rev="2.4.1.v201304180855" force="true" transitive="false" conf="runtime->default"/>
+		<dependency org="bundle" name="org.eclipse.xtext.ui.codetemplates.ui" rev="2.4.1.v201304180855" force="true" transitive="false" conf="compile->default"/>
+		<dependency org="bundle" name="org.eclipse.xtext.ui.codetemplates.ui" rev="2.4.1.v201304180855" force="true" transitive="false" conf="runtime->default"/>
 		<dependency org="bundle" name="org.eclipse.compare" rev="3.5.301.v20130125-135424" force="true" transitive="false" conf="compile->default"/>
 		<dependency org="bundle" name="org.eclipse.compare" rev="3.5.301.v20130125-135424" force="true" transitive="false" conf="runtime->default"/>
-		<dependency org="bundle" name="org.eclipse.xtend.lib" rev="2.4.0.v201303201134" force="true" transitive="false" conf="compile->default"/>
-		<dependency org="bundle" name="org.eclipse.xtend.lib" rev="2.4.0.v201303201134" force="true" transitive="false" conf="runtime->default"/>
+		<dependency org="bundle" name="org.eclipse.xtend.lib" rev="2.4.1.v201304180855" force="true" transitive="false" conf="compile->default"/>
+		<dependency org="bundle" name="org.eclipse.xtend.lib" rev="2.4.1.v201304180855" force="true" transitive="false" conf="runtime->default"/>
 		<dependency org="bundle" name="com.google.guava" rev="10.0.1.v201203051515" force="true" transitive="false" conf="compile->default,use_com.google.common.annotations"/>
 		<dependency org="bundle" name="com.google.guava" rev="10.0.1.v201203051515" force="true" transitive="false" conf="runtime->default,use_com.google.common.annotations"/>
-		<dependency org="bundle" name="org.eclipse.xtext.xbase.lib" rev="2.4.0.v201303201134" force="true" transitive="false" conf="compile->default,use_org.eclipse.xtext.xbase.lib"/>
-		<dependency org="bundle" name="org.eclipse.xtext.xbase.lib" rev="2.4.0.v201303201134" force="true" transitive="false" conf="runtime->default,use_org.eclipse.xtext.xbase.lib"/>
+		<dependency org="bundle" name="org.eclipse.xtext.xbase.lib" rev="2.4.1.v201304180855" force="true" transitive="false" conf="compile->default,use_org.eclipse.xtext.xbase.lib"/>
+		<dependency org="bundle" name="org.eclipse.xtext.xbase.lib" rev="2.4.1.v201304180855" force="true" transitive="false" conf="runtime->default,use_org.eclipse.xtext.xbase.lib"/>
 		<dependency org="bundle" name="org.apache.log4j" rev="1.2.15.v201012070815" force="true" transitive="false" conf="compile->default,use_org.apache.log4j"/>
 		<dependency org="bundle" name="org.apache.log4j" rev="1.2.15.v201012070815" force="true" transitive="false" conf="runtime->default,use_org.apache.log4j"/>
 		<dependency org="bundle" name="com.ibm.icu" rev="4.4.2.v20110823" force="true" transitive="false" conf="compile->default"/>
@@ -53,16 +53,16 @@
 		<dependency org="bundle" name="org.apache.commons.logging" rev="1.1.1.v201101211721" force="true" transitive="false" conf="runtime->default,use_org.apache.commons.logging"/>
 		<dependency org="bundle" name="org.eclipse.swt.cocoa.macosx.x86_64" rev="3.100.1.v4236b" force="true" transitive="false" conf="compile->default"/>
 		<dependency org="bundle" name="org.eclipse.swt.cocoa.macosx.x86_64" rev="3.100.1.v4236b" force="true" transitive="false" conf="runtime->default"/>
-		<dependency org="bundle" name="org.eclipse.xtext" rev="2.4.0.v201303201134" force="true" transitive="false" conf="compile->default"/>
-		<dependency org="bundle" name="org.eclipse.xtext" rev="2.4.0.v201303201134" force="true" transitive="false" conf="runtime->default"/>
-		<dependency org="bundle" name="org.eclipse.xtext.util" rev="2.4.0.v201303201134" force="true" transitive="false" conf="compile->default"/>
-		<dependency org="bundle" name="org.eclipse.xtext.util" rev="2.4.0.v201303201134" force="true" transitive="false" conf="runtime->default"/>
+		<dependency org="bundle" name="org.eclipse.xtext" rev="2.4.1.v201304180855" force="true" transitive="false" conf="compile->default"/>
+		<dependency org="bundle" name="org.eclipse.xtext" rev="2.4.1.v201304180855" force="true" transitive="false" conf="runtime->default"/>
+		<dependency org="bundle" name="org.eclipse.xtext.util" rev="2.4.1.v201304180855" force="true" transitive="false" conf="compile->default"/>
+		<dependency org="bundle" name="org.eclipse.xtext.util" rev="2.4.1.v201304180855" force="true" transitive="false" conf="runtime->default"/>
 		<dependency org="bundle" name="org.eclipse.emf.ecore" rev="2.8.3.v20130125-0546" force="true" transitive="false" conf="compile->default,use_org.eclipse.emf.ecore,use_org.eclipse.emf.ecore.util"/>
 		<dependency org="bundle" name="org.eclipse.emf.ecore" rev="2.8.3.v20130125-0546" force="true" transitive="false" conf="runtime->default,use_org.eclipse.emf.ecore,use_org.eclipse.emf.ecore.util"/>
 		<dependency org="bundle" name="org.eclipse.emf.common" rev="2.8.0.v20130125-0546" force="true" transitive="false" conf="compile->default,use_org.eclipse.emf.common.util"/>
 		<dependency org="bundle" name="org.eclipse.emf.common" rev="2.8.0.v20130125-0546" force="true" transitive="false" conf="runtime->default,use_org.eclipse.emf.common.util"/>
-		<dependency org="bundle" name="org.eclipse.xtext.common.types" rev="2.4.0.v201303201134" force="true" transitive="false" conf="compile->default"/>
-		<dependency org="bundle" name="org.eclipse.xtext.common.types" rev="2.4.0.v201303201134" force="true" transitive="false" conf="runtime->default"/>
+		<dependency org="bundle" name="org.eclipse.xtext.common.types" rev="2.4.1.v201304180855" force="true" transitive="false" conf="compile->default"/>
+		<dependency org="bundle" name="org.eclipse.xtext.common.types" rev="2.4.1.v201304180855" force="true" transitive="false" conf="runtime->default"/>
 		<dependency org="bundle" name="javax.servlet" rev="3.0.0.v201112011016" force="true" transitive="false" conf="compile->default"/>
 		<dependency org="bundle" name="javax.servlet" rev="3.0.0.v201112011016" force="true" transitive="false" conf="runtime->default"/>
 		<dependency org="bundle" name="org.eclipse.emf.ecore.xmi" rev="2.8.1.v20130125-0546" force="true" transitive="false" conf="compile->default"/>
@@ -203,8 +203,8 @@
 		<dependency org="bundle" name="org.eclipse.emf.edit" rev="2.8.0.v20130125-0826" force="true" transitive="false" conf="runtime->default"/>
 		<dependency org="bundle" name="org.eclipse.emf.common.ui" rev="2.7.0.v20130125-0826" force="true" transitive="false" conf="compile->default"/>
 		<dependency org="bundle" name="org.eclipse.emf.common.ui" rev="2.7.0.v20130125-0826" force="true" transitive="false" conf="runtime->default"/>
-		<dependency org="bundle" name="org.eclipse.xtext.xbase" rev="2.4.0.v201303201134" force="true" transitive="false" conf="compile->default"/>
-		<dependency org="bundle" name="org.eclipse.xtext.xbase" rev="2.4.0.v201303201134" force="true" transitive="false" conf="runtime->default"/>
+		<dependency org="bundle" name="org.eclipse.xtext.xbase" rev="2.4.1.v201304180855" force="true" transitive="false" conf="compile->default"/>
+		<dependency org="bundle" name="org.eclipse.xtext.xbase" rev="2.4.1.v201304180855" force="true" transitive="false" conf="runtime->default"/>
 		<dependency org="bundle" name="org.eclipse.search" rev="3.8.0.v20120523-1540" force="true" transitive="false" conf="compile->default"/>
 		<dependency org="bundle" name="org.eclipse.search" rev="3.8.0.v20120523-1540" force="true" transitive="false" conf="runtime->default"/>
 		<dependency org="bundle" name="org.eclipse.jdt.core" rev="3.8.3.v_OTDT_r212_201301271217" force="true" transitive="false" conf="compile->default"/>
@@ -241,7 +241,7 @@
 		<dependency org="bundle" name="org.eclipse.jdt.debug" rev="3.7.101.v20120913-153601" force="true" transitive="false" conf="runtime->default"/>
 		<dependency org="bundle" name="org.eclipse.ui.views.properties.tabbed" rev="3.5.300.v20120912-132807" force="true" transitive="false" conf="compile->default"/>
 		<dependency org="bundle" name="org.eclipse.ui.views.properties.tabbed" rev="3.5.300.v20120912-132807" force="true" transitive="false" conf="runtime->default"/>
-		<dependency org="bundle" name="org.eclipse.xtext.ui.codetemplates" rev="2.4.0.v201303201134" force="true" transitive="false" conf="compile->default"/>
-		<dependency org="bundle" name="org.eclipse.xtext.ui.codetemplates" rev="2.4.0.v201303201134" force="true" transitive="false" conf="runtime->default"/>
+		<dependency org="bundle" name="org.eclipse.xtext.ui.codetemplates" rev="2.4.1.v201304180855" force="true" transitive="false" conf="compile->default"/>
+		<dependency org="bundle" name="org.eclipse.xtext.ui.codetemplates" rev="2.4.1.v201304180855" force="true" transitive="false" conf="runtime->default"/>
 	</dependencies>
 </ivy-module>

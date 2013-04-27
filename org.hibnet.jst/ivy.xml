@@ -4,7 +4,7 @@
 		module="jst"
 		revision="0.1.0.qualifier"
 		status="integration"
-		publication="20130407225140"
+		publication="20130427231556"
 	/>
 	<configurations>
 		<conf name="compile" visibility="public"/>
@@ -14,12 +14,12 @@
 	<publications>
 	</publications>
 	<dependencies>
-		<dependency org="bundle" name="org.eclipse.xtext" rev="2.4.0.v201303201134" force="true" transitive="false" conf="generate->default"/>
-		<dependency org="bundle" name="org.eclipse.xtext" rev="2.4.0.v201303201134" force="true" transitive="false" conf="compile->default"/>
-		<dependency org="bundle" name="org.eclipse.xtext" rev="2.4.0.v201303201134" force="true" transitive="false" conf="runtime->default"/>
-		<dependency org="bundle" name="org.eclipse.xtext.util" rev="2.4.0.v201303201134" force="true" transitive="false" conf="generate->default"/>
-		<dependency org="bundle" name="org.eclipse.xtext.util" rev="2.4.0.v201303201134" force="true" transitive="false" conf="compile->default"/>
-		<dependency org="bundle" name="org.eclipse.xtext.util" rev="2.4.0.v201303201134" force="true" transitive="false" conf="runtime->default"/>
+		<dependency org="bundle" name="org.eclipse.xtext" rev="2.4.1.v201304180855" force="true" transitive="false" conf="generate->default"/>
+		<dependency org="bundle" name="org.eclipse.xtext" rev="2.4.1.v201304180855" force="true" transitive="false" conf="compile->default"/>
+		<dependency org="bundle" name="org.eclipse.xtext" rev="2.4.1.v201304180855" force="true" transitive="false" conf="runtime->default"/>
+		<dependency org="bundle" name="org.eclipse.xtext.util" rev="2.4.1.v201304180855" force="true" transitive="false" conf="generate->default"/>
+		<dependency org="bundle" name="org.eclipse.xtext.util" rev="2.4.1.v201304180855" force="true" transitive="false" conf="compile->default"/>
+		<dependency org="bundle" name="org.eclipse.xtext.util" rev="2.4.1.v201304180855" force="true" transitive="false" conf="runtime->default"/>
 		<dependency org="bundle" name="org.eclipse.emf.ecore" rev="2.8.3.v20130125-0546" force="true" transitive="false" conf="generate->default"/>
 		<dependency org="bundle" name="org.eclipse.emf.ecore" rev="2.8.3.v20130125-0546" force="true" transitive="false" conf="compile->default"/>
 		<dependency org="bundle" name="org.eclipse.emf.ecore" rev="2.8.3.v20130125-0546" force="true" transitive="false" conf="runtime->default"/>
@@ -29,12 +29,12 @@
 		<dependency org="bundle" name="org.antlr.runtime" rev="3.2.0.v201101311130" force="true" transitive="false" conf="generate->default"/>
 		<dependency org="bundle" name="org.antlr.runtime" rev="3.2.0.v201101311130" force="true" transitive="false" conf="compile->default"/>
 		<dependency org="bundle" name="org.antlr.runtime" rev="3.2.0.v201101311130" force="true" transitive="false" conf="runtime->default"/>
-		<dependency org="bundle" name="org.eclipse.xtext.common.types" rev="2.4.0.v201303201134" force="true" transitive="false" conf="generate->default"/>
-		<dependency org="bundle" name="org.eclipse.xtext.common.types" rev="2.4.0.v201303201134" force="true" transitive="false" conf="compile->default"/>
-		<dependency org="bundle" name="org.eclipse.xtext.common.types" rev="2.4.0.v201303201134" force="true" transitive="false" conf="runtime->default"/>
-		<dependency org="bundle" name="org.eclipse.xtext.xbase.lib" rev="2.4.0.v201303201134" force="true" transitive="false" conf="generate->default,use_org.eclipse.xtext.xbase.lib"/>
-		<dependency org="bundle" name="org.eclipse.xtext.xbase.lib" rev="2.4.0.v201303201134" force="true" transitive="false" conf="compile->default,use_org.eclipse.xtext.xbase.lib"/>
-		<dependency org="bundle" name="org.eclipse.xtext.xbase.lib" rev="2.4.0.v201303201134" force="true" transitive="false" conf="runtime->default,use_org.eclipse.xtext.xbase.lib"/>
+		<dependency org="bundle" name="org.eclipse.xtext.common.types" rev="2.4.1.v201304180855" force="true" transitive="false" conf="generate->default"/>
+		<dependency org="bundle" name="org.eclipse.xtext.common.types" rev="2.4.1.v201304180855" force="true" transitive="false" conf="compile->default"/>
+		<dependency org="bundle" name="org.eclipse.xtext.common.types" rev="2.4.1.v201304180855" force="true" transitive="false" conf="runtime->default"/>
+		<dependency org="bundle" name="org.eclipse.xtext.xbase.lib" rev="2.4.1.v201304180855" force="true" transitive="false" conf="generate->default,use_org.eclipse.xtext.xbase.lib"/>
+		<dependency org="bundle" name="org.eclipse.xtext.xbase.lib" rev="2.4.1.v201304180855" force="true" transitive="false" conf="compile->default,use_org.eclipse.xtext.xbase.lib"/>
+		<dependency org="bundle" name="org.eclipse.xtext.xbase.lib" rev="2.4.1.v201304180855" force="true" transitive="false" conf="runtime->default,use_org.eclipse.xtext.xbase.lib"/>
 		<dependency org="bundle" name="javax.servlet" rev="3.0.0.v201112011016" force="true" transitive="false" conf="generate->default"/>
 		<dependency org="bundle" name="javax.servlet" rev="3.0.0.v201112011016" force="true" transitive="false" conf="compile->default"/>
 		<dependency org="bundle" name="javax.servlet" rev="3.0.0.v201112011016" force="true" transitive="false" conf="runtime->default"/>
@@ -46,10 +46,13 @@
 		<dependency org="bundle" name="org.apache.log4j" rev="1.2.15.v201012070815" force="true" transitive="false" conf="runtime->default,use_org.apache.log4j"/>
 		<dependency org="bundle" name="org.apache.commons.logging" rev="1.1.1.v201101211721" force="true" transitive="false" conf="generate->default,use_org.apache.commons.logging"/>
 		<dependency org="bundle" name="org.apache.commons.logging" rev="1.1.1.v201101211721" force="true" transitive="false" conf="compile->default,use_org.apache.commons.logging"/>
-		<dependency org="bundle" name="org.apache.commons.logging" rev="1.1.1.v201101211721" force="true" transitive="false" conf="runtime->default"/>
+		<dependency org="bundle" name="org.apache.commons.logging" rev="1.1.1.v201101211721" force="true" transitive="false" conf="runtime->default,use_org.apache.commons.logging"/>
 		<dependency org="bundle" name="com.ibm.icu" rev="4.4.2.v20110823" force="true" transitive="false" conf="generate->default,use_com.ibm.icu.text,use_com.ibm.icu.util"/>
 		<dependency org="bundle" name="com.ibm.icu" rev="4.4.2.v20110823" force="true" transitive="false" conf="compile->default,use_com.ibm.icu.text,use_com.ibm.icu.util"/>
 		<dependency org="bundle" name="com.ibm.icu" rev="4.4.2.v20110823" force="true" transitive="false" conf="runtime->default,use_com.ibm.icu.text,use_com.ibm.icu.util"/>
+		<dependency org="bundle" name="org.eclipse.emf.mwe.utils" rev="1.3.0.v201303191413" force="true" transitive="false" conf="generate->default,use_org.eclipse.emf.mwe.utils"/>
+		<dependency org="bundle" name="org.eclipse.emf.mwe.utils" rev="1.3.0.v201303191413" force="true" transitive="false" conf="compile->default,use_org.eclipse.emf.mwe.utils"/>
+		<dependency org="bundle" name="org.eclipse.emf.mwe.utils" rev="1.3.0.v201303191413" force="true" transitive="false" conf="runtime->default"/>
 		<dependency org="bundle" name="org.eclipse.jdt.core" rev="3.8.3.v20130121-145325" force="true" transitive="false" conf="generate->default"/>
 		<dependency org="bundle" name="org.eclipse.jdt.core" rev="3.8.3.v20130121-145325" force="true" transitive="false" conf="compile->default"/>
 		<dependency org="bundle" name="org.eclipse.jdt.core" rev="3.8.3.v20130121-145325" force="true" transitive="false" conf="runtime->default"/>
@@ -95,6 +98,15 @@
 		<dependency org="bundle" name="com.google.guava" rev="10.0.1.v201203051515" force="true" transitive="false" conf="generate->default,use_com.google.common.base,use_com.google.common.collect,use_com.google.common.annotations"/>
 		<dependency org="bundle" name="com.google.guava" rev="10.0.1.v201203051515" force="true" transitive="false" conf="compile->default,use_com.google.common.base,use_com.google.common.collect,use_com.google.common.annotations"/>
 		<dependency org="bundle" name="com.google.guava" rev="10.0.1.v201203051515" force="true" transitive="false" conf="runtime->default"/>
+		<dependency org="bundle" name="org.eclipse.emf.mwe.core" rev="1.2.1.v201303191413" force="true" transitive="false" conf="generate->default"/>
+		<dependency org="bundle" name="org.eclipse.emf.mwe.core" rev="1.2.1.v201303191413" force="true" transitive="false" conf="compile->default"/>
+		<dependency org="bundle" name="org.eclipse.emf.mwe.core" rev="1.2.1.v201303191413" force="true" transitive="false" conf="runtime->default"/>
+		<dependency org="bundle" name="org.apache.commons.cli" rev="1.2.0.v201105210650" force="true" transitive="false" conf="generate->default"/>
+		<dependency org="bundle" name="org.apache.commons.cli" rev="1.2.0.v201105210650" force="true" transitive="false" conf="compile->default"/>
+		<dependency org="bundle" name="org.apache.commons.cli" rev="1.2.0.v201105210650" force="true" transitive="false" conf="runtime->default"/>
+		<dependency org="bundle" name="org.eclipse.emf.mwe2.runtime" rev="2.4.0.v201303191413" force="true" transitive="false" conf="generate->default"/>
+		<dependency org="bundle" name="org.eclipse.emf.mwe2.runtime" rev="2.4.0.v201303191413" force="true" transitive="false" conf="compile->default"/>
+		<dependency org="bundle" name="org.eclipse.emf.mwe2.runtime" rev="2.4.0.v201303191413" force="true" transitive="false" conf="runtime->default"/>
 		<dependency org="bundle" name="org.eclipse.core.resources" rev="3.8.1.v20121114-124432" force="true" transitive="false" conf="generate->default"/>
 		<dependency org="bundle" name="org.eclipse.core.resources" rev="3.8.1.v20121114-124432" force="true" transitive="false" conf="compile->default"/>
 		<dependency org="bundle" name="org.eclipse.core.resources" rev="3.8.1.v20121114-124432" force="true" transitive="false" conf="runtime->default"/>
@@ -110,35 +122,27 @@
 		<dependency org="bundle" name="org.eclipse.core.commands" rev="3.6.2.v20130123-162658" force="true" transitive="false" conf="generate->default"/>
 		<dependency org="bundle" name="org.eclipse.core.commands" rev="3.6.2.v20130123-162658" force="true" transitive="false" conf="compile->default"/>
 		<dependency org="bundle" name="org.eclipse.core.commands" rev="3.6.2.v20130123-162658" force="true" transitive="false" conf="runtime->default"/>
-		<dependency org="bundle" name="org.eclipse.xtext.xbase" rev="2.4.0.v201303201134" force="true" transitive="false" conf="generate->default"/>
-		<dependency org="bundle" name="org.eclipse.xtext.xbase" rev="2.4.0.v201303201134" force="true" transitive="false" conf="compile->default"/>
-		<dependency org="bundle" name="org.eclipse.xtext.generator" rev="2.4.0.v201303201134" force="true" transitive="false" conf="generate->default"/>
-		<dependency org="bundle" name="org.eclipse.xtext.generator" rev="2.4.0.v201303201134" force="true" transitive="false" conf="compile->default"/>
+		<dependency org="bundle" name="org.eclipse.xtext.xbase" rev="2.4.1.v201304180855" force="true" transitive="false" conf="generate->default"/>
+		<dependency org="bundle" name="org.eclipse.xtext.xbase" rev="2.4.1.v201304180855" force="true" transitive="false" conf="compile->default"/>
+		<dependency org="bundle" name="org.eclipse.xtext.generator" rev="2.4.1.v201304180855" force="true" transitive="false" conf="generate->default"/>
+		<dependency org="bundle" name="org.eclipse.xtext.generator" rev="2.4.1.v201304180855" force="true" transitive="false" conf="compile->default"/>
 		<dependency org="bundle" name="org.eclipse.emf.codegen.ecore" rev="2.8.2.v20130125-0826" force="true" transitive="false" conf="generate->default"/>
 		<dependency org="bundle" name="org.eclipse.emf.codegen.ecore" rev="2.8.2.v20130125-0826" force="true" transitive="false" conf="compile->default"/>
-		<dependency org="bundle" name="org.eclipse.emf.mwe.utils" rev="1.3.0.v201303191413" force="true" transitive="false" conf="generate->default,use_org.eclipse.emf.mwe.utils"/>
-		<dependency org="bundle" name="org.eclipse.emf.mwe.utils" rev="1.3.0.v201303191413" force="true" transitive="false" conf="compile->default,use_org.eclipse.emf.mwe.utils"/>
 		<dependency org="bundle" name="org.eclipse.emf.mwe2.launch" rev="2.4.0.v201303191501" force="true" transitive="false" conf="generate->default"/>
 		<dependency org="bundle" name="org.eclipse.emf.mwe2.launch" rev="2.4.0.v201303191501" force="true" transitive="false" conf="compile->default"/>
 		<dependency org="bundle" name="org.apache.ant" rev="1.8.3.v201301120609" force="true" transitive="false" conf="generate->default"/>
 		<dependency org="bundle" name="org.apache.ant" rev="1.8.3.v201301120609" force="true" transitive="false" conf="compile->default"/>
 		<dependency org="bundle" name="org.eclipse.jdt.core" rev="3.8.3.v_OTDT_r212_201301271217" force="true" transitive="false" conf="generate->default"/>
-		<dependency org="bundle" name="org.eclipse.xtend.lib" rev="2.4.0.v201303201134" force="true" transitive="false" conf="generate->default"/>
-		<dependency org="bundle" name="org.eclipse.xtend.lib" rev="2.4.0.v201303201134" force="true" transitive="false" conf="compile->default"/>
+		<dependency org="bundle" name="org.eclipse.xtend.lib" rev="2.4.1.v201304180855" force="true" transitive="false" conf="generate->default"/>
+		<dependency org="bundle" name="org.eclipse.xtend.lib" rev="2.4.1.v201304180855" force="true" transitive="false" conf="compile->default"/>
 		<dependency org="bundle" name="org.eclipse.xtend" rev="1.3.0.v201302260541" force="true" transitive="false" conf="generate->default"/>
 		<dependency org="bundle" name="org.eclipse.xtend" rev="1.3.0.v201302260541" force="true" transitive="false" conf="compile->default"/>
 		<dependency org="bundle" name="org.eclipse.xpand" rev="1.3.0.v201302260541" force="true" transitive="false" conf="generate->default"/>
 		<dependency org="bundle" name="org.eclipse.xpand" rev="1.3.0.v201302260541" force="true" transitive="false" conf="compile->default"/>
 		<dependency org="bundle" name="org.eclipse.xtend.typesystem.emf" rev="1.3.0.v201302260541" force="true" transitive="false" conf="generate->default"/>
 		<dependency org="bundle" name="org.eclipse.xtend.typesystem.emf" rev="1.3.0.v201302260541" force="true" transitive="false" conf="compile->default"/>
-		<dependency org="bundle" name="org.eclipse.xtext.ecore" rev="2.4.0.v201303201134" force="true" transitive="false" conf="generate->default"/>
-		<dependency org="bundle" name="org.eclipse.xtext.ecore" rev="2.4.0.v201303201134" force="true" transitive="false" conf="compile->default"/>
-		<dependency org="bundle" name="org.eclipse.emf.mwe.core" rev="1.2.1.v201303191413" force="true" transitive="false" conf="generate->default"/>
-		<dependency org="bundle" name="org.eclipse.emf.mwe.core" rev="1.2.1.v201303191413" force="true" transitive="false" conf="compile->default"/>
-		<dependency org="bundle" name="org.apache.commons.cli" rev="1.2.0.v201105210650" force="true" transitive="false" conf="generate->default"/>
-		<dependency org="bundle" name="org.apache.commons.cli" rev="1.2.0.v201105210650" force="true" transitive="false" conf="compile->default"/>
-		<dependency org="bundle" name="org.eclipse.emf.mwe2.runtime" rev="2.4.0.v201303191413" force="true" transitive="false" conf="generate->default"/>
-		<dependency org="bundle" name="org.eclipse.emf.mwe2.runtime" rev="2.4.0.v201303191413" force="true" transitive="false" conf="compile->default"/>
+		<dependency org="bundle" name="org.eclipse.xtext.ecore" rev="2.4.1.v201304180855" force="true" transitive="false" conf="generate->default"/>
+		<dependency org="bundle" name="org.eclipse.xtext.ecore" rev="2.4.1.v201304180855" force="true" transitive="false" conf="compile->default"/>
 		<dependency org="bundle" name="org.eclipse.jdt.launching" rev="3.6.101.v20130111-183046" force="true" transitive="false" conf="generate->default"/>
 		<dependency org="bundle" name="org.eclipse.jdt.launching" rev="3.6.101.v20130111-183046" force="true" transitive="false" conf="compile->default"/>
 		<dependency org="bundle" name="org.eclipse.emf.codegen" rev="2.8.0.v20130125-0826" force="true" transitive="false" conf="generate->default"/>
