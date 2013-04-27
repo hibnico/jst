@@ -21,6 +21,7 @@ import org.eclipse.xtext.service.SingletonBinding;
 import org.eclipse.xtext.xbase.compiler.XbaseCompiler;
 import org.eclipse.xtext.xbase.typesystem.computation.ITypeComputer;
 import org.eclipse.xtext.xtext.ecoreInference.IXtext2EcorePostProcessor;
+import org.hibnet.jst.generator.JstJavaFileGenerator;
 import org.hibnet.jst.jvmmodel.JstCompiler;
 import org.hibnet.jst.jvmmodel.JstTypeComputer;
 import org.hibnet.jst.parser.antlr.internal.InternalJstLexer;
