@@ -1,0 +1,35 @@
+<!--
+    Copyright 2013 JST contributors
+    
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+    
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<ivy-module version="2.0">
+    <info organisation="org.hibnet" module="jst-generator" />
+    <dependencies>
+        <dependency org="bundle" name="org.hibnet.jst" rev="0.1+" conf="default->default" />
+        <dependency org="bundle" name="org.eclipse.xtext.xbase" rev="2.4+" conf="default->default" />
+
+        <!-- provided -->
+        <exclude org="package" module="javax.xml.parsers" />
+        <exclude org="package" module="javax.xml.transform" />
+        <exclude org="package" module="javax.xml.transform.dom" />
+        <exclude org="package" module="javax.xml.transform.stream" />
+        <exclude org="package" module="org.xml.sax" />
+        <exclude org="package" module="org.xml.sax.helpers" />
+        <exclude org="package" module="org.xml.sax.ext" />
+        <exclude org="package" module="org.w3c.dom" />
+        <exclude org="package" module="org.w3c.dom.css" />
+        <exclude org="package" module="org.w3c.dom.events" />
+        <exclude org="package" module="javax.annotation" />
+    </dependencies>
+</ivy-module>

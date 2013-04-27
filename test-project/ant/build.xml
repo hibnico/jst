@@ -13,13 +13,13 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<project name="jst-test" xmlns:jst="antlib:org.hibnet.jst.ant">
+<project name="jst-test-build" xmlns:ivy="antlib:org.apache.ivy.ant">
 
-    <import file="${basedir}/ant/anttask.xml" />
+    <import file="../../build/common-build.xml" />
 
-	<target name="generate-jst" depends="init-ant-tasks">
-        <jst:generate output="src-gen">
-			<fileset dir="src" includes="**/*.jst" />
-	    </jst:generate>
-	</target>
+    <target name="update-deps" depends="init,ivy:configure" description="Update dependencies (to be called on ivy-manifest.xml change)">
+        <ivy:resolve file="${basedir}/ivy-manifest.xml" conf="default" type="jar" uncompress="true" resolveId="update-deps" />
+        <ivy:fixdeps tofile="${basedir}/ivy.xml" resolveId="update-deps" />
+    </target>
+
 </project>
