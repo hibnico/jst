@@ -19,7 +19,7 @@
 
     <property name="caches.basedir" value="${ivy.settings.dir}/repo-caches" />
 
-    <caches resolutionCacheDir="${ivy.default.ivy.user.dir}/resolution-cache">
+    <caches resolutionCacheDir="${caches.basedir}/resolution-cache">
         <cache name="eclipse-juno" basedir="${caches.basedir}/eclipse-juno" />
         <cache name="xtext" basedir="${caches.basedir}/xtext" />
         <cache name="snapshots" basedir="${caches.basedir}/snapshots" />
