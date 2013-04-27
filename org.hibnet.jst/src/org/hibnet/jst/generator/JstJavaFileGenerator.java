@@ -47,8 +47,8 @@ public class JstJavaFileGenerator {
     public List<Issue> generate(List<File> sources, File output) {
         ResourceSet set = resourceSetProvider.get();
 
-        List<Resource> resources = new ArrayList<>();
-        List<Issue> issues = new ArrayList<>();
+        List<Resource> resources = new ArrayList<Resource>();
+        List<Issue> issues = new ArrayList<Issue>();
 
         for (File source : sources) {
             Resource resource = set.getResource(URI.createURI(source.toURI().toString()), true);

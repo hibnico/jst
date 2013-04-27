@@ -21,28 +21,21 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.Resource;
 import org.apache.tools.ant.types.ResourceCollection;
 import org.apache.tools.ant.types.resources.FileProvider;
-import org.hibnet.jst.JstJavaFileGenerator;
-import org.hibnet.jst.JstJavaFileGenerator.Logger;
+import org.eclipse.xtext.validation.Issue;
 import org.hibnet.jst.JstStandaloneSetup;
+import org.hibnet.jst.generator.JstJavaFileGenerator;
 
 import com.google.inject.Injector;
 
 public class JstGenerateTask extends Task {
 
-    private String encoding;
-
     private ResourceCollection sources;
 
     private File output;
-
-    public void setEncoding(String encoding) {
-        this.encoding = encoding;
-    }
 
     public void add(ResourceCollection sources) {
         this.sources = sources;
@@ -51,45 +44,6 @@ public class JstGenerateTask extends Task {
     public void setOutput(File output) {
         this.output = output;
     }
-
-    private Logger antLogger = new Logger() {
-
-        @Override
-        public boolean isDebugEnabled() {
-            return true;
-        }
-
-        @Override
-        public boolean isInfoEnabled() {
-            return true;
-        }
-
-        @Override
-        public boolean isWarnEnabled() {
-            return true;
-        }
-
-        @Override
-        public void debug(String message) {
-            log(message, Project.MSG_DEBUG);
-        }
-
-        @Override
-        public void info(String message) {
-            log(message, Project.MSG_INFO);
-        }
-
-        @Override
-        public void warn(String message) {
-            log(message, Project.MSG_WARN);
-        }
-
-        @Override
-        public void error(String message) {
-            log(message, Project.MSG_ERR);
-        }
-
-    };
 
     @Override
     public void execute() throws BuildException {
@@ -108,7 +62,8 @@ public class JstGenerateTask extends Task {
         Injector injector = new JstStandaloneSetup().createInjectorAndDoEMFRegistration();
         JstJavaFileGenerator generator = injector.getInstance(JstJavaFileGenerator.class);
 
-        if (!generator.generate(jstFiles, encoding, output, antLogger)) {
+        List<Issue> issues = generator.generate(jstFiles, output);
+        if (issues != null) {
             throw new BuildException("Error compiling jst templates");
         }
     }

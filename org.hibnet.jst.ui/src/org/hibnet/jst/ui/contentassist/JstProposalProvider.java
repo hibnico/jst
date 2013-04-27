@@ -22,7 +22,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.text.contentassist.CompletionProposal;
 import org.eclipse.xtext.AbstractRule;
 import org.eclipse.xtext.GrammarUtil;
-import org.eclipse.xtext.Keyword;
 import org.eclipse.xtext.RuleCall;
 import org.eclipse.xtext.TerminalRule;
 import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext;
@@ -39,7 +38,7 @@ public class JstProposalProvider extends AbstractJstProposalProvider {
     @Inject
     public JstGrammarAccess jstGrammarAccess;
 
-    private List<TerminalRule> directiveRules = new ArrayList<>();
+    private List<TerminalRule> directiveRules = new ArrayList<TerminalRule>();
 
     @Inject
     public void computeDirectiveRules() {
