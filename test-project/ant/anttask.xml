@@ -21,7 +21,6 @@
         <dirname property="jst-test-build-anttasks.dir" file="${ant.file.jst-test-build-anttasks}" />
         <ivy:resolve file="${jst-test-build-anttasks.dir}/ivy.xml" conf="default" type="jar" uncompress="true" resolveId="anttasks" />
         <ivy:cachepath pathid="anttask.classpath" conf="default" type="jar" uncompress="true" osgi="true" resolveId="anttasks" />
-        <echo message="${toString:anttask.classpath}" />
         <taskdef resource="org/hibnet/jst/ant/antlib.xml" uri="antlib:org.hibnet.jst.ant" classpathref="anttask.classpath" />
     </target>
 
