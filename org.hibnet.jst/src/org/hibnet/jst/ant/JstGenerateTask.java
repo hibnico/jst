@@ -26,9 +26,11 @@ import java.util.TreeMap;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
+import org.apache.tools.ant.types.Path;
+import org.apache.tools.ant.types.Reference;
 import org.apache.tools.ant.types.Resource;
-import org.apache.tools.ant.types.ResourceCollection;
 import org.apache.tools.ant.types.resources.FileProvider;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.xtext.diagnostics.Severity;
 import org.eclipse.xtext.validation.Issue;
 import org.hibnet.jst.JstStandaloneSetup;
@@ -38,36 +40,136 @@ import com.google.inject.Injector;
 
 public class JstGenerateTask extends Task {
 
-    private ResourceCollection sources;
+    private String encoding;
+
+    private Path src;
 
     private File output;
 
-    public void add(ResourceCollection sources) {
-        this.sources = sources;
+    private File tmp;
+
+    private Path compileClasspath;
+
+    public void setEncoding(String encoding) {
+        this.encoding = encoding;
     }
 
     public void setOutput(File output) {
         this.output = output;
     }
 
+    public void setTmp(File tmp) {
+        this.tmp = tmp;
+    }
+
+    /**
+     * Adds a path for source compilation.
+     * 
+     * @return a nested src element.
+     */
+    public Path createSrc() {
+        if (src == null) {
+            src = new Path(getProject());
+        }
+        return src.createPath();
+    }
+
+    /**
+     * Recreate src.
+     * 
+     * @return a nested src element.
+     */
+    protected Path recreateSrc() {
+        src = null;
+        return createSrc();
+    }
+
+    /**
+     * Set the source directories to find the source Java files.
+     * 
+     * @param srcDir
+     *            the source directories as a path
+     */
+    public void setSrcdir(Path srcDir) {
+        if (src == null) {
+            src = srcDir;
+        } else {
+            src.append(srcDir);
+        }
+    }
+
+    /**
+     * Gets the source dirs to find the source java files.
+     * 
+     * @return the source directories as a path
+     */
+    public Path getSrcdir() {
+        return src;
+    }
+
+    /**
+     * Set the classpath to be used for this compilation.
+     * 
+     * @param classpath
+     *            an Ant Path object containing the compilation classpath.
+     */
+    public void setClasspath(Path classpath) {
+        if (compileClasspath == null) {
+            compileClasspath = classpath;
+        } else {
+            compileClasspath.append(classpath);
+        }
+    }
+
+    /**
+     * Gets the classpath to be used for this compilation.
+     * 
+     * @return the class path
+     */
+    public Path getClasspath() {
+        return compileClasspath;
+    }
+
+    /**
+     * Adds a path to the classpath.
+     * 
+     * @return a class path to be configured
+     */
+    public Path createClasspath() {
+        if (compileClasspath == null) {
+            compileClasspath = new Path(getProject());
+        }
+        return compileClasspath.createPath();
+    }
+
+    /**
+     * Adds a reference to a classpath defined elsewhere.
+     * 
+     * @param r
+     *            a reference to a classpath
+     */
+    public void setClasspathRef(Reference r) {
+        createClasspath().setRefid(r);
+    }
+
     @Override
     public void execute() throws BuildException {
-        if (!sources.isFilesystemOnly()) {
-            throw new BuildException("Only local files are supported for the sources");
-        }
-
-        List<File> jstFiles = new ArrayList<File>();
-        @SuppressWarnings("unchecked")
-        Iterator<Resource> itResource = sources.iterator();
-        while (itResource.hasNext()) {
-            FileProvider fp = (FileProvider) itResource.next().as(FileProvider.class);
-            jstFiles.add(fp.getFile());
-        }
 
         Injector injector = new JstStandaloneSetup().createInjectorAndDoEMFRegistration();
         JstJavaFileGenerator generator = injector.getInstance(JstJavaFileGenerator.class);
 
-        List<Issue> issues = generator.generate(jstFiles, output);
+        if (encoding != null) {
+            generator.setFileEncoding(encoding);
+        }
+        if (tmp != null) {
+            generator.setTempDirectory(tmp);
+        }
+
+        generator.setSourcePath(pathAsFiles(src));
+        generator.setOutputPath(output);
+        generator.setClassPath(pathAsFiles(compileClasspath));
+
+        List<Issue> issues = generator.compile();
         boolean hasError = false;
         if (issues != null) {
             Map<String, List<Issue>> issuesByFile = new TreeMap<String, List<Issue>>();
@@ -102,6 +204,35 @@ public class JstGenerateTask extends Task {
         if (hasError) {
             throw new BuildException("Error compiling jst templates");
         }
+    }
+
+    private List<File> pathAsFiles(Path path) {
+        List<File> dirs = new ArrayList<File>();
+        if (path != null) {
+            @SuppressWarnings("unchecked")
+            Iterator<Resource> itResource = path.iterator();
+            while (itResource.hasNext()) {
+                FileProvider provider = (FileProvider) itResource.next().as(FileProvider.class);
+                dirs.add(provider.getFile());
+
+            }
+        }
+        return dirs;
+    }
+
+    private StringBuilder createIssueMessage(Issue issue) {
+        StringBuilder issueBuilder = new StringBuilder("\n");
+        issueBuilder.append(issue.getSeverity()).append(": \t");
+        URI uriToProblem = issue.getUriToProblem();
+        if (uriToProblem != null) {
+            URI resourceUri = uriToProblem.trimFragment();
+            issueBuilder.append(resourceUri.lastSegment()).append(" - ");
+            if (resourceUri.isFile()) {
+                issueBuilder.append(resourceUri.toFileString());
+            }
+        }
+        issueBuilder.append("\n").append(issue.getLineNumber()).append(": ").append(issue.getMessage());
+        return issueBuilder;
     }
 
     private int getLogLevel(Severity severity) {

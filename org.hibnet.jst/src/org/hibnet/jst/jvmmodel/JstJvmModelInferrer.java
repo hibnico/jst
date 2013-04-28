@@ -64,6 +64,16 @@ public class JstJvmModelInferrer extends AbstractModelInferrer {
     @Inject
     private TypesFactory typesFactory;
 
+    public static String getClassName(JstFile jstFile) {
+        String fileName = jstFile.eResource().getURI().trimFileExtension().lastSegment();
+        int i = fileName.lastIndexOf('.');
+        if (i != -1) {
+            fileName = fileName.substring(0, i);
+        }
+        String simpleName = StringExtensions.toFirstUpper(fileName) + "JstTemplate";
+        return simpleName;
+    }
+    
     protected void _infer(final JstFile jstFile, final IJvmDeclaredTypeAcceptor acceptor,
             final boolean isPreIndexingPhase) {
         String fileName = jstFile.eResource().getURI().trimFileExtension().lastSegment();
@@ -75,7 +85,7 @@ public class JstJvmModelInferrer extends AbstractModelInferrer {
         } else {
             defaultEscape = null;
         }
-        String simpleName = StringExtensions.toFirstUpper(fileName) + "JstTemplate";
+        String simpleName = getClassName(jstFile);
 
         String qualifiedName;
         String packageName = jstFile.getPackageName();

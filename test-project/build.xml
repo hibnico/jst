@@ -19,7 +19,7 @@
 
 	<target name="generate-jst" depends="init-ant-tasks">
         <jst:generate output="src-gen">
-			<fileset dir="src" includes="**/*.jst" />
+            <src path="src" />
 	    </jst:generate>
 	</target>
 </project>

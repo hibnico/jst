@@ -4,7 +4,7 @@
 		module="jst-generator"
 		revision="working@hibpro.local"
 		status="integration"
-		publication="20130428000242"
+		publication="20130428142847"
 	/>
 	<configurations>
 		<conf name="default" visibility="public"/>
@@ -12,7 +12,7 @@
 	<publications>
 	</publications>
 	<dependencies>
-		<dependency org="bundle" name="org.hibnet.jst" rev="0.1.0.201304272347-dev" force="true" transitive="false" conf="default->default"/>
+		<dependency org="bundle" name="org.hibnet.jst" rev="0.1.0.201304281427-dev" force="true" transitive="false" conf="default->default"/>
 		<dependency org="bundle" name="org.eclipse.xtext.xbase" rev="2.4.1.v201304180855" force="true" transitive="false" conf="default->default"/>
 		<dependency org="bundle" name="org.eclipse.xtext" rev="2.4.1.v201304180855" force="true" transitive="false" conf="default->default"/>
 		<dependency org="bundle" name="org.eclipse.xtext.util" rev="2.4.1.v201304180855" force="true" transitive="false" conf="default->default"/>
