@@ -1,0 +1,12 @@
+
+#renderer _(User connectedUser, Theme t)
+  #render new PageLayoutRenderer() with {
+    connectedUser = connectedUser;
+    content = new PageLayoutRenderer() with {
+        t = t;
+        content = new PostListRenderer() with {
+            posts = t.posts;
+            postRenderer = new PostRenderer()
+        };
+    }
+#end
