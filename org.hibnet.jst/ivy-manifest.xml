@@ -27,7 +27,7 @@
         <dependency org="bundle" name="org.apache.log4j" rev="1.2.15.v201012070815" conf="default->default" />
         <dependency org="bundle" name="org.apache.commons.logging" rev="1.1.1.v201101211721" conf="default->default" />
         <dependency org="bundle" name="com.ibm.icu" rev="4.4.2.v20110823" conf="default->default" />
-        <dependency org="bundle" name="org.eclipse.emf.mwe.utils" rev="1.3.0.v201303191413" conf="default->default" />
+        <dependency org="bundle" name="org.eclipse.emf.mwe.utils" rev="1.3.0.v201306110341" conf="default->default" />
 
         <!-- force use of this version over the OTDT one -->
         <dependency org="bundle" name="org.eclipse.jdt.core" rev="3.8.3.v20130121-145325" conf="*->default" force="true" />

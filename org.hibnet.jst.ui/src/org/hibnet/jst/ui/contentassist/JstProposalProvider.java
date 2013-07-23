@@ -45,7 +45,7 @@ public class JstProposalProvider extends AbstractJstProposalProvider {
         List<AbstractRule> allRules = GrammarUtil.allRules(jstGrammarAccess.getGrammar());
         for (AbstractRule rule : allRules) {
             if (rule instanceof TerminalRule && rule.getName().startsWith("DIRECTIVE")) {
-                directiveRules.add((TerminalRule) rule.getAlternatives());
+                directiveRules.add((TerminalRule) rule);
             }
         }
     }
