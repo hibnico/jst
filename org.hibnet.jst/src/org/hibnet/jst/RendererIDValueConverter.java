@@ -30,7 +30,7 @@ public class RendererIDValueConverter extends KeywordAlternativeConverter {
     @Override
     public String toValue(final String string, final INode node) throws ValueConverterException {
         String value = super.toValue(string, node);
-        if ("_".equals(value)) {
+        if (value == null) {
             return "render";
         }
         return "render" + StringExtensions.toFirstUpper(value);

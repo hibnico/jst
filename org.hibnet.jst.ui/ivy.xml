@@ -4,7 +4,7 @@
 		module="jst-ui"
 		revision="0.1.0.qualifier"
 		status="integration"
-		publication="20130723161942"
+		publication="20130723165715"
 	/>
 	<configurations>
 		<conf name="compile" visibility="public"/>
@@ -13,8 +13,8 @@
 	<publications>
 	</publications>
 	<dependencies>
-		<dependency org="bundle" name="org.hibnet.jst" rev="0.1.0.201307231617-dev" force="true" transitive="false" conf="compile->default"/>
-		<dependency org="bundle" name="org.hibnet.jst" rev="0.1.0.201307231617-dev" force="true" transitive="false" conf="runtime->default"/>
+		<dependency org="bundle" name="org.hibnet.jst" rev="0.1.0.201307231654-dev" force="true" transitive="false" conf="compile->default"/>
+		<dependency org="bundle" name="org.hibnet.jst" rev="0.1.0.201307231654-dev" force="true" transitive="false" conf="runtime->default"/>
 		<dependency org="bundle" name="org.eclipse.xtext.ui" rev="2.4.2.v201306120542" force="true" transitive="false" conf="compile->default"/>
 		<dependency org="bundle" name="org.eclipse.xtext.ui" rev="2.4.2.v201306120542" force="true" transitive="false" conf="runtime->default"/>
 		<dependency org="bundle" name="org.eclipse.ui.editors" rev="3.8.0.v20120523-1540" force="true" transitive="false" conf="compile->default"/>
@@ -45,8 +45,8 @@
 		<dependency org="bundle" name="org.eclipse.xtext.xbase.lib" rev="2.4.2.v201306120542" force="true" transitive="false" conf="runtime->default,use_org.eclipse.xtext.xbase.lib"/>
 		<dependency org="bundle" name="org.apache.log4j" rev="1.2.15.v201012070815" force="true" transitive="false" conf="compile->default,use_org.apache.log4j"/>
 		<dependency org="bundle" name="org.apache.log4j" rev="1.2.15.v201012070815" force="true" transitive="false" conf="runtime->default,use_org.apache.log4j"/>
-		<dependency org="bundle" name="com.ibm.icu" rev="4.4.2.v20110823" force="true" transitive="false" conf="compile->default"/>
-		<dependency org="bundle" name="com.ibm.icu" rev="4.4.2.v20110823" force="true" transitive="false" conf="runtime->default"/>
+		<dependency org="bundle" name="com.ibm.icu" rev="4.4.2.v20110823" force="true" transitive="false" conf="compile->default,use_com.ibm.icu.text,use_com.ibm.icu.util"/>
+		<dependency org="bundle" name="com.ibm.icu" rev="4.4.2.v20110823" force="true" transitive="false" conf="runtime->default,use_com.ibm.icu.text,use_com.ibm.icu.util"/>
 		<dependency org="bundle" name="org.apache.commons.lang" rev="2.6.0.v201205030909" force="true" transitive="false" conf="compile->default,use_org.apache.commons.lang"/>
 		<dependency org="bundle" name="org.apache.commons.lang" rev="2.6.0.v201205030909" force="true" transitive="false" conf="runtime->default,use_org.apache.commons.lang"/>
 		<dependency org="bundle" name="org.apache.commons.logging" rev="1.1.1.v201101211721" force="true" transitive="false" conf="compile->default,use_org.apache.commons.logging"/>
@@ -143,8 +143,6 @@
 		<dependency org="bundle" name="org.eclipse.e4.ui.workbench3" rev="0.12.0.v20120521-2329" force="true" transitive="false" conf="runtime->default"/>
 		<dependency org="bundle" name="org.eclipse.e4.ui.workbench.addons.swt" rev="0.10.3.v20130124-185622" force="true" transitive="false" conf="compile->default"/>
 		<dependency org="bundle" name="org.eclipse.e4.ui.workbench.addons.swt" rev="0.10.3.v20130124-185622" force="true" transitive="false" conf="runtime->default"/>
-		<dependency org="bundle" name="com.ibm.icu.base" rev="4.4.2.v20110831" force="true" transitive="false" conf="compile->default,use_com.ibm.icu.text,use_com.ibm.icu.util"/>
-		<dependency org="bundle" name="com.ibm.icu.base" rev="4.4.2.v20110831" force="true" transitive="false" conf="runtime->default,use_com.ibm.icu.text,use_com.ibm.icu.util"/>
 		<dependency org="bundle" name="org.eclipse.core.databinding" rev="1.4.1.v20120912-132807" force="true" transitive="false" conf="compile->default"/>
 		<dependency org="bundle" name="org.eclipse.core.databinding" rev="1.4.1.v20120912-132807" force="true" transitive="false" conf="runtime->default"/>
 		<dependency org="bundle" name="org.eclipse.e4.ui.workbench" rev="0.11.0.v20130125-100758" force="true" transitive="false" conf="compile->default,use_org.eclipse.e4.ui.workbench.modeling,use_org.eclipse.e4.ui.workbench,use_org.eclipse.e4.ui.internal.workbench"/>

@@ -33,6 +33,7 @@ JstFile:
     (
         members+=Field
       | members+=Method
+      | renderers+=MainRenderer
       | renderers+=Renderer
       | renderers+=AbstractRenderer
     )*
@@ -74,14 +75,21 @@ enum Visibility returns types::JvmVisibility:
 //////////////////////////////////
 
 Renderer:
-    DIRECTIVE_RENDERER simpleName=RendererID PARENTHESE_OPEN (parameters+=RendererParameter (',' parameters+=RendererParameter)*)? PARENTHESE_CLOSE
+    DIRECTIVE_DEF simpleName=RendererID PARENTHESE_OPEN (parameters+=RendererParameter (',' parameters+=RendererParameter)*)? PARENTHESE_CLOSE
+    expression=RichString
+    DIRECTIVE_END
+;
+
+MainRenderer returns Renderer:
+    {MainRenderer}
+    DIRECTIVE_MAIN
     expression=RichString
     DIRECTIVE_END
 ;
 
 AbstractRenderer returns Renderer:
     {AbstractRenderer}
-    DIRECTIVE_RENDERER ABSTRACT simpleName=RendererID PARENTHESE_OPEN (parameters+=RendererParameter (',' parameters+=RendererParameter)*)? PARENTHESE_CLOSE
+    DIRECTIVE_DEF ABSTRACT simpleName=RendererID PARENTHESE_OPEN (parameters+=RendererParameter (',' parameters+=RendererParameter)*)? PARENTHESE_CLOSE
 ;
 
 RendererParameter:
@@ -188,7 +196,8 @@ terminal ABSTRACT: 'abstract';
 terminal DOLLAR: '$$';
 terminal SHARP: '##';
 
-terminal DIRECTIVE_RENDERER: '#renderer';
+terminal DIRECTIVE_MAIN: '#main';
+terminal DIRECTIVE_DEF: '#def';
 terminal DIRECTIVE_IF: '#if(';
 terminal DIRECTIVE_ELSE: '#else';
 terminal DIRECTIVE_ELSEIF: '#elseif(';

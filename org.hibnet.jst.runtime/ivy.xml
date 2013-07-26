@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivy-module version="2.0">
+	<info organisation="org.hibnet"
+		module="jst-runtime"
+		revision="0.1.0.qualifier"
+		status="integration"
+		publication="20130722221353"
+	/>
+	<publications>
+	</publications>
+	<dependencies>
+	   <dependency org="commons-lang" name="commons-lang" rev="2.6" />
+	</dependencies>
+</ivy-module>

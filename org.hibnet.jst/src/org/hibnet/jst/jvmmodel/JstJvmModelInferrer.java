@@ -15,7 +15,6 @@
  */
 package org.hibnet.jst.jvmmodel;
 
-import java.io.IOException;
 import java.io.Writer;
 import java.util.Arrays;
 
@@ -30,8 +29,6 @@ import org.eclipse.xtext.common.types.JvmParameterizedTypeReference;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.common.types.JvmVisibility;
 import org.eclipse.xtext.common.types.TypesFactory;
-import org.eclipse.xtext.xbase.XStringLiteral;
-import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable;
 import org.eclipse.xtext.xbase.jvmmodel.AbstractModelInferrer;
 import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor;
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder;
@@ -41,7 +38,6 @@ import org.eclipse.xtext.xbase.typesystem.IBatchTypeResolver;
 import org.hibnet.jst.jst.AbstractRenderer;
 import org.hibnet.jst.jst.Field;
 import org.hibnet.jst.jst.JstFile;
-import org.hibnet.jst.jst.JstOption;
 import org.hibnet.jst.jst.Method;
 import org.hibnet.jst.jst.Renderer;
 import org.hibnet.jst.jst.RendererParameter;
@@ -73,18 +69,9 @@ public class JstJvmModelInferrer extends AbstractModelInferrer {
         String simpleName = StringExtensions.toFirstUpper(fileName) + "JstTemplate";
         return simpleName;
     }
-    
+
     protected void _infer(final JstFile jstFile, final IJvmDeclaredTypeAcceptor acceptor,
             final boolean isPreIndexingPhase) {
-        String fileName = jstFile.eResource().getURI().trimFileExtension().lastSegment();
-        final String defaultEscape;
-        int i = fileName.lastIndexOf('.');
-        if (i != -1) {
-            defaultEscape = fileName.substring(i + 1, fileName.length());
-            fileName = fileName.substring(0, i);
-        } else {
-            defaultEscape = null;
-        }
         String simpleName = getClassName(jstFile);
 
         String qualifiedName;
@@ -106,6 +93,7 @@ public class JstJvmModelInferrer extends AbstractModelInferrer {
                 for (JvmParameterizedTypeReference superType : jstFile.getSuperTypes()) {
                     it.getSuperTypes().add(jvmTypesBuilder.cloneWithProxies(superType));
                 }
+                it.getSuperTypes().add(jvmTypesBuilder.newTypeRef(jstFile, "org.hibnet.jst.runtime.JstTemplate"));
 
                 // copy fields and methods
                 EList<JvmFeature> members = jstFile.getMembers();
@@ -146,11 +134,17 @@ public class JstJvmModelInferrer extends AbstractModelInferrer {
                 // create renderer methods
                 for (final Renderer renderer : jstFile.getRenderers()) {
                     JvmTypeReference voidTypeRef = jvmTypesBuilder.newTypeRef(jstFile, Void.TYPE);
-                    JvmOperation method = jvmTypesBuilder.toMethod(jstFile, renderer.getSimpleName(), voidTypeRef,
+                    String name = renderer.getSimpleName();
+                    if (name == null) {
+                        name = "render";
+                    }
+                    JvmOperation method = jvmTypesBuilder.toMethod(jstFile, name, voidTypeRef,
                             new Procedure1<JvmOperation>() {
                                 @Override
                                 public void apply(JvmOperation op) {
-                                    op.setVisibility(JvmVisibility.PUBLIC);
+                                    if (renderer.getSimpleName() != null) {
+                                        op.setVisibility(JvmVisibility.PRIVATE);
+                                    }
                                     JvmTypeReference writerTypeRef = jvmTypesBuilder.newTypeRef(renderer, Writer.class);
                                     JvmFormalParameter param = jvmTypesBuilder.toParameter(renderer, "out",
                                             writerTypeRef);
@@ -171,112 +165,8 @@ public class JstJvmModelInferrer extends AbstractModelInferrer {
                             });
                     it.getMembers().add(method);
                 }
-
-                // create escape methods
-                it.getMembers().add(buildWriteMethod(jstFile, "unescape", null));
-                it.getMembers()
-                        .add(buildWriteMethod(jstFile, "escape_xml",
-                                "org.apache.commons.lang.StringEscapeUtils.escapeXml("));
-                it.getMembers().add(
-                        buildWriteMethod(jstFile, "escape_html",
-                                "org.apache.commons.lang.StringEscapeUtils.escapeHtml("));
-                it.getMembers().add(
-                        buildWriteMethod(jstFile, "escape_js",
-                                "org.apache.commons.lang.StringEscapeUtils.escapeJavaScript("));
-                it.getMembers().add(
-                        buildWriteMethod(jstFile, "escape_java",
-                                "org.apache.commons.lang.StringEscapeUtils.escapeJava("));
-                it.getMembers()
-                        .add(buildWriteMethod(jstFile, "escape_csv",
-                                "org.apache.commons.lang.StringEscapeUtils.escapeCsv("));
-                it.getMembers()
-                        .add(buildWriteMethod(jstFile, "escape_sql",
-                                "org.apache.commons.lang.StringEscapeUtils.escapeSql("));
-
-                it.getMembers().add(
-                        jvmTypesBuilder.toMethod(jstFile, "_jst_write_escape",
-                                jvmTypesBuilder.newTypeRef(jstFile, Void.TYPE), new Procedure1<JvmOperation>() {
-                                    @Override
-                                    public void apply(final JvmOperation op) {
-                                        op.setVisibility(JvmVisibility.PRIVATE);
-                                        op.getParameters().add(
-                                                jvmTypesBuilder.toParameter(jstFile, "out",
-                                                        jvmTypesBuilder.newTypeRef(jstFile, Writer.class)));
-                                        op.getParameters().add(
-                                                jvmTypesBuilder.toParameter(jstFile, "object",
-                                                        jvmTypesBuilder.newTypeRef(jstFile, Object.class)));
-                                        op.getParameters().add(
-                                                jvmTypesBuilder.toParameter(jstFile, "elvis",
-                                                        jvmTypesBuilder.newTypeRef(jstFile, Boolean.TYPE)));
-                                        op.getExceptions().add(jvmTypesBuilder.newTypeRef(jstFile, IOException.class));
-
-                                        jvmTypesBuilder.setBody(op, new Procedure1<ITreeAppendable>() {
-                                            @Override
-                                            public void apply(ITreeAppendable it) {
-                                                String escape = getEscapeOption(jstFile, defaultEscape);
-                                                if (escape == null) {
-                                                    it.append("_jst_write_unescape");
-                                                } else {
-                                                    it.append("_jst_write_escape_");
-                                                    it.append(escape);
-                                                }
-                                                it.append("(out, object, elvis);");
-                                            }
-                                        });
-                                    }
-                                }));
             }
         });
-    }
-
-    private JvmOperation buildWriteMethod(final JstFile element, String escapeName, final String escapeFunction) {
-        return jvmTypesBuilder.toMethod(element, "_jst_write_" + escapeName,
-                jvmTypesBuilder.newTypeRef(element, Void.TYPE), new Procedure1<JvmOperation>() {
-                    @Override
-                    public void apply(JvmOperation op) {
-                        op.setVisibility(JvmVisibility.PRIVATE);
-                        EList<JvmFormalParameter> parameters = op.getParameters();
-                        parameters.add(jvmTypesBuilder.toParameter(element, "out",
-                                jvmTypesBuilder.newTypeRef(element, Writer.class)));
-                        parameters.add(jvmTypesBuilder.toParameter(element, "object",
-                                jvmTypesBuilder.newTypeRef(element, Object.class)));
-                        parameters.add(jvmTypesBuilder.toParameter(element, "elvis",
-                                jvmTypesBuilder.newTypeRef(element, Boolean.TYPE)));
-                        op.getExceptions().add(jvmTypesBuilder.newTypeRef(element, IOException.class));
-
-                        jvmTypesBuilder.setBody(op, new Procedure1<ITreeAppendable>() {
-                            @Override
-                            public void apply(ITreeAppendable it) {
-                                it.append("if (object != null) {").increaseIndentation().newLine();
-                                it.append("out.append(");
-                                if (escapeFunction != null) {
-                                    it.append(escapeFunction);
-                                }
-                                it.append("object.toString()");
-                                if (escapeFunction != null) {
-                                    it.append(")");
-                                }
-                                it.append(");");
-                                it.decreaseIndentation().newLine().append("} else if (!elvis) {").increaseIndentation()
-                                        .newLine();
-                                it.append("out.append(\"null\");");
-                                it.decreaseIndentation().newLine().append("}");
-                            }
-                        });
-                    }
-                });
-    }
-
-    private String getEscapeOption(JstFile element, String defaultEscape) {
-        if (defaultEscape != null) {
-            return defaultEscape;
-        }
-        for (JstOption option : element.getOptions()) {
-            if (option.getKey().equals("escape") && option.getValue() instanceof XStringLiteral) {
-                return ((XStringLiteral) option.getValue()).getValue();
-            }
-        }
-        return null;
     }
 
     @Override

@@ -19,12 +19,17 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.xbase.XExpression;
+import org.eclipse.xtext.xbase.XStringLiteral;
 import org.eclipse.xtext.xbase.compiler.XbaseCompiler;
 import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable;
 import org.eclipse.xtext.xbase.controlflow.IEarlyExitComputer;
 import org.eclipse.xtext.xbase.featurecalls.IdentifiableSimpleNameProvider;
+import org.eclipse.xtext.xbase.lib.StringExtensions;
+import org.hibnet.jst.jst.JstFile;
+import org.hibnet.jst.jst.JstOption;
 import org.hibnet.jst.jst.RichString;
 import org.hibnet.jst.jst.RichStringDoWhileLoop;
 import org.hibnet.jst.jst.RichStringForLoop;
@@ -126,13 +131,15 @@ public class JstCompiler extends XbaseCompiler {
             internalToJavaStatement(richStringInlineExpr.getExpr(), it, true);
             it.newLine();
             if (richStringInlineExpr.isUnescape() || richStringInlineExpr.isElvisUnescape()) {
-                it.append("_jst_write_unescape(out, ");
+                it.append(getEscapeMethod(null) + "(out, ");
             } else if (richStringInlineExpr.getEscape() != null) {
-                it.append("_jst_write_escape_" + richStringInlineExpr.getEscape() + "(out, ");
+                it.append(getEscapeMethod(richStringInlineExpr.getEscape()) + "(out, ");
             } else if (richStringInlineExpr.getElvisEscape() != null) {
-                it.append("_jst_write_escape_" + richStringInlineExpr.getElvisEscape() + "(out, ");
+                it.append(getEscapeMethod(richStringInlineExpr.getElvisEscape()) + "(out, ");
             } else {
-                it.append("_jst_write_escape(out, ");
+                String escape = getEscapeOption((JstFile) EcoreUtil.getRootContainer(expr));
+                it.append(getEscapeMethod(escape));
+                it.append("(out, ");
             }
             internalToJavaExpression(richStringInlineExpr.getExpr(), it);
             it.append(", ");
@@ -177,6 +184,36 @@ public class JstCompiler extends XbaseCompiler {
         }
     }
 
+    private String getEscapeMethod(String escape) {
+        if (escape == null) {
+            return "org.hibnet.jst.runtime.JstEscape.unescape";
+        }
+        return "org.hibnet.jst.runtime.JstEscape.escape" + StringExtensions.toFirstUpper(escape);
+    }
+
+    private String getEscapeOption(JstFile jstFile) {
+        String fileName = jstFile.eResource().getURI().trimFileExtension().lastSegment();
+        final String defaultEscape;
+        int i = fileName.lastIndexOf('.');
+        if (i != -1) {
+            defaultEscape = fileName.substring(i + 1, fileName.length());
+            fileName = fileName.substring(0, i);
+        } else {
+            defaultEscape = null;
+        }
+
+        if (defaultEscape != null) {
+            return defaultEscape;
+        }
+
+        for (JstOption option : jstFile.getOptions()) {
+            if (option.getKey().equals("escape") && option.getValue() instanceof XStringLiteral) {
+                return ((XStringLiteral) option.getValue()).getValue();
+            }
+        }
+        return null;
+    }
+
     private boolean isPrintable(XExpression e) {
         if (e instanceof RichString || e instanceof RichStringIf || e instanceof RichStringForLoop
                 || e instanceof RichStringWhileLoop || e instanceof RichStringDoWhileLoop
@@ -198,15 +235,16 @@ public class JstCompiler extends XbaseCompiler {
         generatePrintExpr(e, it, isPrintable(e), isEscape(e));
     }
 
-    private void generatePrintExpr(XExpression e, ITreeAppendable it, boolean printable, boolean escape) {
+    private void generatePrintExpr(XExpression e, ITreeAppendable it, boolean printable, boolean doEscape) {
         internalToJavaStatement(e, it, printable);
         it.newLine();
         if (printable) {
-            if (escape) {
-                it.append("_jst_write_escape(out, ");
-            } else {
-                it.append("_jst_write_unescape(out, ");
+            String escape = null;
+            if (doEscape) {
+                escape = getEscapeOption((JstFile) EcoreUtil.getRootContainer(e));
             }
+            it.append(getEscapeMethod(escape));
+            it.append("(out, ");
             internalToJavaExpression(e, it);
             it.append(", false);");
             it.newLine();

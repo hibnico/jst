@@ -1,0 +1,63 @@
+<!--
+    Copyright 2013 JST contributors
+    
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+    
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<project name="jst" xmlns:ivy="antlib:org.apache.ivy.ant">
+
+    <import file="../build/common-build.xml" />
+
+    <property name="target.dir" location="${basedir}/target" />
+
+    <target name="clean" description="Clean build artifacts">
+        <delete dir="${target.dir}" />
+    </target>
+
+    <target name="ivy:resolve" depends="init">
+        <ivy:configure />
+        <ivy:resolve file="${basedir}/ivy.xml" conf="default" type="jar" />
+        <ivy:cachepath pathid="compile.classpath" conf="default" type="jar" />
+    </target>
+
+    <target name="build" depends="ivy:resolve" description="Build the jar">
+        <loadresource property="jst.symbolicname">
+            <file file="META-INF/MANIFEST.MF" />
+            <filterchain>
+                <linecontainsregexp>
+                    <regexp pattern="Bundle-SymbolicName:"/>
+                </linecontainsregexp>
+                <striplinebreaks />
+                <tokenfilter>
+                    <replaceregex pattern="Bundle-SymbolicName: (.*);.*" replace="\1" flags="gi" />
+                </tokenfilter>
+            </filterchain>
+        </loadresource>
+        <mkdir dir="${target.dir}/classes/META-INF" />
+        <copy todir="${target.dir}/classes/META-INF" file="META-INF/MANIFEST.MF" overwrite="true">
+            <filterchain>
+                <tokenfilter>
+                    <replaceregex pattern="Bundle-Version: (.*)" replace="Bundle-Version: ${jst.version.full}" flags="gi" />
+                </tokenfilter>
+            </filterchain>
+        </copy>
+        <javac srcdir="${basedir}/src/" destdir="${target.dir}/classes" debug="on" includeantruntime="false" source="1.6" target="1.6" classpathref="compile.classpath" />
+        <copy todir="${target.dir}/classes">
+            <fileset dir="${basedir}/src">
+                <exclude name="**/*.java" />
+            </fileset>
+            <fileset dir="${basedir}" includes="META-INF/**/*,plugin.xml" />
+        </copy>
+        <jar destfile="${target.dir}/${jst.symbolicname}_${jst.version.full}.jar" basedir="${target.dir}/classes" manifest="${target.dir}/classes/META-INF/MANIFEST.MF" />
+    </target>
+
+</project>
