@@ -30,7 +30,7 @@ public class PostListTemplate implements Template {
         System.out.println("<ul class='postlist'>");
         for (Post post : posts) {
             System.out.println("<li>");
-            // #render postRenderer(post = post)
+            // #render postTemplate(post = post)
             postTemplate.post = post;
             postTemplate.render();
             System.out.println("</li>");
