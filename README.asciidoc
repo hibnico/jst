@@ -26,7 +26,7 @@ TODO
 IDEAS
 -----
 - add a servlet option: the Writer would come from the HttpServletResponse and HttpServletRequest would be available in the template
-- try catch support ? #renderer cannot thow anything else than IOException for now.
+- try catch support ? a renderer cannot thow anything else than IOException for now.
 
 Continuous Integration Build
 ----------------------------
@@ -40,39 +40,98 @@ Dependencies
 
 Once generated, the templates need at runtime:
 
-- commons-lang 2.4
+- commons-lang 2.6
 - guava 10
 - org.eclipse.xtext.xbase.lib 2.4
+- org.hibnet.jst.runtime
 
 Template Language
 -----------------
 
 NB: the programming language is based on Xbase which is not Java but is close to it. For further documentation about that language, see http://www.eclipse.org/Xtext/documentation.html#xbaseLanguageRef_Introduction
 
-The minimum: define a rendering method in your template
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+A quick Tour
+~~~~~~~~~~~~
+
+The smalest template
+^^^^^^^^^^^^^^^^^^^^
+
+Here is the bare minimum you need to have a working template which display 'Hello World'
 
 --------------------------------------
-#renderer hello()
+#main
   Hello World
 #end
 --------------------------------------
 
-- +#renderer+ defines a new rendering funtion.
-- +hello+ is the name; in your Java code it will be a method called +renderHello+.
-- +()+ is then the list or arguments of your rendering method, here empty.
-- +#end+ defines when the rendering of the current method ends.
+- +#main+ defines the main rendering function.
+- +#end+ defines when it ends.
 
-Note: if the name of the renderer is +_+, then the generated Java method will simply be +render+.
+A more complete template
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+--------------------------------------
+package com.acme;
+
+import java.util.List;
+import java.text.SimpleDateFormat;
+import org.springframework.beans.factory.InitializingBean;
+
+template implements InitializingBean;
+
+List<String> names;
+Date date;
+
+#main
+    <p>Today is $(new SimpleDateFormat("YYYY/MM/dd").format(date))</p>
+    <ul>Hello guys:
+        #for(String name : names)
+            <li>#call name(name)</li>
+        #end
+    </ul>
+#end
+
+#def name(String n)
+  <b>$(n)</b>
+#end
+--------------------------------------
+
+In this exemple, we have first the package declaration: the package in which the Java classes will generated.
+
+Then the Java-like +import+, to avoid fully qualifying classes along the template.
+
++template+ then defines general options on the tempalte and the template Java class hierarchy.
+
+Then there are some fields declared as part of the tempalte class. It is the way of declaring arguments to the +main+ renderer. In this section can also be defined methods.
+
+The +#main+ defines the mandatory entry point of a template. Its body defines how it should be rendered.
+
+In the body of the +main+ renderer, +$(...)+ is outputing the java expression, +#for+ is a loop a java collection, and +#call+ is a call to an inner renderer.
+
+An finally there is the definition of the inner renderer called +name+.
+
+Definition of an inner renderer
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The +main+ renderer is the entry point to render a template. It may be useful to define some other rendering function to be called from the same one, to factorize pieces of the template.
+
+An inner renderer is comparable to a private function of a class. Contrary to the +main+ renderer, it accepts arguments.
+
+Exemple:
+--------------------------------------
+#def paragraph()
+  <p>Some content</p>
+#end
+--------------------------------------
 
 Outputing expressions
 ~~~~~~~~~~~~~~~~~~~~~
 
-In the outputed content, juste use +$(aJavaExpression)+. And to output an empty string rather than +null+ on null values, use +$?(aMaybeNullExpression)+
+In the outputed content, just use +$(aJavaExpression)+. And to output an empty string rather than +null+ on null values, use +$?(aMaybeNullExpression)+
 
 Exemple:
 --------------------------------------
-#renderer hello(String name)
+#def hello(String name)
   Hello $(name) !
 #end
 --------------------------------------
@@ -84,7 +143,7 @@ Just double the letters: +##+ and +$$+
 
 Exemple:
 --------------------------------------
-#renderer account(int account, int amount)
+#def account(int account, int amount)
   Account ##$(account) owns $(amount)$$
 #end
 --------------------------------------
@@ -107,7 +166,7 @@ You can also disable the global escaping and output your expression in a raw for
 
 Exemple:
 --------------------------------------
-#renderer main(String name, String htmlData, String script)
+#def content(String name, String htmlData, String script)
 <html><body>
   Hello $\html(name) !
   <p>$\\(htmlData)</p>
@@ -133,7 +192,7 @@ To declare variables or just do some Java code, do it within +#{...}+
 
 Exemple:
 --------------------------------------
-#renderer hello(String name)
+#def hello(String name)
   #{ var hello = "Hello " + name.trim() + " !" }
   $(hello)
 #end
@@ -147,7 +206,7 @@ At the begining of your template, just do like you would do in plain Java, decla
 Exemple:
 --------------------------------------
 import java.util.List;
-#renderer size(List list)
+#def size(List list)
   List size is $(list.size())
 #end
 --------------------------------------
@@ -155,12 +214,12 @@ import java.util.List;
 Loops
 ~~~~~
 
-Loops are like in Java but with the keywords +#for+, +#while+ or #do, together with +#end+
+Loops are like in Java but with the keywords +#for+, +#while+ or +#do+, together with +#end+
 
 Exemple:
 --------------------------------------
 import java.util.List
-#renderer list(List list)
+#def list(List list)
   <ul>
   #for (item : list)
     <li>$(item)</li>
@@ -191,7 +250,7 @@ To do branching, just like in Java but with the keywords +#if+, +#else+, +#elsei
 Exemple:
 --------------------------------------
 import java.util.List
-#renderer size(List list)
+#def size(List list)
   #if (list == null)
     The list is null
   #elseif(list.isEmpty())
@@ -213,7 +272,7 @@ Exemple:
 --------------------------------------
 package org.acme;
 
-#renderer hello()
+#def hello()
   Hello World
 #end
 --------------------------------------
@@ -237,7 +296,7 @@ import java.util.ArrayList;
 
 template extends ArrayList implements Serializable;
 
-#renderer hello()
+#def hello()
   Hello World
 #end
 --------------------------------------
@@ -251,7 +310,7 @@ Exemple:
 --------------------------------------
 abstract template;
 
-#renderer hello()
+#def hello()
   Hello World
 #end
 --------------------------------------
@@ -267,11 +326,11 @@ import java.io.File;
 
 private File path;
 
-private void setPath(File path) {
+public void setPath(File path) {
   this.path = path;
 }
 
-#renderer path()
+#def path()
   $(path.getAbsolutePath())
 #end
 --------------------------------------
@@ -279,15 +338,15 @@ private void setPath(File path) {
 Renderer call
 ~~~~~~~~~~~~~
 
-Within a renderer, another renderer can be called with the directive +#render+. The syntax is like a function call in Java.
+Within a renderer, another renderer can be called with the directive +#call+. The syntax is like a function call in Java.
 
 Exemple:
 --------------------------------------
-#renderer hello()
+#def hello()
   Hello
-  #render name("World")
+  #call name("World")
 #end
-#renderer name(String n)
+#def name(String n)
   $(n)
 #end
 --------------------------------------
@@ -300,14 +359,14 @@ As the template class, a renderer can be declared abstract. Just add the keyword
 Exemple:
 --------------------------------------
 abstract template;
-#renderer body(List<String> list)
+#def body(List<String> list)
   <ul>
   #for(i : list)
-    <li>#render item(i)</li>
+    <li>#call item(i)</li>
   #end
   </ul>
 #end
-#renderer abstract item(String i)
+#def abstract item(String i)
 --------------------------------------
 
 Template Options
@@ -323,7 +382,7 @@ The supported options are:
 Exemple:
 --------------------------------------
 template with escape = 'html', servlet = true;
-#renderer hello()
+#def hello()
   Hello World !
 #end
 --------------------------------------
@@ -331,46 +390,35 @@ template with escape = 'html', servlet = true;
 Layout pattern
 ~~~~~~~~~~~~~~
 
-When working with templates, some are designed to be layouts of some other contents. With JST, no special keyword or contruction is required, just use the Object Oriented patterns: composition and inheritance.
+When working with templates, some are designed to be layouts and some other contents. With JST, no special keyword or contruction is required, just use the Object Oriented patterns: composition and inheritance.
 
-If you want to be able to change easily of layout, the recomended relation is composition. The "content" layout will be the one called, which will then itself call the "layout" template. Then, if you have several "content" templates sharing the same layout, the recommended way of sharing it is to use inheritance.
+Since the layout should not know about how the actual content should be rendered and vise versa, the interface +JstTemplate+ common to every Jst template will be used. And since it is the layout template which specifies where to put the content, it will be the entry point to render the full page.
 
 Exemple:
 
 - layout.html.jst
 --------------------------------------
-#renderer header()
+public JstTemplate contentTemplate;
+#main
 <html>
   <body>
     <h1>My website</h1>
-#end
-#renderer footer()
+    ${ contentTemplate.render(out); }
   </body>
 </html>
 #end
 --------------------------------------
-- abstractContent.html.jst
+- content1.html.jst
 --------------------------------------
-abstract template;
-public LayoutJstTemplate layout;
-#renderer _()
-  #{ layout.renderHeader(out); }
-  #render content()
-  #{ layout.renderFooter(out); }
-#end
-#renderer abstract content()
---------------------------------------
-- content.html.jst
---------------------------------------
-template extends AbstractContentJstTemplate;
-#renderer content()
+#main
   <p>Hello World !</p>
 #end
 --------------------------------------
 - content2.html.jst
 --------------------------------------
-template;
-#renderer content(String name)
+String name;
+
+#main
   <p>Hello $(name) !</p>
 #end
 --------------------------------------
@@ -378,14 +426,14 @@ template;
 --------------------------------------
 public class Main {
   public static void main(String[] args) {
-    LayoutJstTemplate layout = new LayoutJstTemplate();
-    ContentJstTemplate content = new ContentJstTemplate();
-    content.layout = layout;
-    content.render(new OutputStreamWriter(System.out));
+    LayoutJstTemplate content1 = new LayoutJstTemplate();
+    content1.contentTemplate = new Content1JstTemplate();
+    content1.render(new OutputStreamWriter(System.out));
 
-    Content2JstTemplate content2 = new Content2JstTemplate();
-    content2.layout = layout;
-    content2.render(new OutputStreamWriter(System.out), "John Malkovich");
+    LayoutJstTemplate content2 = new LayoutJstTemplate();
+    content2.contentTemplate = new Content2JstTemplate();
+    content2.contentTemplate.name = "Nico";
+    content2.render(new OutputStreamWriter(System.out));
   }
 }
 --------------------------------------
