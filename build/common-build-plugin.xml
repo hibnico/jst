@@ -62,6 +62,7 @@
                 </tokenfilter>
             </filterchain>
         </copy>
+        <mkdir dir="${basedir}/src-gen" />
         <javac srcdir="${basedir}/src/:${basedir}/src-gen/" destdir="${target.dir}/classes" debug="on" includeantruntime="false" source="1.6" target="1.6" classpathref="compile.classpath" />
         <copy todir="${target.dir}/classes">
             <fileset dir="${basedir}/src">
