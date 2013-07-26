@@ -4,7 +4,7 @@
 		module="jst-ui"
 		revision="0.1.0.qualifier"
 		status="integration"
-		publication="20130723165715"
+		publication="20130726223915"
 	/>
 	<configurations>
 		<conf name="compile" visibility="public"/>
@@ -13,8 +13,8 @@
 	<publications>
 	</publications>
 	<dependencies>
-		<dependency org="bundle" name="org.hibnet.jst" rev="0.1.0.201307231654-dev" force="true" transitive="false" conf="compile->default"/>
-		<dependency org="bundle" name="org.hibnet.jst" rev="0.1.0.201307231654-dev" force="true" transitive="false" conf="runtime->default"/>
+		<dependency org="bundle" name="org.hibnet.jst" rev="0.1.0.201307262237-dev" force="true" transitive="false" conf="compile->default"/>
+		<dependency org="bundle" name="org.hibnet.jst" rev="0.1.0.201307262237-dev" force="true" transitive="false" conf="runtime->default"/>
 		<dependency org="bundle" name="org.eclipse.xtext.ui" rev="2.4.2.v201306120542" force="true" transitive="false" conf="compile->default"/>
 		<dependency org="bundle" name="org.eclipse.xtext.ui" rev="2.4.2.v201306120542" force="true" transitive="false" conf="runtime->default"/>
 		<dependency org="bundle" name="org.eclipse.ui.editors" rev="3.8.0.v20120523-1540" force="true" transitive="false" conf="compile->default"/>

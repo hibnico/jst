@@ -18,7 +18,7 @@
         <extends organisation="bundle" module="org.hibnet.jst.runtime" revision="0.1.0.qualifer" location="META-INF/MANIFEST.MF"/>
     </info>
     <configurations>
-        <conf name="compile" />
+        <conf name="compile" extends="default" />
         <conf name="runtime" extends="default" />
     </configurations>
     <dependencies>

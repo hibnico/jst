@@ -4,7 +4,7 @@
 		module="jst-runtime"
 		revision="0.1.0.qualifier"
 		status="integration"
-		publication="20130726221148"
+		publication="20130726223716"
 	/>
 	<configurations>
 		<conf name="compile" visibility="public"/>
@@ -13,6 +13,7 @@
 	<publications>
 	</publications>
 	<dependencies>
+		<dependency org="bundle" name="org.apache.commons.lang" rev="2.6.0.v201205030909" force="true" transitive="false" conf="compile->default"/>
 		<dependency org="bundle" name="org.apache.commons.lang" rev="2.6.0.v201205030909" force="true" transitive="false" conf="runtime->default"/>
 	</dependencies>
 </ivy-module>
