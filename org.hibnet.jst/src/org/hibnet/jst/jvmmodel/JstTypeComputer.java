@@ -19,13 +19,12 @@ import org.eclipse.xtext.xbase.XExpression;
 import org.eclipse.xtext.xbase.annotations.typesystem.XbaseWithAnnotationsTypeComputer;
 import org.eclipse.xtext.xbase.typesystem.computation.ITypeComputationState;
 import org.hibnet.jst.jst.RichString;
+import org.hibnet.jst.jst.RichStringCall;
 import org.hibnet.jst.jst.RichStringDoWhileLoop;
 import org.hibnet.jst.jst.RichStringForLoop;
 import org.hibnet.jst.jst.RichStringIf;
 import org.hibnet.jst.jst.RichStringInlineExpr;
 import org.hibnet.jst.jst.RichStringLiteral;
-import org.hibnet.jst.jst.RichStringRender;
-import org.hibnet.jst.jst.RichStringTemplateRender;
 import org.hibnet.jst.jst.RichStringWhileLoop;
 
 public class JstTypeComputer extends XbaseWithAnnotationsTypeComputer {
@@ -40,10 +39,8 @@ public class JstTypeComputer extends XbaseWithAnnotationsTypeComputer {
             _computeTypes((RichStringIf) expression, state);
         } else if (expression instanceof RichStringInlineExpr) {
             _computeTypes((RichStringInlineExpr) expression, state);
-        } else if (expression instanceof RichStringRender) {
-            _computeTypes((RichStringRender) expression, state);
-        } else if (expression instanceof RichStringTemplateRender) {
-            _computeTypes((RichStringTemplateRender) expression, state);
+        } else if (expression instanceof RichStringCall) {
+            _computeTypes((RichStringCall) expression, state);
         } else if (expression instanceof RichStringDoWhileLoop) {
             _computeTypes((RichStringDoWhileLoop) expression, state);
         } else if (expression instanceof RichStringForLoop) {
@@ -72,16 +69,8 @@ public class JstTypeComputer extends XbaseWithAnnotationsTypeComputer {
         computeTypes(expression.getExpr(), state);
     }
 
-    protected void _computeTypes(RichStringRender expression, ITypeComputationState state) {
+    protected void _computeTypes(RichStringCall expression, ITypeComputationState state) {
         for (XExpression arg : expression.getFeatureCallArguments()) {
-            computeTypes(arg, state);
-        }
-        state.acceptActualType(getTypeForName(Void.class, state));
-    }
-
-    protected void _computeTypes(RichStringTemplateRender expression, ITypeComputationState state) {
-        computeTypes(expression.getMemberCallTarget(), state);
-        for (XExpression arg : expression.getMemberCallArguments()) {
             computeTypes(arg, state);
         }
         state.acceptActualType(getTypeForName(Void.class, state));

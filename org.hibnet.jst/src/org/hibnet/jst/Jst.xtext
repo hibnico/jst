@@ -109,8 +109,7 @@ RichStringPart returns xbase::XExpression:
     | RichStringWhileLoop
     | RichStringDoWhileLoop
     | RichStringIf
-    | RichStringRender
-    | RichStringTemplateRender
+    | RichStringCall
 ;
 
 RichStringLiteral returns xbase::XStringLiteral:
@@ -165,14 +164,9 @@ RichStringElseIf returns xbase::XIfExpression:
     (else=RichStringElseIf | DIRECTIVE_ELSE else=RichString)?
 ;
 
-RichStringRender:
-    DIRECTIVE_RENDER feature=[types::JvmIdentifiableElement|RendererValidID]
+RichStringCall:
+    DIRECTIVE_CALL feature=[types::JvmIdentifiableElement|RendererValidID]
          PARENTHESE_OPEN (featureCallArguments+=XExpression (',' featureCallArguments+=XExpression)* )? PARENTHESE_CLOSE
-;
-
-RichStringTemplateRender:
-    DIRECTIVE_RENDER memberCallTarget=XPrimaryExpression '.' feature=[types::JvmIdentifiableElement|RendererValidID]
-         PARENTHESE_OPEN (memberCallArguments+=XExpression (',' memberCallArguments+=XExpression)*)? PARENTHESE_CLOSE
 ;
 
 RendererID:
@@ -205,7 +199,7 @@ terminal DIRECTIVE_END: '#end';
 terminal DIRECTIVE_FOR: '#for(';
 terminal DIRECTIVE_WHILE: '#while(';
 terminal DIRECTIVE_DO: '#do';
-terminal DIRECTIVE_RENDER: '#render';
+terminal DIRECTIVE_CALL: '#call';
 terminal DIRECTIVE_SCRIPT: '#{';
 terminal DIRECTIVE_ECHO: '$(';
 terminal DIRECTIVE_ECHO_ELVIS: '$?(';

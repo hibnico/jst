@@ -31,13 +31,12 @@ import org.eclipse.xtext.xbase.lib.StringExtensions;
 import org.hibnet.jst.jst.JstFile;
 import org.hibnet.jst.jst.JstOption;
 import org.hibnet.jst.jst.RichString;
+import org.hibnet.jst.jst.RichStringCall;
 import org.hibnet.jst.jst.RichStringDoWhileLoop;
 import org.hibnet.jst.jst.RichStringForLoop;
 import org.hibnet.jst.jst.RichStringIf;
 import org.hibnet.jst.jst.RichStringInlineExpr;
 import org.hibnet.jst.jst.RichStringLiteral;
-import org.hibnet.jst.jst.RichStringRender;
-import org.hibnet.jst.jst.RichStringTemplateRender;
 import org.hibnet.jst.jst.RichStringWhileLoop;
 
 public class JstCompiler extends XbaseCompiler {
@@ -147,33 +146,12 @@ public class JstCompiler extends XbaseCompiler {
                     richStringInlineExpr.isElvis() || richStringInlineExpr.isElvisUnescape()
                             || richStringInlineExpr.getElvisEscape() != null).toString());
             it.append(");");
-        } else if (expr instanceof RichStringRender) {
-            RichStringRender richStringRender = (RichStringRender) expr;
-            String name = featureNameProvider.getSimpleName(richStringRender.getFeature());
+        } else if (expr instanceof RichStringCall) {
+            RichStringCall richStringCall = (RichStringCall) expr;
+            String name = featureNameProvider.getSimpleName(richStringCall.getFeature());
             it.append(name);
             it.append("(out");
-            List<XExpression> arguments = richStringRender.getFeatureCallArguments();
-            if (!arguments.isEmpty()) {
-                it.append(", ");
-                this.appendArguments(arguments, it, true);
-            }
-            it.append(");");
-        } else if (expr instanceof RichStringTemplateRender) {
-            RichStringTemplateRender richStringTemplateRender = (RichStringTemplateRender) expr;
-            XExpression receiver = richStringTemplateRender.getMemberCallTarget();
-            prepareExpression(receiver, it);
-            List<XExpression> arguments = richStringTemplateRender.getMemberCallArguments();
-            for (XExpression arg : arguments) {
-                prepareExpression(arg, it);
-            }
-            it.newLine();
-            internalToJavaExpression(receiver, it);
-            it.append(".");
-            // TODO
-            // appendTypeArgument(richStringTemplateRender, it)
-            String name = featureNameProvider.getSimpleName(richStringTemplateRender.getFeature());
-            it.append(name);
-            it.append("(out");
+            List<XExpression> arguments = richStringCall.getFeatureCallArguments();
             if (!arguments.isEmpty()) {
                 it.append(", ");
                 this.appendArguments(arguments, it, true);
@@ -217,8 +195,7 @@ public class JstCompiler extends XbaseCompiler {
     private boolean isPrintable(XExpression e) {
         if (e instanceof RichString || e instanceof RichStringIf || e instanceof RichStringForLoop
                 || e instanceof RichStringWhileLoop || e instanceof RichStringDoWhileLoop
-                || e instanceof RichStringInlineExpr || e instanceof RichStringRender
-                || e instanceof RichStringTemplateRender) {
+                || e instanceof RichStringInlineExpr || e instanceof RichStringCall) {
             return false;
         }
         return true;
