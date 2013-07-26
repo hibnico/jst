@@ -43,6 +43,10 @@
             <property name="jst.version.full" value="${jst.version.full}" />
         </ant>
 
+        <ant antfile="${jst-root.dir}/org.hibnet.jst.runtime/build.xml" target="install" dir="${jst-root.dir}/org.hibnet.jst.runtime">
+            <property name="jst.version.full" value="${jst.version.full}" />
+        </ant>
+
         <ant antfile="${jst-root.dir}/p2repo/build.xml" target="generate-snapshots-repo" dir="${jst-root.dir}/p2repo">
             <property name="jst.version.full" value="${jst.version.full}" />
         </ant>

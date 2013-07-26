@@ -13,9 +13,14 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<project name="jst" xmlns:ivy="antlib:org.apache.ivy.ant">
-
-    <import file="../build/common-build.xml" />
-    <import file="../build/common-build-plugin.xml" />
-
-</project>
+<ivy-module version="2.0">
+    <info organisation="org.hibnet" module="jst-runtime">
+        <extends organisation="bundle" module="org.hibnet.jst.runtime" revision="0.1.0.qualifer" location="META-INF/MANIFEST.MF"/>
+    </info>
+    <configurations>
+        <conf name="compile" />
+        <conf name="runtime" extends="default" />
+    </configurations>
+    <dependencies>
+    </dependencies>
+</ivy-module>

@@ -6,6 +6,7 @@ Bundle-SymbolicName: org.hibnet.jst.tests; singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.hibnet.jst,
  org.hibnet.jst.ui,
+ org.hibnet.jst.runtime,
  org.eclipse.core.runtime,
  org.eclipse.xtext.junit4,
  org.eclipse.ui.workbench;resolution:=optional,

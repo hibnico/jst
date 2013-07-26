@@ -1,8 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: org.hibnet.jst.runtime
+Bundle-SymbolicName: org.hibnet.jst.runtime;singleton:=true
 Bundle-Version: 0.1.0.qualifier
-Bundle-SymbolicName: org.hibnet.jst.runtime; singleton:=true
-Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Require-Bundle: org.apache.commons.lang;bundle-version="2.6.0"
 Export-Package: org.hibnet.jst.runtime

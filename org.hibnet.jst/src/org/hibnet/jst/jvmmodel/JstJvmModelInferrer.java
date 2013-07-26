@@ -143,7 +143,7 @@ public class JstJvmModelInferrer extends AbstractModelInferrer {
                                 @Override
                                 public void apply(JvmOperation op) {
                                     if (renderer.getSimpleName() != null) {
-                                        op.setVisibility(JvmVisibility.PRIVATE);
+                                        op.setVisibility(JvmVisibility.PROTECTED);
                                     }
                                     JvmTypeReference writerTypeRef = jvmTypesBuilder.newTypeRef(renderer, Writer.class);
                                     JvmFormalParameter param = jvmTypesBuilder.toParameter(renderer, "out",

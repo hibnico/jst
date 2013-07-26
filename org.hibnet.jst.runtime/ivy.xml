@@ -4,11 +4,15 @@
 		module="jst-runtime"
 		revision="0.1.0.qualifier"
 		status="integration"
-		publication="20130722221353"
+		publication="20130726221148"
 	/>
+	<configurations>
+		<conf name="compile" visibility="public"/>
+		<conf name="runtime" visibility="public"/>
+	</configurations>
 	<publications>
 	</publications>
 	<dependencies>
-	   <dependency org="commons-lang" name="commons-lang" rev="2.6" />
+		<dependency org="bundle" name="org.apache.commons.lang" rev="2.6.0.v201205030909" force="true" transitive="false" conf="runtime->default"/>
 	</dependencies>
 </ivy-module>

@@ -46,7 +46,7 @@ public class JstEscape {
       }
     }
     
-    public static void escpaeJs(final Writer out, final Object object, final boolean elvis) throws IOException {
+    public static void escapeJs(final Writer out, final Object object, final boolean elvis) throws IOException {
       if (object != null) {
         out.append(StringEscapeUtils.escapeJavaScript(object.toString()));
       } else if (!elvis) {
