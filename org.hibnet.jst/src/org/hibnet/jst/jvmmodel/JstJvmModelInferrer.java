@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.xtext.common.types.JvmAnnotationReference;
 import org.eclipse.xtext.common.types.JvmConstructor;
 import org.eclipse.xtext.common.types.JvmFeature;
 import org.eclipse.xtext.common.types.JvmField;
@@ -40,6 +41,7 @@ import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder;
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
 import org.eclipse.xtext.xbase.lib.StringExtensions;
 import org.eclipse.xtext.xbase.typesystem.IBatchTypeResolver;
+import org.hibnet.jst.JstOptions;
 import org.hibnet.jst.jst.AbstractRenderer;
 import org.hibnet.jst.jst.Field;
 import org.hibnet.jst.jst.JstFile;
@@ -77,6 +79,8 @@ public class JstJvmModelInferrer extends AbstractModelInferrer {
 
     protected void _infer(final JstFile jstFile, final IJvmDeclaredTypeAcceptor acceptor,
             final boolean isPreIndexingPhase) {
+        final JvmConstructor superConstructor = getSuperConstructor(jstFile);
+
         String simpleName = getClassName(jstFile);
 
         String qualifiedName;
@@ -86,7 +90,7 @@ public class JstJvmModelInferrer extends AbstractModelInferrer {
         } else {
             qualifiedName = packageName + "." + simpleName;
         }
-        JvmGenericType templateClass = jvmTypesBuilder.toClass(jstFile, qualifiedName);
+        final JvmGenericType templateClass = jvmTypesBuilder.toClass(jstFile, qualifiedName);
         templateClass.setPackageName(packageName);
 
         acceptor.<JvmGenericType> accept(templateClass).initializeLater(new Procedure1<JvmGenericType>() {
@@ -129,7 +133,7 @@ public class JstJvmModelInferrer extends AbstractModelInferrer {
                                         p.setVisibility(method.getVisibility());
                                         for (JvmFormalParameter param : method.getParameters()) {
                                             p.getParameters().add(
-                                                    jvmTypesBuilder.toParameter(jstFile, param.getIdentifier(),
+                                                    jvmTypesBuilder.toParameter(method, param.getIdentifier(),
                                                             param.getParameterType()));
                                         }
                                         jvmTypesBuilder.setBody(p, method.getExpression());
@@ -148,7 +152,7 @@ public class JstJvmModelInferrer extends AbstractModelInferrer {
                     if (name == null) {
                         name = "render";
                         for (RendererParameter parameter : renderer.getParameters()) {
-                            JvmField f = jvmTypesBuilder.toField(jstFile, parameter.getParameterName(),
+                            JvmField f = jvmTypesBuilder.toField(renderer, parameter.getParameterName(),
                                     parameter.getParameterType(), new Procedure1<JvmField>() {
                                         @Override
                                         public void apply(JvmField f) {
@@ -157,61 +161,6 @@ public class JstJvmModelInferrer extends AbstractModelInferrer {
                                     });
                             it.getMembers().add(f);
                         }
-                        JvmConstructor superConstructor = null;
-                        for (JvmParameterizedTypeReference superType : jstFile.getSuperTypes()) {
-                            if (superType.getType() instanceof JvmGenericType
-                                    && !((JvmGenericType) superType.getType()).isInterface()) {
-                                Iterator<JvmConstructor> itConst = ((JvmGenericType) superType.getType())
-                                        .getDeclaredConstructors().iterator();
-                                if (itConst.hasNext()) {
-                                    superConstructor = itConst.next();
-                                }
-                                break;
-                            }
-                        }
-                        final List<JvmFormalParameter> superParams = new ArrayList<JvmFormalParameter>();
-                        if (superConstructor != null) {
-                            for (JvmFormalParameter parameter : superConstructor.getParameters()) {
-                                JvmFormalParameter param = jvmTypesBuilder.toParameter(renderer, parameter.getName(),
-                                        parameter.getParameterType());
-                                superParams.add(param);
-                            }
-                        }
-                        final List<JvmFormalParameter> params = new ArrayList<JvmFormalParameter>();
-                        for (RendererParameter parameter : renderer.getParameters()) {
-                            JvmFormalParameter param = jvmTypesBuilder.toParameter(renderer,
-                                    parameter.getParameterName(), parameter.getParameterType());
-                            params.add(param);
-                        }
-                        JvmConstructor constructor = jvmTypesBuilder.toConstructor(jstFile,
-                                new Procedure1<JvmConstructor>() {
-                                    @Override
-                                    public void apply(JvmConstructor p) {
-                                        p.getParameters().addAll(superParams);
-                                        p.getParameters().addAll(params);
-                                        jvmTypesBuilder.setBody(p, new Procedure1<ITreeAppendable>() {
-                                            @Override
-                                            public void apply(ITreeAppendable p) {
-                                                p.append("super(");
-                                                Iterator<JvmFormalParameter> itParams = superParams.iterator();
-                                                while (itParams.hasNext()) {
-                                                    p.append(itParams.next().getName());
-                                                    if (itParams.hasNext()) {
-                                                        p.append(", ");
-                                                    }
-                                                }
-                                                p.append(");");
-                                                p.newLine();
-                                                for (JvmFormalParameter parameter : params) {
-                                                    p.append("this." + parameter.getName() + " = "
-                                                            + parameter.getName() + ";");
-                                                    p.newLine();
-                                                }
-                                            }
-                                        });
-                                    }
-                                });
-                        it.getMembers().add(constructor);
                     }
                     JvmOperation method = jvmTypesBuilder.toMethod(jstFile, name, voidTypeRef,
                             new Procedure1<JvmOperation>() {
@@ -241,9 +190,148 @@ public class JstJvmModelInferrer extends AbstractModelInferrer {
                                 }
                             });
                     it.getMembers().add(method);
+
                 }
+
+                JvmConstructor constructor = jvmTypesBuilder.toConstructor(jstFile, new Procedure1<JvmConstructor>() {
+                    @Override
+                    public void apply(JvmConstructor p) {
+                        p.getParameters().addAll(getSuperParams(jstFile, superConstructor));
+                        p.getParameters().addAll(getParams(jstFile));
+                        jvmTypesBuilder.setBody(p, new Procedure1<ITreeAppendable>() {
+                            @Override
+                            public void apply(ITreeAppendable p) {
+                                p.append("super(");
+                                Iterator<JvmFormalParameter> itParams = getSuperParams(jstFile, superConstructor)
+                                        .iterator();
+                                while (itParams.hasNext()) {
+                                    p.append(itParams.next().getName());
+                                    if (itParams.hasNext()) {
+                                        p.append(", ");
+                                    }
+                                }
+                                p.append(");");
+                                p.newLine();
+                                for (JvmFormalParameter parameter : getParams(jstFile)) {
+                                    p.append("this." + parameter.getName() + " = " + parameter.getName() + ";");
+                                    p.newLine();
+                                }
+                            }
+                        });
+                    }
+                });
+                it.getMembers().add(constructor);
             }
         });
+
+        String factory = JstOptions.getStringOption(jstFile, "factory");
+        if (factory != null && factory.equals("spring")) {
+            JvmGenericType templateFactoryClass = jvmTypesBuilder.toClass(jstFile, qualifiedName + "Factory");
+            templateFactoryClass.setPackageName(packageName);
+
+            acceptor.<JvmGenericType> accept(templateFactoryClass).initializeLater(new Procedure1<JvmGenericType>() {
+                @Override
+                public void apply(final JvmGenericType it) {
+                    JvmTypeReference processorType = jvmTypesBuilder.newTypeRef(jstFile,
+                            "org.springframework.context.annotation.CommonAnnotationBeanPostProcessor");
+
+                    JvmField f = jvmTypesBuilder.toField(jstFile, "postProcessor", processorType,
+                            new Procedure1<JvmField>() {
+                                @Override
+                                public void apply(JvmField f) {
+                                    JvmAnnotationReference resourceAnnotation = jvmTypesBuilder.toAnnotation(jstFile,
+                                            "javax.annotation.Resource");
+                                    f.getAnnotations().add(resourceAnnotation);
+                                    f.setVisibility(JvmVisibility.PRIVATE);
+                                }
+                            });
+                    it.getMembers().add(f);
+
+                    JvmTypeReference templateType = jvmTypesBuilder.newTypeRef(templateClass);
+
+                    JvmOperation m = jvmTypesBuilder.toMethod(jstFile, "build", templateType,
+                            new Procedure1<JvmOperation>() {
+                                @Override
+                                public void apply(JvmOperation p) {
+                                    p.setVisibility(JvmVisibility.PUBLIC);
+                                    p.getParameters().addAll(getSuperParams(jstFile, superConstructor));
+                                    p.getParameters().addAll(getParams(jstFile));
+                                    jvmTypesBuilder.setBody(p, new Procedure1<ITreeAppendable>() {
+                                        @Override
+                                        public void apply(ITreeAppendable p) {
+                                            p.append(templateClass.getQualifiedName() + " t = new "
+                                                    + templateClass.getQualifiedName() + "(");
+                                            boolean first = true;
+                                            for (JvmFormalParameter param : getSuperParams(jstFile, superConstructor)) {
+                                                if (!first) {
+                                                    p.append(", ");
+                                                }
+                                                p.append(param.getName());
+                                                first = false;
+                                            }
+                                            for (JvmFormalParameter param : getParams(jstFile)) {
+                                                if (!first) {
+                                                    p.append(", ");
+                                                }
+                                                p.append(param.getName());
+                                                first = false;
+                                            }
+                                            p.append(");");
+                                            p.newLine();
+                                            p.append("postProcessor.postProcessAfterInstantiation(t, t.getClass().getName());");
+                                            p.newLine();
+                                            p.append("return t;");
+                                            p.newLine();
+                                        }
+                                    });
+                                }
+                            });
+                    it.getMembers().add(m);
+                }
+            });
+        }
+    }
+
+    private JvmConstructor getSuperConstructor(final JstFile jstFile) {
+        JvmConstructor superConstructor = null;
+        for (JvmParameterizedTypeReference superType : jstFile.getSuperTypes()) {
+            if (superType.getType() instanceof JvmGenericType && !((JvmGenericType) superType.getType()).isInterface()) {
+                Iterator<JvmConstructor> itConst = ((JvmGenericType) superType.getType()).getDeclaredConstructors()
+                        .iterator();
+                if (itConst.hasNext()) {
+                    superConstructor = itConst.next();
+                }
+                break;
+            }
+        }
+        return superConstructor;
+    }
+
+    private List<JvmFormalParameter> getSuperParams(JstFile jstFile, JvmConstructor superConstructor) {
+        List<JvmFormalParameter> superParams = new ArrayList<JvmFormalParameter>();
+        if (superConstructor != null) {
+            for (JvmFormalParameter parameter : superConstructor.getParameters()) {
+                JvmFormalParameter param = jvmTypesBuilder.toParameter(jstFile, parameter.getName(),
+                        parameter.getParameterType());
+                superParams.add(param);
+            }
+        }
+        return superParams;
+    }
+
+    private List<JvmFormalParameter> getParams(JstFile jstFile) {
+        List<JvmFormalParameter> params = new ArrayList<JvmFormalParameter>();
+        for (final Renderer renderer : jstFile.getRenderers()) {
+            if (renderer.getSimpleName() == null) {
+                for (RendererParameter parameter : renderer.getParameters()) {
+                    JvmFormalParameter param = jvmTypesBuilder.toParameter(renderer, parameter.getParameterName(),
+                            parameter.getParameterType());
+                    params.add(param);
+                }
+                break;
+            }
+        }
+        return params;
     }
 
     @Override

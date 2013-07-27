@@ -22,14 +22,13 @@ import javax.inject.Inject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.xbase.XExpression;
-import org.eclipse.xtext.xbase.XStringLiteral;
 import org.eclipse.xtext.xbase.compiler.XbaseCompiler;
 import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable;
 import org.eclipse.xtext.xbase.controlflow.IEarlyExitComputer;
 import org.eclipse.xtext.xbase.featurecalls.IdentifiableSimpleNameProvider;
 import org.eclipse.xtext.xbase.lib.StringExtensions;
+import org.hibnet.jst.JstOptions;
 import org.hibnet.jst.jst.JstFile;
-import org.hibnet.jst.jst.JstOption;
 import org.hibnet.jst.jst.RichString;
 import org.hibnet.jst.jst.RichStringCall;
 import org.hibnet.jst.jst.RichStringDoWhileLoop;
@@ -184,12 +183,7 @@ public class JstCompiler extends XbaseCompiler {
             return defaultEscape;
         }
 
-        for (JstOption option : jstFile.getOptions()) {
-            if (option.getKey().equals("escape") && option.getValue() instanceof XStringLiteral) {
-                return ((XStringLiteral) option.getValue()).getValue();
-            }
-        }
-        return null;
+        return JstOptions.getStringOption(jstFile, "escape");
     }
 
     private boolean isPrintable(XExpression e) {

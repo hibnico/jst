@@ -422,3 +422,56 @@ public class Main {
   }
 }
 --------------------------------------
+
+
+Integration with Springframework
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The template classes could have some injectable resources. The boilerplate code to inject the resources can be generated via an option. If the option +factory+ is set to +'spring'+, then an additional Java class will be generated, and will be the class to be managed by springframework and which will generate the template instance as needed, properly injected.
+
+Exemple of +mytemplate.jst+:
+
+--------------------------------------
+import javax.annotation.Resource;
+import javax.sql.DataSource;
+
+template with factory = 'spring';
+
+@Resource
+DataSource datasource;
+
+#main (String name)
+  Hello $(name) !
+#end
+--------------------------------------
+
+This will generate the additional class +MytemplateJstTemplateFactory+:
+--------------------------------------
+import javax.annotation.Resource;
+import org.hibnet.jst.runtime.JstTemplate;
+import org.springframework.context.annotation.CommonAnnotationBeanPostProcessor;
+
+@SuppressWarnings("all")
+public class MytemplateJstTemplateFactory {
+  @Resource
+  private CommonAnnotationBeanPostProcessor postProcessor;
+
+  public MytemplateJstTemplate build(final String name) {
+    MytemplateJstTemplate t = new MytemplateJstTemplate(name);
+    postProcessor.postProcessAfterInstantiation(t, t.getClass().getName());
+    return t;
+  }
+}
+--------------------------------------
+
+Then in your code to render some content, simply do:
+--------------------------------------
+@Resource
+MytemplateJstTemplateFactory mytemplateJstTemplateFactory;
+
+public void render(Writer out) {
+    MytemplateJstTemplate template = mytemplateJstTemplateFactory.build("World");
+    template.render(out);
+}
+--------------------------------------
+
