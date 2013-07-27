@@ -122,6 +122,11 @@ public class JstJvmModelInferrer extends AbstractModelInferrer {
                                         p.setStatic(method.isStatic());
                                         p.setAbstract(method.isAbstract());
                                         p.setVisibility(method.getVisibility());
+                                        for (JvmFormalParameter param : method.getParameters()) {
+                                            p.getParameters().add(
+                                                    jvmTypesBuilder.toParameter(jstFile, param.getIdentifier(),
+                                                            param.getParameterType()));
+                                        }
                                         jvmTypesBuilder.setBody(p, method.getExpression());
                                         jvmTypesBuilder.translateAnnotationsTo(method.getMethodAnnotations(), p);
                                         p.getExceptions().addAll(method.getExceptions());
