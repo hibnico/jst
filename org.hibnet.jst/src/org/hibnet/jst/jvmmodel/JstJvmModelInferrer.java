@@ -169,7 +169,7 @@ public class JstJvmModelInferrer extends AbstractModelInferrer {
                                 break;
                             }
                         }
-                        final List<JvmFormalParameter> superParams = new ArrayList<>();
+                        final List<JvmFormalParameter> superParams = new ArrayList<JvmFormalParameter>();
                         if (superConstructor != null) {
                             for (JvmFormalParameter parameter : superConstructor.getParameters()) {
                                 JvmFormalParameter param = jvmTypesBuilder.toParameter(renderer, parameter.getName(),
@@ -177,7 +177,7 @@ public class JstJvmModelInferrer extends AbstractModelInferrer {
                                 superParams.add(param);
                             }
                         }
-                        final List<JvmFormalParameter> params = new ArrayList<>();
+                        final List<JvmFormalParameter> params = new ArrayList<JvmFormalParameter>();
                         for (RendererParameter parameter : renderer.getParameters()) {
                             JvmFormalParameter param = jvmTypesBuilder.toParameter(renderer,
                                     parameter.getParameterName(), parameter.getParameterType());
