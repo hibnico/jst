@@ -23,15 +23,14 @@ import org.hibnet.jst.poc.model.User;
 public class UserFollowedPostsTemplate extends AbstractTemplate {
 
     public void render(User connectedUser) {
-        AbstractPageLayoutTemplate pageLayoutTemplate = getPageTemplate(connectedUser);
-        pageLayoutTemplate.connectedUser = connectedUser;
-        UserLayoutTemplate userLayoutTemplate = new UserLayoutTemplate();
-        pageLayoutTemplate.contentTemplate = userLayoutTemplate;
-        userLayoutTemplate.user = connectedUser;
-        PostListTemplate postListTemplate = new PostListTemplate();
-        userLayoutTemplate.contentTemplate = postListTemplate;
-        postListTemplate.posts = connectedUser.followedposts;
-        postListTemplate.postTemplate = new PostTemplate();
+        PostTemplate postTemplate = new PostTemplate(null);
+        injectResources(postTemplate);
+        PostListTemplate postListTemplate = new PostListTemplate(connectedUser.followedposts, postTemplate);
+        injectResources(postListTemplate);
+        UserLayoutTemplate userLayoutTemplate = new UserLayoutTemplate(postListTemplate, connectedUser);
+        injectResources(userLayoutTemplate);
+        AbstractPageLayoutTemplate pageLayoutTemplate = getPageTemplate(userLayoutTemplate, connectedUser);
+        injectResources(pageLayoutTemplate);
         pageLayoutTemplate.render();
     }
 

@@ -23,6 +23,11 @@ public class UserLayoutTemplate implements Template {
 
     public User user;
 
+    public UserLayoutTemplate(Template contentTemplate, User user) {
+        this.contentTemplate = contentTemplate;
+        this.user = user;
+    }
+
     @Override
     public void render() {
         System.out.println("<div class='userheader'>" + user.name + "</div>");
@@ -30,10 +35,4 @@ public class UserLayoutTemplate implements Template {
         System.out.println("<div class='userfooter'></div>");
     }
 
-    public static void render(Template contentTemplate, User user) {
-        UserLayoutTemplate themeLayoutTemplate = new UserLayoutTemplate();
-        themeLayoutTemplate.contentTemplate = contentTemplate;
-        themeLayoutTemplate.user = user;
-        themeLayoutTemplate.render();
-    }
 }

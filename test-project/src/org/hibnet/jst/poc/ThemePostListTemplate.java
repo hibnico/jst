@@ -24,15 +24,14 @@ import org.hibnet.jst.poc.model.User;
 public class ThemePostListTemplate extends AbstractTemplate {
 
     public void render(User connectedUser, Theme t) {
-        AbstractPageLayoutTemplate pageLayoutTemplate = getPageTemplate(connectedUser);
-        pageLayoutTemplate.connectedUser = connectedUser;
-        ThemeLayoutTemplate themeLayoutTemplate = new ThemeLayoutTemplate();
-        pageLayoutTemplate.contentTemplate = themeLayoutTemplate;
-        themeLayoutTemplate.theme = t;
-        PostListTemplate postListTemplate = new PostListTemplate();
-        themeLayoutTemplate.contentTemplate = postListTemplate;
-        postListTemplate.posts = t.posts;
-        postListTemplate.postTemplate = new PostTemplate();
+        PostTemplate postTemplate = new PostTemplate(null);
+        injectResources(postTemplate);
+        PostListTemplate postListTemplate = new PostListTemplate(t.posts, postTemplate);
+        injectResources(postListTemplate);
+        ThemeLayoutTemplate themeLayoutTemplate = new ThemeLayoutTemplate(postListTemplate, t);
+        injectResources(themeLayoutTemplate);
+        AbstractPageLayoutTemplate pageLayoutTemplate = getPageTemplate(themeLayoutTemplate, connectedUser);
+        injectResources(pageLayoutTemplate);
         pageLayoutTemplate.render();
     }
 

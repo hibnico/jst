@@ -17,15 +17,24 @@ package org.hibnet.jst.poc;
 
 import org.hibnet.jst.poc.jst.PageLayoutTemplate;
 import org.hibnet.jst.poc.jst.PageLayoutV2Template;
+import org.hibnet.jst.poc.jst.Template;
 import org.hibnet.jst.poc.model.User;
 
 public abstract class AbstractTemplate {
 
-    public AbstractPageLayoutTemplate getPageTemplate(User connectedUser) {
+    // for instance with spring
+    //    @Resource
+    //    private CommonAnnotationBeanPostProcessor postProcessor;
+
+    public AbstractPageLayoutTemplate getPageTemplate(Template contentTemplate, User connectedUser) {
         if (connectedUser != null && connectedUser.isV2) {
-            return new PageLayoutV2Template();
+            return new PageLayoutV2Template(connectedUser, contentTemplate);
         }
-        return new PageLayoutTemplate();
+        return new PageLayoutTemplate(connectedUser, contentTemplate);
     }
 
+    public void injectResources(Object object) {
+        // for instance for spring
+        // postProcessor.postProcessAfterInstantiation(object, object.getClass().getCanonicalName());
+    }
 }

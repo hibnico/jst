@@ -20,17 +20,14 @@ import org.hibnet.jst.poc.model.User;
 
 public class PageLayoutV2Template extends AbstractPageLayoutTemplate implements Template {
 
+    public PageLayoutV2Template(User connectedUser, Template contentTemplate) {
+        super(connectedUser, contentTemplate);
+    }
+
     @Override
     public void render() {
         System.out.println("<div class='scoopheader_v2'>" + connectedUser.name + " </div>");
         contentTemplate.render();
         System.out.println("<div class='scoopfooter_v2'></div>");
-    }
-
-    public static void render(Template contentTemplate, User connectedUser) {
-        PageLayoutV2Template pageLayoutTemplate = new PageLayoutV2Template();
-        pageLayoutTemplate.contentTemplate = contentTemplate;
-        pageLayoutTemplate.connectedUser = connectedUser;
-        pageLayoutTemplate.render();
     }
 }

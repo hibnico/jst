@@ -23,7 +23,12 @@ public class PostListTemplate implements Template {
 
     public List<Post> posts;
 
-    public PostTemplate postTemplate = new PostTemplate();
+    public PostTemplate postTemplate;
+
+    public PostListTemplate(List<Post> posts, PostTemplate postTemplate) {
+        this.posts = posts;
+        this.postTemplate = postTemplate;
+    }
 
     @Override
     public void render() {
@@ -38,9 +43,4 @@ public class PostListTemplate implements Template {
         System.out.println("</ul>");
     }
 
-    public static void render(List<Post> posts) {
-        PostListTemplate postListTemplate = new PostListTemplate();
-        postListTemplate.posts = posts;
-        postListTemplate.render();
-    }
 }

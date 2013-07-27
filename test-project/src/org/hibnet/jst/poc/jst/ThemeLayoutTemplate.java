@@ -23,17 +23,15 @@ public class ThemeLayoutTemplate implements Template {
 
     public Theme theme;
 
+    public ThemeLayoutTemplate(Template contentTemplate, Theme theme) {
+        this.contentTemplate = contentTemplate;
+        this.theme = theme;
+    }
+
     @Override
     public void render() {
         System.out.println("<div class='themeheader'>" + theme.name + "</div>");
         contentTemplate.render();
         System.out.println("<div class='themefooter'></div>");
-    }
-
-    public static void render(Template contentTemplate, Theme theme) {
-        ThemeLayoutTemplate themeLayoutTemplate = new ThemeLayoutTemplate();
-        themeLayoutTemplate.contentTemplate = contentTemplate;
-        themeLayoutTemplate.theme = theme;
-        themeLayoutTemplate.render();
     }
 }

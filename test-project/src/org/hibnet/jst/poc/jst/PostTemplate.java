@@ -21,14 +21,13 @@ public class PostTemplate implements Template {
 
     public Post post;
 
+    public PostTemplate(Post post) {
+        this.post = post;
+    }
+
     @Override
     public void render() {
         System.out.println("render post: " + post.content);
     }
 
-    public static void render(final Post post) {
-        PostTemplate postTemplate = new PostTemplate();
-        postTemplate.post = post;
-        postTemplate.render();
-    }
 }

@@ -24,4 +24,9 @@ public abstract class AbstractPageLayoutTemplate implements Template {
 
     public Template contentTemplate;
 
+    public AbstractPageLayoutTemplate(User connectedUser, Template contentTemplate) {
+        this.connectedUser = connectedUser;
+        this.contentTemplate = contentTemplate;
+    }
+
 }
