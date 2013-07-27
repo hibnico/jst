@@ -15,6 +15,7 @@
  */
 package org.hibnet.jst.tests.compiler;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
@@ -27,7 +28,7 @@ public class ParsingTest extends AbstractTest {
     @Test
     public void testParseAndCompile_Simple() throws Exception {
         StringConcatenation template = new StringConcatenation();
-        template.append("#main");
+        template.append("#main ()");
         template.newLine();
         template.append("Hello World");
         template.newLine();
@@ -41,7 +42,7 @@ public class ParsingTest extends AbstractTest {
     @Test
     public void testParseAndCompile_Dollar() throws Exception {
         StringConcatenation template = new StringConcatenation();
-        template.append("#main");
+        template.append("#main ()");
         template.newLine();
         template.append("$$ ## $$a ##z");
         template.newLine();
@@ -55,7 +56,7 @@ public class ParsingTest extends AbstractTest {
     @Test
     public void testParseAndCompile_If() throws Exception {
         StringConcatenation template = new StringConcatenation();
-        template.append("#main");
+        template.append("#main ()");
         template.newLine();
         template.append("#if(true)");
         template.newLine();
@@ -73,7 +74,7 @@ public class ParsingTest extends AbstractTest {
     @Test
     public void testParseAndCompile_IfElse() throws Exception {
         StringConcatenation template = new StringConcatenation();
-        template.append("#main");
+        template.append("#main ()");
         template.newLine();
         template.append("#if(true)");
         template.newLine();
@@ -96,7 +97,7 @@ public class ParsingTest extends AbstractTest {
     @Test
     public void testParseAndCompile_IfElseIf() throws Exception {
         StringConcatenation template = new StringConcatenation();
-        template.append("#main");
+        template.append("#main ()");
         template.newLine();
         template.append("#if(false)");
         template.newLine();
@@ -123,7 +124,7 @@ public class ParsingTest extends AbstractTest {
     @Test
     public void testParseAndCompile_Inline() throws Exception {
         StringConcatenation template = new StringConcatenation();
-        template.append("#main");
+        template.append("#main ()");
         template.newLine();
         template.append("<i>$(\"Hello\")</i>");
         template.newLine();
@@ -138,7 +139,7 @@ public class ParsingTest extends AbstractTest {
     @Test
     public void testParseAndCompile_Script() throws Exception {
         StringConcatenation template = new StringConcatenation();
-        template.append("#main");
+        template.append("#main ()");
         template.newLine();
         template.append("#{ var name = \"Foo\";}");
         template.newLine();
@@ -155,7 +156,7 @@ public class ParsingTest extends AbstractTest {
     @Test
     public void testParseAndCompile_InlineElvis() throws Exception {
         StringConcatenation template = new StringConcatenation();
-        template.append("#main");
+        template.append("#main ()");
         template.newLine();
         template.append("#{ var name = \"Foo\";}");
         template.newLine();
@@ -189,7 +190,7 @@ public class ParsingTest extends AbstractTest {
     @Test
     public void testParseAndCompile_InlineUnescape() throws Exception {
         StringConcatenation template = new StringConcatenation();
-        template.append("#main");
+        template.append("#main ()");
         template.newLine();
         template.append("#{ var name = \"Foo\";}");
         template.newLine();
@@ -222,7 +223,7 @@ public class ParsingTest extends AbstractTest {
     @Test
     public void testParseAndCompile_InlineEscape() throws Exception {
         StringConcatenation template = new StringConcatenation();
-        template.append("#main");
+        template.append("#main ()");
         template.newLine();
         template.append("#{ var html = \"<&\u00E9a>a\";}");
         template.newLine();
@@ -269,7 +270,7 @@ public class ParsingTest extends AbstractTest {
         StringConcatenation template = new StringConcatenation();
         template.append("template with escape = \'html\';");
         template.newLine();
-        template.append("#main");
+        template.append("#main ()");
         template.newLine();
         template.append("#{ var html = \"<&\u00E9a>a\";}");
         template.newLine();
@@ -298,7 +299,7 @@ public class ParsingTest extends AbstractTest {
     @Test
     public void testParseAndCompile_MultiLineComment() throws Exception {
         StringConcatenation template = new StringConcatenation();
-        template.append("#main");
+        template.append("#main ()");
         template.newLine();
         template.append("#* some comment *#");
         template.newLine();
@@ -322,7 +323,7 @@ public class ParsingTest extends AbstractTest {
     public void testParseAndCompile_SingleLineComment() throws Exception {
         StringConcatenation template = new StringConcatenation();
         template.append(" ");
-        template.append("#main");
+        template.append("#main ()");
         template.newLine();
         template.append("#- some comment");
         template.newLine();
@@ -341,7 +342,7 @@ public class ParsingTest extends AbstractTest {
     @Test
     public void testParseAndCompile_For() throws Exception {
         StringConcatenation template = new StringConcatenation();
-        template.append("#main");
+        template.append("#main ()");
         template.newLine();
         template.append("#{ var list = newArrayList(\"one\", \"two\", \"three\", \"four\"); }");
         template.newLine();
@@ -379,7 +380,7 @@ public class ParsingTest extends AbstractTest {
     @Test
     public void testParseAndCompile_While() throws Exception {
         StringConcatenation template = new StringConcatenation();
-        template.append("#main");
+        template.append("#main ()");
         template.newLine();
         template.append("#{ var count = 0; }");
         template.newLine();
@@ -417,7 +418,7 @@ public class ParsingTest extends AbstractTest {
     @Test
     public void testParseAndCompile_DoWhile() throws Exception {
         StringConcatenation template = new StringConcatenation();
-        template.append("#main");
+        template.append("#main ()");
         template.newLine();
         template.append("#{ var count = 0; }");
         template.newLine();
@@ -455,7 +456,7 @@ public class ParsingTest extends AbstractTest {
     @Test
     public void testParseAndCompile_Complex() throws Exception {
         StringConcatenation template = new StringConcatenation();
-        template.append("#main");
+        template.append("#main ()");
         template.newLine();
         template.append("#{ var nullString = null;");
         template.newLine();
@@ -524,7 +525,7 @@ public class ParsingTest extends AbstractTest {
         template.append(" ");
         template.append("import java.io.File;");
         template.newLine();
-        template.append("#main");
+        template.append("#main ()");
         template.newLine();
         template.append("#{ var file = new File(\'testimport\');");
         template.newLine();
@@ -548,7 +549,7 @@ public class ParsingTest extends AbstractTest {
         template.append(" ");
         template.append("String field = \"testfield\";");
         template.newLine();
-        template.append("#main");
+        template.append("#main ()");
         template.newLine();
         template.append("$(field)");
         template.newLine();
@@ -566,7 +567,7 @@ public class ParsingTest extends AbstractTest {
         template.append(" ");
         template.append("String getString() { return \"testmethod\"; }");
         template.newLine();
-        template.append("#main");
+        template.append("#main ()");
         template.newLine();
         template.append("#{ var v = getString(); }");
         template.newLine();
@@ -604,7 +605,7 @@ public class ParsingTest extends AbstractTest {
         template.newLine();
         template.append("String field = \"testfield\";");
         template.newLine();
-        template.append("#main");
+        template.append("#main ()");
         template.newLine();
         template.append("$(field)");
         template.newLine();
@@ -624,7 +625,7 @@ public class ParsingTest extends AbstractTest {
         template.newLine();
         template.append("String getString() { return \"testmethod\"; }");
         template.newLine();
-        template.append("#main");
+        template.append("#main ()");
         template.newLine();
         template.append("#{ var v = getString(); }");
         template.newLine();
@@ -644,7 +645,7 @@ public class ParsingTest extends AbstractTest {
         template.append(" ");
         template.append("template implements java.io.Serializable;");
         template.newLine();
-        template.append("#main");
+        template.append("#main ()");
         template.newLine();
         template.append("testimplements");
         template.newLine();
@@ -664,7 +665,7 @@ public class ParsingTest extends AbstractTest {
         template.newLine();
         template.append("template implements Serializable;");
         template.newLine();
-        template.append("#main");
+        template.append("#main ()");
         template.newLine();
         template.append("testimportimplements");
         template.newLine();
@@ -682,7 +683,7 @@ public class ParsingTest extends AbstractTest {
         template.append(" ");
         template.append("template extends java.util.ArrayList<String>;");
         template.newLine();
-        template.append("#main");
+        template.append("#main ()");
         template.newLine();
         template.append("#{ add(\"test\");");
         template.newLine();
@@ -706,7 +707,7 @@ public class ParsingTest extends AbstractTest {
     public void testParseAndCompile_Render() throws Exception {
         StringConcatenation template = new StringConcatenation();
         template.append(" ");
-        template.append("#main");
+        template.append("#main ()");
         template.newLine();
         template.append("#call strong(\"testrender\")");
         template.newLine();
@@ -730,7 +731,7 @@ public class ParsingTest extends AbstractTest {
         template.append(" ");
         template.append("abstract template;");
         template.newLine();
-        template.append("#main");
+        template.append("#main ()");
         template.newLine();
         template.append("#call strong(\"testrender\")");
         template.newLine();
@@ -750,5 +751,35 @@ public class ParsingTest extends AbstractTest {
             }
         }
         Assert.assertTrue(renderStringFound);
+    }
+
+    public static class SuperClass {
+        public String name;
+
+        public SuperClass(String name) {
+            this.name = name;
+        }
+
+    }
+
+    @Test
+    public void testParseAndCompile_SuperConstructor() throws Exception {
+        StringConcatenation template = new StringConcatenation();
+        template.append("template extends " + SuperClass.class.getCanonicalName() + ";");
+        template.newLine();
+        template.append("#main (String color)");
+        template.newLine();
+        template.append("$(color)");
+        template.newLine();
+        template.append("#end");
+        template.newLine();
+
+        Class<?> cl = compileTemplate(template);
+
+        final Constructor<?>[] constructors = cl.getDeclaredConstructors();
+        Assert.assertEquals(1, constructors.length);
+        Assert.assertEquals(2, constructors[0].getParameterTypes().length);
+        Assert.assertEquals(String.class, constructors[0].getParameterTypes()[0]);
+        Assert.assertEquals(String.class, constructors[0].getParameterTypes()[1]);
     }
 }

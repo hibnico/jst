@@ -82,7 +82,7 @@ Renderer:
 
 MainRenderer returns Renderer:
     {MainRenderer}
-    DIRECTIVE_MAIN
+    DIRECTIVE_MAIN PARENTHESE_OPEN (parameters+=RendererParameter (',' parameters+=RendererParameter)*)? PARENTHESE_CLOSE
     expression=RichString
     DIRECTIVE_END
 ;

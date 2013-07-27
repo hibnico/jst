@@ -23,7 +23,7 @@ public class JvmModelTest extends AbstractTest {
     @Test
     public void testIfCondition() throws Exception {
         StringConcatenation template = new StringConcatenation();
-        template.append("#main");
+        template.append("#main ()");
         template.newLine();
         template.append("#{ var test = true; var test2 = null; }");
         template.newLine();
@@ -49,7 +49,7 @@ public class JvmModelTest extends AbstractTest {
     @Test
     public void testCondition() throws Exception {
         StringConcatenation template = new StringConcatenation();
-        template.append("#main");
+        template.append("#main ()");
         template.newLine();
         template.append("#{ var bool = (1 == 1); }");
         template.newLine();

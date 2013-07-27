@@ -120,7 +120,7 @@ public class JstLexerImpl extends InternalJstLexer {
                         break;
                     case RULE_DIRECTIVE_MAIN:
                         directiveStackSize++;
-                        rawText = true;
+                        directiveParameters = true;
                         break;
                     case RULE_DIRECTIVE_DEF:
                         rendererDef = true;
