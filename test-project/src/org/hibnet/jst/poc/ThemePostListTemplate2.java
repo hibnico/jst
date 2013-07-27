@@ -15,18 +15,32 @@
  */
 package org.hibnet.jst.poc;
 
+import javax.annotation.Resource;
+
 import org.hibnet.jst.poc.jst.PostListTemplate;
+import org.hibnet.jst.poc.jst.PostListTemplateFactory;
 import org.hibnet.jst.poc.jst.PostTemplate;
+import org.hibnet.jst.poc.jst.PostTemplateFactory;
 import org.hibnet.jst.poc.jst.ThemeLayoutTemplate;
+import org.hibnet.jst.poc.jst.ThemeLayoutTemplateFactory;
 import org.hibnet.jst.poc.model.Theme;
 import org.hibnet.jst.poc.model.User;
 
-public class ThemePostListTemplate extends AbstractTemplate {
+public class ThemePostListTemplate2 extends AbstractTemplate2 {
+
+    @Resource
+    PostTemplateFactory postTemplateFactory;
+
+    @Resource
+    PostListTemplateFactory postListTemplateFactory;
+
+    @Resource
+    ThemeLayoutTemplateFactory themeLayoutTemplateFactory;
 
     public void render(User connectedUser, Theme t) {
-        PostTemplate postTemplate = new PostTemplate(null);
-        PostListTemplate postListTemplate = new PostListTemplate(t.posts, postTemplate);
-        ThemeLayoutTemplate themeLayoutTemplate = new ThemeLayoutTemplate(postListTemplate, t);
+        PostTemplate postTemplate = postTemplateFactory.build(null);
+        PostListTemplate postListTemplate = postListTemplateFactory.build(t.posts, postTemplate);
+        ThemeLayoutTemplate themeLayoutTemplate = themeLayoutTemplateFactory.build(postListTemplate, t);
         AbstractPageLayoutTemplate pageLayoutTemplate = getPageTemplate(themeLayoutTemplate, connectedUser);
         pageLayoutTemplate.render();
     }

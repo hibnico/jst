@@ -24,13 +24,9 @@ public class UserFollowedPostsTemplate extends AbstractTemplate {
 
     public void render(User connectedUser) {
         PostTemplate postTemplate = new PostTemplate(null);
-        injectResources(postTemplate);
         PostListTemplate postListTemplate = new PostListTemplate(connectedUser.followedposts, postTemplate);
-        injectResources(postListTemplate);
         UserLayoutTemplate userLayoutTemplate = new UserLayoutTemplate(postListTemplate, connectedUser);
-        injectResources(userLayoutTemplate);
         AbstractPageLayoutTemplate pageLayoutTemplate = getPageTemplate(userLayoutTemplate, connectedUser);
-        injectResources(pageLayoutTemplate);
         pageLayoutTemplate.render();
     }
 

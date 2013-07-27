@@ -15,25 +15,17 @@
  */
 package org.hibnet.jst.poc;
 
-import javax.annotation.Resource;
-
-import org.hibnet.jst.poc.jst.PageLayoutTemplateFactory;
-import org.hibnet.jst.poc.jst.PageLayoutV2TemplateFactory;
+import org.hibnet.jst.poc.jst.PageLayoutTemplate;
+import org.hibnet.jst.poc.jst.PageLayoutV2Template;
 import org.hibnet.jst.poc.jst.Template;
 import org.hibnet.jst.poc.model.User;
 
-public abstract class AbstractTemplate {
-
-    @Resource
-    PageLayoutTemplateFactory pageLayoutTemplateFactory;
-
-    @Resource
-    PageLayoutV2TemplateFactory pageLayoutV2TemplateFactory;
+public abstract class AbstractTemplate2 {
 
     public AbstractPageLayoutTemplate getPageTemplate(Template contentTemplate, User connectedUser) {
         if (connectedUser != null && connectedUser.isV2) {
-            return pageLayoutV2TemplateFactory.build(connectedUser, contentTemplate);
+            return new PageLayoutV2Template(connectedUser, contentTemplate);
         }
-        return pageLayoutTemplateFactory.build(connectedUser, contentTemplate);
+        return new PageLayoutTemplate(connectedUser, contentTemplate);
     }
 }

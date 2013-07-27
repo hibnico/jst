@@ -13,27 +13,22 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hibnet.jst.poc;
+package org.hibnet.jst.poc.jst;
 
 import javax.annotation.Resource;
 
-import org.hibnet.jst.poc.jst.PageLayoutTemplateFactory;
-import org.hibnet.jst.poc.jst.PageLayoutV2TemplateFactory;
-import org.hibnet.jst.poc.jst.Template;
 import org.hibnet.jst.poc.model.User;
+import org.hibnet.jst.poc.spring.CommonAnnotationBeanPostProcessor;
 
-public abstract class AbstractTemplate {
-
-    @Resource
-    PageLayoutTemplateFactory pageLayoutTemplateFactory;
+public class PageLayoutTemplateFactory {
 
     @Resource
-    PageLayoutV2TemplateFactory pageLayoutV2TemplateFactory;
+    private CommonAnnotationBeanPostProcessor postProcessor;
 
-    public AbstractPageLayoutTemplate getPageTemplate(Template contentTemplate, User connectedUser) {
-        if (connectedUser != null && connectedUser.isV2) {
-            return pageLayoutV2TemplateFactory.build(connectedUser, contentTemplate);
-        }
-        return pageLayoutTemplateFactory.build(connectedUser, contentTemplate);
+    public PageLayoutTemplate build(User connectedUser, Template contentTemplate) {
+        PageLayoutTemplate t = new PageLayoutTemplate(connectedUser, contentTemplate);
+        postProcessor.postProcessAfterInstantiation(t, t.getClass().getName());
+        return t;
     }
+
 }
