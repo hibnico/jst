@@ -59,7 +59,7 @@ The smalest template
 Here is the bare minimum you need to have a working template which display 'Hello World'
 
 --------------------------------------
-#main
+#main ()
   Hello World
 #end
 --------------------------------------
@@ -79,10 +79,9 @@ import org.springframework.beans.factory.InitializingBean;
 
 template implements InitializingBean;
 
-List<String> names;
-Date date;
+Date date = System.currentTimeInMillis();
 
-#main
+#main (List<String> names)
     <p>Today is $(new SimpleDateFormat("YYYY/MM/dd").format(date))</p>
     <ul>Hello guys:
         #for(String name : names)
@@ -102,27 +101,13 @@ Then the Java-like +import+, to avoid fully qualifying classes along the templat
 
 +template+ then defines general options on the tempalte and the template Java class hierarchy.
 
-Then there are some fields declared as part of the tempalte class. It is the way of declaring arguments to the +main+ renderer. In this section can also be defined methods.
+Then there are some fields declared as part of the template class. In this section can also be defined methods.
 
-The +#main+ defines the mandatory entry point of a template. Its body defines how it should be rendered.
+The +#main+ defines the mandatory entry point of a template. Its parameters will be the parameters of the Java constructor of the template class. Its body defines how it should be rendered.
 
 In the body of the +main+ renderer, +$(...)+ is outputing the java expression, +#for+ is a loop a java collection, and +#call+ is a call to an inner renderer.
 
 An finally there is the definition of the inner renderer called +name+.
-
-Definition of an inner renderer
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The +main+ renderer is the entry point to render a template. It may be useful to define some other rendering function to be called from the same one, to factorize pieces of the template.
-
-An inner renderer is comparable to a private function of a class. Contrary to the +main+ renderer, it accepts arguments.
-
-Exemple:
---------------------------------------
-#def paragraph()
-  <p>Some content</p>
-#end
---------------------------------------
 
 Outputing expressions
 ~~~~~~~~~~~~~~~~~~~~~
@@ -166,7 +151,7 @@ You can also disable the global escaping and output your expression in a raw for
 
 Exemple:
 --------------------------------------
-#def content(String name, String htmlData, String script)
+#main (String name, String htmlData, String script)
 <html><body>
   Hello $\html(name) !
   <p>$\\(htmlData)</p>
@@ -192,7 +177,7 @@ To declare variables or just do some Java code, do it within +#{...}+
 
 Exemple:
 --------------------------------------
-#def hello(String name)
+#main (String name)
   #{ var hello = "Hello " + name.trim() + " !" }
   $(hello)
 #end
@@ -206,7 +191,7 @@ At the begining of your template, just do like you would do in plain Java, decla
 Exemple:
 --------------------------------------
 import java.util.List;
-#def size(List list)
+#main (List list)
   List size is $(list.size())
 #end
 --------------------------------------
@@ -219,7 +204,7 @@ Loops are like in Java but with the keywords +#for+, +#while+ or +#do+, together
 Exemple:
 --------------------------------------
 import java.util.List
-#def list(List list)
+#main (List list)
   <ul>
   #for (item : list)
     <li>$(item)</li>
@@ -250,7 +235,7 @@ To do branching, just like in Java but with the keywords +#if+, +#else+, +#elsei
 Exemple:
 --------------------------------------
 import java.util.List
-#def size(List list)
+#main (List list)
   #if (list == null)
     The list is null
   #elseif(list.isEmpty())
@@ -272,12 +257,30 @@ Exemple:
 --------------------------------------
 package org.acme;
 
-#def hello()
+#main ()
   Hello World
 #end
 --------------------------------------
 
 Note that the JST engine doesn't care about where the jst template is placed. You can place it in a java classpath in a proper package, or just randomly put in some folder. Only the +package+ directive and the name of the file specifies the java class to generate. And actually the jst file is useless at runtime, you don't need to embed it into your jar, you just need the compiled class of the generated Java file.
+
+An inner renderer
+~~~~~~~~~~~~~~~~~
+
+The +main+ renderer is the entry point to render a template. It may be useful to define some other rendering function to be called from the same one, to factorize pieces of the template.
+
+An inner renderer is comparable to a private function of a class. Its definition is like the main but +#def+ is used. Then, Within a renderer, another renderer can be called with the directive +#call+. The syntax is like a function call in Java.
+
+Exemple:
+--------------------------------------
+#main ()
+  Hello
+  #call name("World")
+#end
+#def name(String n)
+  $(n)
+#end
+--------------------------------------
 
 Template Class
 ~~~~~~~~~~~~~~
@@ -335,22 +338,6 @@ public void setPath(File path) {
 #end
 --------------------------------------
 
-Renderer call
-~~~~~~~~~~~~~
-
-Within a renderer, another renderer can be called with the directive +#call+. The syntax is like a function call in Java.
-
-Exemple:
---------------------------------------
-#def hello()
-  Hello
-  #call name("World")
-#end
-#def name(String n)
-  $(n)
-#end
---------------------------------------
-
 Abstract Renderer
 ~~~~~~~~~~~~~~~~~
 
@@ -398,8 +385,7 @@ Exemple:
 
 - layout.html.jst
 --------------------------------------
-public JstTemplate contentTemplate;
-#main
+#main (JstTemplate contentTemplate)
 <html>
   <body>
     <h1>My website</h1>
@@ -410,15 +396,13 @@ public JstTemplate contentTemplate;
 --------------------------------------
 - content1.html.jst
 --------------------------------------
-#main
+#main ()
   <p>Hello World !</p>
 #end
 --------------------------------------
 - content2.html.jst
 --------------------------------------
-String name;
-
-#main
+#main (String name)
   <p>Hello $(name) !</p>
 #end
 --------------------------------------
@@ -426,13 +410,14 @@ String name;
 --------------------------------------
 public class Main {
   public static void main(String[] args) {
-    LayoutJstTemplate content1 = new LayoutJstTemplate();
-    content1.contentTemplate = new Content1JstTemplate();
-    content1.render(new OutputStreamWriter(System.out));
+    Content1JstTemplate content1JstTemplate = new Content1JstTemplate();
+    LayoutJstTemplate content1 = new LayoutJstTemplate(content1JstTemplate);
 
-    LayoutJstTemplate content2 = new LayoutJstTemplate();
-    content2.contentTemplate = new Content2JstTemplate();
-    content2.contentTemplate.name = "Nico";
+    content1.render(new OutputStreamWriter(System.out));
+    
+    Content2JstTemplate content2JstTemplate = new Content2JstTemplate("Nico");
+    LayoutJstTemplate content2 = new LayoutJstTemplate(content2JstTemplate);
+
     content2.render(new OutputStreamWriter(System.out));
   }
 }
