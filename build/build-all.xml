@@ -32,9 +32,6 @@
             <property name="jst.version.full" value="${jst.version.full}" />
         </ant>
 
-        <!-- needed because the snapshot repo changed, we need to do better and avoid that -->
-        <ant antfile="${jst-root.dir}/org.hibnet.jst.ui/build.xml" target="update-deps" dir="${jst-root.dir}/org.hibnet.jst.ui" />
-
         <ant antfile="${jst-root.dir}/org.hibnet.jst.ui/build.xml" target="install" dir="${jst-root.dir}/org.hibnet.jst.ui">
             <property name="jst.version.full" value="${jst.version.full}" />
         </ant>

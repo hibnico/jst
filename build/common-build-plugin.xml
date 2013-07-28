@@ -36,9 +36,12 @@
     </target>
 
     <target name="update-deps" depends="init,ivy:configure" description="Update dependencies (to be called on ivy-manifest.xml or MANIFEST.MF change)">
-        <property name="ivy.resolve.confs" value="compile,runtime" />
-        <ivy:resolve file="${basedir}/ivy-manifest.xml" conf="${ivy.resolve.confs}" type="jar" uncompress="true" resolveId="update-deps" />
-        <ivy:fixdeps tofile="${basedir}/ivy.xml" resolveId="update-deps" />
+        <ivy:resolve file="${basedir}/ivy-manifest.xml" conf="*" type="jar" uncompress="true" resolveId="update-deps" />
+        <ivy:fixdeps tofile="${basedir}/ivy.xml" resolveId="update-deps">
+            <keep org="bundle" module="org.hibnet.jst" />
+            <keep org="bundle" module="org.hibnet.jst.ui" />
+            <keep org="bundle" module="org.hibnet.jst.runtime" />
+        </ivy:fixdeps>
     </target>
 
     <target name="build" depends="ivy:resolve" description="Build the jar">

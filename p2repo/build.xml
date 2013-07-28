@@ -44,6 +44,7 @@
         </path>
         <compute-osgi.bundles property="osgi.bundles" fileset="plugins.fileset" />
         <delete dir="${basedir}/dist/snapshots" includes="*.xml" />
+        <ivy:buildobr baseDir="${p2repo.dir}/dist/snapshots/" out="${p2repo.dir}/dist/snapshots/obr.xml" indent="true" />
         <generate-p2-repo p2repo="${basedir}/dist/snapshots/" name="JST Plugins Repository" launcherclasspath="launcher.path" osgibundles="${osgi.bundles}" />
         <mkdir dir="${basedir}/target" />
         <echo file="${basedir}/target/category.xml"><![CDATA[<?xml version='1.0' encoding='UTF-8'?>
